@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Hub Interactiv</title>
+    <title>Slide Romania | Hub Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -23,70 +23,42 @@
             background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        /* SIDEBAR INTERACTIV */
-        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); }
+        /* SIDEBAR */
+        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
         .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; cursor: pointer; text-shadow: var(--glow); }
         
-        .nav-item { 
-            padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; 
-            color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0;
-        }
+        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
-        .nav-item.active { 
-            color: white; background: rgba(46, 204, 113, 0.15); 
-            border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05);
-        }
+        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
         
         .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 20px; background: rgba(0,0,0,0.5); }
         .u-info { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .u-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--verde); box-shadow: var(--glow); }
 
         /* MAIN CONTENT */
-        .main { flex: 1; padding: 50px; overflow-y: auto; }
-        .header-box { 
-            display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; 
-            border: 1px solid var(--border); margin-bottom: 40px;
-        }
+        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
 
-        .card { 
-            background: var(--panel); border: 1px solid var(--border); padding: 30px; 
-            border-radius: 20px; position: relative; overflow: hidden;
-        }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
         .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
 
-        .btn { 
-            width: 100%; padding: 15px; border-radius: 10px; border: none; 
-            font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; 
-            text-transform: uppercase; letter-spacing: 1px;
-        }
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
         .btn-buy:hover { background: white; transform: scale(1.02); }
 
-        .input-box { 
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #000; 
-            border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px;
-        }
+        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
         .input-box:focus { border-color: var(--verde); box-shadow: var(--glow); }
 
-        /* GRID SHOP */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-
-        /* OVERLAYS */
-        .overlay { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-            z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);
-        }
-        .modal { 
-            background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; 
-            border-radius: 25px; width: 100%; max-width: 550px; text-align: center;
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        /* OVERLAYS & MODALS */
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
         @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .page { display: none; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .req-item { background: #000; border: 1px solid #222; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
     </style>
 </head>
 <body>
@@ -104,12 +76,32 @@
     <div id="confirm-modal" class="overlay">
         <div class="modal">
             <div style="font-size:50px; margin-bottom:10px;">🛒</div>
-            <h2 id="conf-title" style="color:var(--verde); margin:0;">ESTI SIGUR?</h2>
-            <p id="conf-desc" style="color:#888; font-size:18px; margin:20px 0;">Vrei sa achizitionezi acest produs?</p>
+            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
+            <p id="conf-desc" style="color:#888; font-size:18px; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
+            <div style="text-align:left; margin-bottom:15px;">
+                <label style="font-size:12px; color:var(--verde); font-weight:800;">ID JOCUL TĂU:</label>
+                <input type="text" id="shop-id-verify" class="input-box" placeholder="Ex: 1522" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-top:5px;">
+            </div>
             <div style="display:flex; gap:15px;">
-                <button class="btn btn-buy" id="confirm-yes-btn">DA, CONFIRM</button>
+                <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
                 <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZA</button>
             </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="overlay">
+        <div class="modal" style="text-align:left;">
+            <h2 style="color:var(--verde);">PANOU CONTROL FONDATOR</h2>
+            <div style="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px;">
+                <h4 style="margin:0 0 15px 0;">ADAUGA CREDITE MANUAL</h4>
+                <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="email" id="adm-email" class="input-box" placeholder="Email (notificare)">
+                <button class="btn btn-buy" onclick="adminManual()">ADAUGA BALANTA & TRIMITE EMAIL</button>
+            </div>
+            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING</h4>
+            <div id="admin-req-list" style="max-height:300px; overflow-y:auto; padding-right:10px;"></div>
+            <button class="btn" style="background:var(--rosu); color:white; margin-top:20px;" onclick="closeModal('admin-modal')">INCHIDE PANOU</button>
         </div>
     </div>
 
@@ -120,14 +112,13 @@
         <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
         <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
         <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
-
         <div class="sidebar-footer">
             <div class="u-info">
                 <img id="u-avatar" src="" class="u-avatar" style="display:none;">
                 <span id="u-name" style="font-weight:800; letter-spacing:1px;">...</span>
             </div>
-            <a href="https://discord.gg/ESyJU2k5" target="_blank" class="btn" style="background:var(--discord); color:white; text-decoration:none; display:block; text-align:center; padding:10px; margin-bottom:10px;">SERVER DISCORD</a>
-            <button onclick="logout()" class="btn" style="background:transparent; color:var(--rosu); border:1px solid var(--rosu); padding:8px;">DECONECTARE</button>
+            <a href="https://discord.gg/ESyJU2k5" target="_blank" class="btn" style="background:var(--discord); color:white; text-decoration:none; display:block; text-align:center; padding:10px; margin-bottom:10px; font-size:12px;">SERVER DISCORD</a>
+            <button onclick="logout()" class="btn" style="background:transparent; color:var(--rosu); border:1px solid var(--rosu); padding:8px; font-size:12px;">DECONECTARE</button>
         </div>
     </div>
 
@@ -143,65 +134,47 @@
         <div id="home" class="page active">
             <div class="card">
                 <h3 style="color:var(--verde); margin-top:0;">BINE AI REVENIT!</h3>
-                <p style="color:#aaa; line-height:1.6;">Acesta este panoul tau personal Slide Romania. Poti sa iti incarci balanta de credite prin sistemul de dovezi sau sa cumperi beneficii direct din magazin.</p>
+                <p style="color:#aaa;">Panoul tau personal Slide Romania. Gestioneaza creditele si magazinul.</p>
             </div>
         </div>
 
         <div id="donate" class="page">
             <div class="card" style="text-align:center;">
-                <h2 style="margin-top:0;">DONATII TIPEEESTREAM</h2>
-                <p style="color:#888; margin-bottom:30px;">Dupa finalizarea platii, te rugam sa faci un screenshot dovezii pentru validare.</p>
-                <button class="btn" style="background:#ff4500; color:white; width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">ACCESEAZA PAGINA DE PLATA</button>
+                <h2>DONATII TIPEEESTREAM</h2>
+                <button class="btn" style="background:#ff4500; color:white; width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATA</button>
             </div>
         </div>
 
         <div id="confirm" class="page">
             <div class="card" style="max-width:550px; margin:auto;">
                 <h3>TRIMITE DOVADA PLATA</h3>
-                <input type="email" id="d-email" class="input-box" placeholder="Adresa de email (pt. notificare)">
+                <input type="email" id="d-email" class="input-box" placeholder="Adresa de email">
                 <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <label style="display:block; margin:10px 0; color:#555; font-size:12px;">INCARCA SCREENSHOT:</label>
-                <input type="file" id="d-file" style="margin-bottom:20px;">
-                <button class="btn btn-buy" onclick="sendDovada()">TRIMITE SPRE VERIFICARE</button>
+                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="file" id="d-file" style="margin-bottom:20px; display:block; width:100%;">
+                <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
         </div>
 
         <div id="vip" class="page">
-            <div class="grid">
-                <div class="card"><h3>VIP GOLD</h3><div style="font-size:24px; margin:15px 0;">5.000 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA ACUM</button></div>
-                <div class="card"><h3>VIP SILVER</h3><div style="font-size:24px; margin:15px 0;">2.500 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA ACUM</button></div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+                <div class="card"><h3>VIP GOLD</h3><div style="font-size:24px; margin:15px 0;">5.000 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
+                <div class="card"><h3>VIP SILVER</h3><div style="font-size:24px; margin:15px 0;">2.500 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
             </div>
         </div>
 
         <div id="cars" class="page">
-            <div class="grid">
-                <div class="card"><h3>BMW M5 CS</h3><div style="font-size:24px; margin:15px 0;">8.000 Cr</div><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA ACUM</button></div>
-                <div class="card"><h3>MERCEDES G63</h3><div style="font-size:24px; margin:15px 0;">7.500 Cr</div><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA ACUM</button></div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+                <div class="card"><h3>BMW M5 CS</h3><div style="font-size:24px; margin:15px 0;">8.000 Cr</div><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
+                <div class="card"><h3>MERCEDES G63</h3><div style="font-size:24px; margin:15px 0;">7.500 Cr</div><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
             </div>
-        </div>
-    </div>
-
-    <div id="admin-modal" class="overlay">
-        <div class="modal" style="max-width:700px; text-align:left;">
-            <h2 style="color:var(--verde);">PANOU CONTROL FONDATOR</h2>
-            <div style="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px;">
-                <h4 style="margin:0 0 15px 0;">ADAUGA CREDITE MANUAL</h4>
-                <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <button class="btn btn-buy" onclick="adminManual()">ADAUGA BALANTA</button>
-            </div>
-            <div id="admin-req-list" style="max-height:300px; overflow-y:auto;"></div>
-            <button class="btn" style="background:var(--rosu); color:white; margin-top:20px;" onclick="closeModal('admin-modal')">INCHIDE PANOU</button>
         </div>
     </div>
 
     <script>
-        // WEBHOOKS
         const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx";
         const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
-        
         const FONDATOR_TAG = "1391730473817870459";
 
         const firebaseConfig = { databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" };
@@ -219,7 +192,6 @@
             setTimeout(() => n.remove(), 4000);
         }
 
-        // AUTH
         function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
         
         async function checkAuth() {
@@ -241,14 +213,13 @@
             }
         }
 
-        // DOVEZI
         async function sendDovada() {
             const email = document.getElementById('d-email').value;
             const idj = document.getElementById('d-idj').value;
             const amt = document.getElementById('d-amt').value;
             const file = document.getElementById('d-file').files[0];
 
-            if(!email || !idj || !amt || !file) return notify("TE RUGAM SA COMPLETEZI TOATE CAMPURILE!");
+            if(!email || !idj || !amt || !file) return notify("COMPLETAEAZA TOATE CAMPURILE!");
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -260,30 +231,32 @@
 
                 const fd = new FormData();
                 fd.append('payload_json', JSON.stringify({
-                    content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUA DE CREDITE**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎮 ID Joc: \`${idj}\`\n💰 Suma: **${amt} Credite**`
+                    content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUA**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎮 ID Joc: \`${idj}\`\n📧 Email: \`${email}\`\n💰 Suma: **${amt} Credite**`
                 }));
                 fd.append('file', file);
-                
                 fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("CERERE TRIMISA CU SUCCES!");
+                notify("CERERE TRIMISA!");
                 showPage('home');
             };
         }
 
-        // SHOP
         function askBuy(name, price) {
-            document.getElementById('conf-desc').innerText = `Vrei sa cumperi ${name} pentru suma de ${price} credite?`;
+            document.getElementById('conf-desc').innerText = `Vrei sa cumperi ${name} pentru ${price} credite?`;
+            document.getElementById('shop-id-verify').value = ""; // Reset input
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
 
         async function finalizeBuy(name, price) {
+            const idJoc = document.getElementById('shop-id-verify').value;
+            if(!idJoc) return notify("INTRODU ID-UL DIN JOC PENTRU A CONTINUA!");
+
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             const current = s.val() || 0;
 
             if(current < price) {
                 closeModal('confirm-modal');
-                return notify("NU AI SIFUCIENTE CREDITE!");
+                return notify("CREDITE INSUFICIENTE!");
             }
 
             await db.ref('users/' + user.id).update({ credits: current - price });
@@ -293,14 +266,13 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    content: `🛒 **ACHIZITIE NOUA**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎁 Produs: **${name}**\n💸 Pret: **${price} Credite**`
+                    content: `🛒 **ACHIZITIE NOUĂ**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n💸 Pret: **${price} Cr**`
                 })
             });
 
-            notify(`AI ACHIZITIONAT ${name}!`);
+            notify("ACHIZITIE REUSITA!");
         }
 
-        // ADMIN
         function openAdmin() {
             admClicks++;
             if(admClicks >= 5) {
@@ -313,11 +285,24 @@
         async function adminManual() {
             const target = document.getElementById('adm-uid').value;
             const amt = parseInt(document.getElementById('adm-amt').value);
-            if(!target || !amt) return notify("DATE INCOMPLETE!");
+            const email = document.getElementById('adm-email').value;
+            if(!target || !amt) return notify("ID SI SUMA OBLIGATORII!");
 
             const s = await db.ref('users/' + target + '/credits').once('value');
             await db.ref('users/' + target).update({ credits: (s.val() || 0) + amt });
+
+            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator " + target, amount: amt, approved_by: user.username });
+            
+            fetch(WH_LOGS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: `⚙️ **MANUAL ADD**\n👤 Admin: **${user.username}**\n👤 Catre: <@${target}>\n💰 Suma: **${amt} Cr**` })
+            });
+
             notify("BALANTA ACTUALIZATA!");
+            document.getElementById('adm-uid').value = "";
+            document.getElementById('adm-amt').value = "";
+            document.getElementById('adm-email').value = "";
         }
 
         function loadAdminReqs() {
@@ -325,20 +310,17 @@
                 const list = document.getElementById('admin-req-list');
                 list.innerHTML = "";
                 const data = s.val();
-                if(!data) return list.innerHTML = "NICIO CERERE PENDING.";
-
+                if(!data) return list.innerHTML = "Nicio cerere.";
                 Object.keys(data).forEach(id => {
                     const r = data[id];
                     const d = document.createElement('div');
-                    d.style = 'background:#000; padding:15px; border-radius:10px; border:1px solid #333; margin-bottom:10px;';
-                    d.innerHTML = `
-                        <img src="${r.img}" style="width:100%; border-radius:5px; margin-bottom:10px;">
+                    d.className = 'req-item';
+                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px; margin-bottom:10px;">
                         <p>👤 ${r.username} | 🎮 ID: ${r.idj} | 💰 ${r.amount} Cr</p>
                         <div style="display:flex; gap:10px;">
                             <button class="btn btn-buy" onclick="adminAction('${id}', true)">APROBA</button>
                             <button class="btn" style="background:var(--rosu); color:white;" onclick="adminAction('${id}', false)">RESPINGE</button>
-                        </div>
-                    `;
+                        </div>`;
                     list.appendChild(d);
                 });
             });
@@ -348,35 +330,29 @@
             const s = await db.ref('pending_donations/' + rid).once('value');
             const r = s.val();
             if(!r) return;
-
             if(approved) {
                 const us = await db.ref('users/' + r.uid + '/credits').once('value');
                 await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                
                 fetch(WH_LOGS, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: `✅ **CERERE APROBATA**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>\n💰 Suma: **${r.amount} Cr**` })
+                    body: JSON.stringify({ content: `✅ **APROBAT**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>\n💰 Suma: **${r.amount} Cr**` })
                 });
-                
                 if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
             } else {
                 fetch(WH_LOGS, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: `❌ **CERERE RESPINSA**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>` })
+                    body: JSON.stringify({ content: `❌ **RESPINS**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>` })
                 });
             }
-
             await db.ref('pending_donations/' + rid).remove();
             notify(approved ? "APROBAT!" : "RESPINS!");
         }
 
-        // NAV
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
             document.getElementById(id).classList.add('active');
             document.getElementById('btn-' + id).classList.add('active');
             document.getElementById('page-name').innerText = id.replace('-', ' ').toUpperCase();
@@ -384,7 +360,6 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function logout() { window.location.hash = ""; window.location.reload(); }
-
         checkAuth();
     </script>
 </body>
