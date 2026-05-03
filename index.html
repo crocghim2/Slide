@@ -242,7 +242,7 @@
 
         function askBuy(name, price) {
             document.getElementById('conf-desc').innerText = `Vrei sa cumperi ${name} pentru ${price} credite?`;
-            document.getElementById('shop-id-verify').value = ""; // Reset input
+            document.getElementById('shop-id-verify').value = ""; 
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
@@ -291,7 +291,13 @@
             const s = await db.ref('users/' + target + '/credits').once('value');
             await db.ref('users/' + target).update({ credits: (s.val() || 0) + amt });
 
-            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator " + target, amount: amt, approved_by: user.username });
+            // Trimitere Email cu numărul de credite (variabila amount)
+            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { 
+                to_email: email, 
+                to_name: "Utilizator " + target, 
+                amount: amt, 
+                approved_by: user.username 
+            });
             
             fetch(WH_LOGS, {
                 method: 'POST',
@@ -338,7 +344,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: `✅ **APROBAT**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>\n💰 Suma: **${r.amount} Cr**` })
                 });
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
+                
+                // Trimitere Email cu numărul de credite aprobat
+                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { 
+                    to_email: r.email, 
+                    to_name: r.username, 
+                    amount: r.amount, 
+                    approved_by: user.username 
+                });
             } else {
                 fetch(WH_LOGS, {
                     method: 'POST',
