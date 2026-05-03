@@ -33,25 +33,25 @@
         .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
 
         /* SIDEBAR FOOTER (USER INFO) */
-        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); }
-        .u-info { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
+        .u-info { display: flex; align-items: center; gap: 12px; }
         
-        /* Container Avatar cu Overlay */
-        .avatar-container { position: relative; width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid #333; cursor: pointer; }
+        /* Avatar Mic cu Overlay */
+        .avatar-container { position: relative; width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid #333; flex-shrink: 0; }
         .u-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
-        
-        .avatar-overlay { 
-            position: absolute; inset: 0; background: rgba(46, 204, 113, 0.7); 
-            display: flex; align-items: center; justify-content: center; 
-            opacity: 0; transition: opacity 0.3s; color: black; font-weight: 800; font-size: 10px; text-transform: uppercase;
-        }
+        .avatar-overlay { position: absolute; inset: 0; background: rgba(46, 204, 113, 0.8); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: black; font-size: 9px; font-weight: 800; }
         .avatar-container:hover .avatar-overlay { opacity: 1; }
-        .avatar-container:hover { border-color: var(--verde); box-shadow: var(--glow); }
+
+        /* Butoane Footer */
+        .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .btn-small { padding: 8px; border-radius: 8px; border: none; font-family: 'Rajdhani'; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; text-align: center; text-decoration: none; display: block; }
+        .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
+        .btn-small:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         /* MAIN CONTENT */
         .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
         .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
-
         .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
         .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
 
@@ -61,8 +61,7 @@
         .btn-danger { background: var(--rosu); color: white; }
 
         .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
-        .input-box:focus { border-color: var(--verde); box-shadow: var(--glow); }
-
+        
         /* MODALS */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
@@ -140,13 +139,17 @@
 
         <div class="sidebar-footer">
             <div class="u-info">
-                <div class="avatar-container" onclick="window.open('https://discord.com/users/' + user.id)">
+                <div class="avatar-container">
                     <img id="u-avatar" src="" class="u-avatar">
-                    <div class="avatar-overlay">PROFIL</div>
+                    <div class="avatar-overlay">USER</div>
                 </div>
-                <span id="u-name" style="font-weight:800; letter-spacing:1px;">...</span>
+                <span id="u-name" style="font-weight:800; letter-spacing:1px; color: #fff;">...</span>
             </div>
-            <button onclick="logout()" class="btn" style="background:transparent; color:var(--rosu); border:1px solid var(--rosu); padding:8px; font-size:12px;">DECONECTARE</button>
+            
+            <div class="footer-btns">
+                <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">COMUNITATE DISCORD</a>
+                <button onclick="logout()" class="btn-small btn-logout">DECONECTARE</button>
+            </div>
         </div>
     </div>
 
@@ -231,7 +234,6 @@
             }
         }
 
-        // ADMIN ACCESS
         function openAdminWithPass() {
             document.getElementById('admin-pass-input').value = "";
             document.getElementById('password-modal').style.display = 'flex';
@@ -243,38 +245,28 @@
                 closeModal('password-modal');
                 document.getElementById('admin-modal').style.display = 'flex';
                 loadAdminReqs();
-            } else {
-                notify("PAROLĂ INCORRECTĂ!");
-            }
+            } else { notify("PAROLĂ INCORRECTĂ!"); }
         }
 
-        // ADMIN ACTIONS (ADD / REMOVE)
         async function adminActionManual(type) {
             const target = document.getElementById('adm-uid').value;
             const amt = parseInt(document.getElementById('adm-amt').value);
             const email = document.getElementById('adm-email').value;
-
             if(!target || !amt) return notify("ID ȘI SUMĂ OBLIGATORII!");
-
             const s = await db.ref('users/' + target + '/credits').once('value');
             let current = s.val() || 0;
             let newTotal = type === 'add' ? current + amt : current - amt;
             if(newTotal < 0) newTotal = 0;
-
             await db.ref('users/' + target).update({ credits: newTotal });
-
             if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator", amount: amt, approved_by: user.username });
-            
             fetch(WH_LOGS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE' : 'SCOASE'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
             });
-
             notify("BALANȚĂ ACTUALIZATĂ!");
         }
 
-        // SHOP / DOVEZI (EXISTENTE)
         async function sendDovada() {
             const email = document.getElementById('d-email').value;
             const idj = document.getElementById('d-idj').value;
