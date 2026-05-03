@@ -2,72 +2,291 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Slide Romania | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Romania | Dashboard Oficial</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --verde: #2ecc71; --discord: #7289da; --bg: #0a0a0a; }
-        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .box { background: #111; padding: 40px; border-radius: 15px; border: 2px solid var(--verde); text-align: center; }
-        .btn-discord { background: var(--discord); color: white; padding: 15px 30px; border: none; border-radius: 5px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-block; }
-        .user-card { display: none; }
+        :root { --verde: #2ecc71; --rosu: #e74c3c; --discord: #7289da; --bg: #0a0a0a; --panel: #111; --border: #222; }
+        * { box-sizing: border-box; outline: none; }
+        body { font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+
+        /* ECRAN LOGIN */
+        #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .login-card { background: #111; padding: 50px; border-radius: 20px; border: 2px solid var(--verde); text-align: center; }
+
+        /* SIDEBAR */
+        .sidebar { width: 280px; background: #000; border-right: 2px solid var(--verde); display: flex; flex-direction: column; z-index: 1000; }
+        .side-title { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; text-transform: uppercase; letter-spacing: 5px; cursor: pointer; }
+        .nav-btn { padding: 20px 30px; cursor: pointer; font-size: 17px; font-weight: 700; color: #555; border-left: 5px solid transparent; transition: 0.3s; text-transform: uppercase; }
+        .nav-btn:hover, .nav-btn.active { color: white; background: linear-gradient(90deg, rgba(46, 204, 113, 0.1) 0%, transparent 100%); border-left: 5px solid var(--verde); }
+        .side-footer { margin-top: auto; padding: 20px; border-top: 1px solid #111; }
+
+        /* CONTENT AREA */
+        .main { flex: 1; overflow-y: auto; background: radial-gradient(circle at top right, #1a1a1a, #0d0d0d); position: relative; }
+        .top-nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 500; border-bottom: 1px solid var(--border); }
+        .credit-box { background: #000; border: 2px solid var(--verde); padding: 10px 25px; border-radius: 5px; color: var(--verde); font-weight: 800; font-size: 20px; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--verde); }
+
+        /* ADMIN PANEL */
+        #admin-panel { background: rgba(231, 76, 60, 0.15); border: 2px solid var(--rosu); padding: 20px; margin: 20px; border-radius: 10px; display: none; border-left: 5px solid var(--rosu); }
+        .admin-inputs { display: flex; gap: 10px; margin-top: 10px; }
+        .admin-inputs input { background: #000; border: 1px solid #444; color: white; padding: 10px; border-radius: 5px; flex: 1; font-family: 'Rajdhani'; }
+
+        /* NOTIFICARI */
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .toast { background: #111; border-left: 5px solid var(--verde); color: white; padding: 15px 25px; margin-bottom: 10px; border-radius: 5px; animation: slideIn 0.3s ease; font-weight: 700; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .toast.error { border-left-color: var(--rosu); }
+
+        /* PAGINI SI CARDURI */
+        .pagina { display: none; padding: 40px; animation: fadeIn 0.4s ease; }
+        .pagina.activa { display: block !important; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: #111; border: 1px solid #222; border-radius: 15px; padding: 25px; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; }
+        .card:hover { border-color: var(--verde); transform: translateY(-5px); }
+        .card h3 { margin: 0 0 10px 0; color: var(--verde); text-transform: uppercase; }
+        .card p { color: #777; font-size: 14px; line-height: 1.4; margin-bottom: 20px; flex-grow: 1; }
+
+        .btn { width: 100%; padding: 12px; background: var(--verde); color: black; border: none; border-radius: 5px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-family: 'Rajdhani'; transition: 0.2s; }
+        .btn:hover { background: white; transform: scale(1.02); }
+        .btn-discord { background: var(--discord); color: white; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        .step-item { background: #111; border-left: 4px solid var(--verde); padding: 15px; margin-bottom: 15px; border-radius: 0 10px 10px 0; }
+
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div id="login-section" class="box">
-        <h1>SLIDE ROMANIA</h1>
-        <p>Conectează-te pentru a accesa dashboard-ul</p>
-        <button onclick="login()" class="btn-discord">LOGARE CU DISCORD</button>
+    <div id="login-overlay">
+        <div class="login-card">
+            <h1 style="color:var(--verde); margin-top:0;">SLIDE ROMANIA</h1>
+            <p style="color:#888; margin-bottom:30px;">Conectează-te cu Discord pentru a-ți accesa contul.</p>
+            <button onclick="loginDiscord()" class="btn btn-discord" style="width:280px; padding:18px;">
+                <img src="https://assets-global.website-files.com/6257adef93867e3d0394e0ff/636e0a22aa6522f790280174_discord%20icon.svg" width="24">
+                LOGARE CU DISCORD
+            </button>
+        </div>
     </div>
 
-    <div id="dashboard" class="box" style="display:none;">
-        <img id="avatar" src="" style="width:100px; border-radius:50%; border:3px solid var(--verde);">
-        <h1 id="username">---</h1>
-        <p>ID DISCORD: <span id="userid" style="color:var(--verde);">---</span></p>
-        <button onclick="logout()" style="background:#e74c3c; color:white; border:none; padding:10px; cursor:pointer;">LOGOUT</button>
+    <div id="notification-container"></div>
+    <audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+    <audio id="snd-success" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+    <audio id="snd-error" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+    <div class="sidebar">
+        <div class="side-title" onclick="countAdminClicks()">SLIDE</div>
+        <div class="nav-btn active" onclick="navigatie('home')">🏠 HUB</div>
+        <div class="nav-btn" onclick="navigatie('vip')">⭐ VIP SHOP</div>
+        <div class="nav-btn" onclick="navigatie('masini')">🚗 MASINI</div>
+        <div class="nav-btn" onclick="navigatie('mafii')">🔫 MAFII</div>
+        <div class="nav-btn" onclick="navigatie('donate')">💸 DONATII</div>
+        
+        <div class="side-footer">
+            <button onclick="logout()" class="btn" style="background:#222; color:white; font-size:12px; margin-bottom:10px;">DECONECTARE</button>
+            <a href="https://discord.gg/ESyJU2k5" target="_blank" class="btn btn-discord">💬 DISCORD</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="top-nav">
+            <div class="user-info">
+                <img id="u-avatar" class="avatar" src="" style="display:none;">
+                <div style="font-weight: 800;">USER: <span id="u-name" style="color:var(--verde);">Incarcare...</span></div>
+            </div>
+            <div class="credit-box" id="sold-credite">0 CREDITE</div>
+        </div>
+
+        <div id="admin-panel">
+            <h3 style="margin:0; color:var(--rosu);">🛠️ ADMIN PANEL</h3>
+            <div class="admin-inputs">
+                <input type="text" id="adm-id" placeholder="ID DISCORD">
+                <input type="number" id="adm-suma" placeholder="Câte credite?">
+                <button class="btn" style="width:auto; padding:0 20px; background:var(--rosu); color:white;" onclick="adaugaAdmin()">ADAUGĂ</button>
+            </div>
+        </div>
+
+        <div id="home" class="pagina activa">
+            <div style="background: rgba(255,255,255,0.03); padding: 60px; border-radius: 20px; border: 1px solid #222; text-align: center;">
+                <h1 id="hero-welcome" style="font-size: 50px; margin: 0; color: var(--verde);">SLIDE ROMANIA</h1>
+                <p style="color:#888; font-size: 20px;">ID-ul tău Discord: <span id="display-id" style="color:white; font-weight:800;">#----</span></p>
+                <hr style="border:0; border-top:1px solid #222; margin: 30px 0;">
+                <p>Status: <span style="color:var(--verde);">ONLINE</span> | Bine ai revenit!</p>
+            </div>
+        </div>
+
+        <div id="vip" class="pagina">
+            <h2>⭐ CATEGORIE VIP</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>VIP DIAMOND</h3>
+                    <p>Include Priority #1, acces exclusiv garaj Diamond și tag chat special.</p>
+                    <button class="btn" onclick="buy('VIP DIAMOND', 1500)">Cumpără (1500 CR)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="masini" class="pagina">
+            <h2>🚗 VEHICULE IMPORT</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>FERRARI SF90</h3>
+                    <p>Cea mai rapidă mașină de pe server. Handling custom.</p>
+                    <button class="btn" onclick="buy('Ferrari SF90', 2500)">Cumpără (2500 CR)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="donate" class="pagina">
+            <h2 style="text-align:center;">💸 CUM REÎNCARCI?</h2>
+            <div style="background:#111; padding:30px; border-radius:15px; border:1px solid var(--verde); max-width: 500px; margin: 30px auto;">
+                <input type="text" id="d-idjoc" placeholder="ID DIN JOC" style="width:100%; padding:12px; margin-bottom:15px; background:#000; border:1px solid #333; color:white;">
+                <input type="number" id="d-suma" placeholder="SUMA (€)" style="width:100%; padding:12px; margin-bottom:15px; background:#000; border:1px solid #333; color:white;">
+                <input type="file" id="d-file" style="margin-bottom:20px; color:#555; font-size:12px;">
+                <button class="btn" onclick="sendDonatie()">TRIMITE DOVADA</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // DATELE TALE:
+        // --- CONFIGURARE ---
         const CLIENT_ID = '1399681327741272096';
-        const REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
+        const REDIRECT_URI = 'https://crocghim2.github.io/Slide/';
+        const WEBHOOK_SHOP = "https://discord.com/api/webhooks/1392066262015934484/3oRr_5nkjthX7JQHgmJpW0JIQkp_NeMixIUhYOgCqBcFX1HEA6oEBuEPXFepwrrOC7Ln";
+        const WEBHOOK_DONATII = "https://discord.com/api/webhooks/1392066262015934484/3oRr_5nkjthX7JQHgmJpW0JIQkp_NeMixIUhYOgCqBcFX1HEA6oEBuEPXFepwrrOC7Ln";
 
-        function login() {
-            // Generăm URL-ul corect pentru browser (implicit grant)
+        let currentUser = null;
+        let adminClicks = 0;
+
+        // Logica de Login
+        function loginDiscord() {
             const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
             window.location.href = url;
         }
 
-        async function init() {
+        async function checkAuth() {
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const token = fragment.get('access_token');
 
             if (token) {
-                // Dacă avem token, cerem datele de la Discord
-                const res = await fetch('https://discord.com/api/users/@me', {
-                    headers: { authorization: `Bearer ${token}` }
-                });
-                const user = await res.json();
-
-                if (user.id) {
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    document.getElementById('username').innerText = user.username;
-                    document.getElementById('userid').innerText = user.id;
-                    if(user.avatar) {
-                        document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                    }
-                    // Ștergem token-ul din URL pentru estetică
+                try {
+                    const res = await fetch('https://discord.com/api/users/@me', {
+                        headers: { authorization: `Bearer ${token}` }
+                    });
+                    currentUser = await res.json();
                     window.history.replaceState({}, document.title, REDIRECT_URI);
-                }
+                    initDashboard();
+                } catch (e) { console.error("Eroare Auth"); }
             }
         }
 
-        function logout() {
-            window.location.href = REDIRECT_URI;
+        function initDashboard() {
+            if(!currentUser) return;
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('u-name').innerText = currentUser.username;
+            document.getElementById('display-id').innerText = "#" + currentUser.id;
+            document.getElementById('hero-welcome').innerText = "SALUT, " + currentUser.username.toUpperCase();
+            
+            if(currentUser.avatar) {
+                const img = document.getElementById('u-avatar');
+                img.src = `https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar}.png`;
+                img.style.display = 'block';
+            }
+            updateSold();
         }
 
-        init();
+        function navigatie(id) {
+            document.getElementById('snd-click').play();
+            document.querySelectorAll('.pagina').forEach(p => p.classList.remove('activa'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('activa');
+            if(event) event.currentTarget.classList.add('active');
+        }
+
+        function notif(msg, err=false) {
+            const container = document.getElementById('notification-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${err ? 'error' : ''}`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            if(err) document.getElementById('snd-error').play();
+            else document.getElementById('snd-success').play();
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function updateSold() {
+            if(!currentUser) return;
+            let db = JSON.parse(localStorage.getItem('slide_db_global') || "{}");
+            document.getElementById('sold-credite').innerText = (db[currentUser.id] || 0) + " CREDITE";
+        }
+
+        async function buy(nume, pret) {
+            let db = JSON.parse(localStorage.getItem('slide_db_global') || "{}");
+            let creditCurent = db[currentUser.id] || 0;
+
+            if(creditCurent < pret) return notif("Nu ai suficiente credite!", true);
+
+            db[currentUser.id] = creditCurent - pret;
+            localStorage.setItem('slide_db_global', JSON.stringify(db));
+            updateSold();
+            notif(`Ai cumpărat ${nume}!`);
+
+            fetch(WEBHOOK_SHOP, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "🛒 ACHIZIȚIE SHOP",
+                        color: 3066993,
+                        fields: [
+                            { name: "👤 User", value: currentUser.username, inline: true },
+                            { name: "🆔 ID", value: currentUser.id, inline: true },
+                            { name: "📦 Produs", value: nume, inline: true }
+                        ]
+                    }]
+                })
+            });
+        }
+
+        async function sendDonatie() {
+            const idj = document.getElementById('d-idjoc').value;
+            const suma = document.getElementById('d-suma').value;
+            const file = document.getElementById('d-file').files[0];
+            if(!idj || !suma || !file) return notif("Completează tot!", true);
+
+            const formData = new FormData();
+            formData.append('payload_json', JSON.stringify({
+                content: `🔔 **DONATIE NOUA**\nUser: ${currentUser.username}\nID Discord: ${currentUser.id}\nSuma: ${suma}€`
+            }));
+            formData.append('file', file);
+
+            const res = await fetch(WEBHOOK_DONATII, { method: 'POST', body: formData });
+            if(res.ok) notif("Dovada trimisă!");
+        }
+
+        function countAdminClicks() {
+            adminClicks++;
+            if(adminClicks >= 5) {
+                document.getElementById('admin-panel').style.display = 'block';
+                notif("ADMIN MODE");
+                adminClicks = 0;
+            }
+        }
+
+        function adaugaAdmin() {
+            const id = document.getElementById('adm-id').value;
+            const val = parseInt(document.getElementById('adm-suma').value);
+            let db = JSON.parse(localStorage.getItem('slide_db_global') || "{}");
+            db[id] = (db[id] || 0) + val;
+            localStorage.setItem('slide_db_global', JSON.stringify(db));
+            updateSold();
+            notif("Credite adăugate!");
+        }
+
+        function logout() { window.location.reload(); }
+
+        checkAuth();
     </script>
 </body>
 </html>
