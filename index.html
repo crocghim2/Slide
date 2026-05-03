@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Dashboard & Shop</title>
+    <title>Slide Romania | Hub Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -17,38 +17,34 @@
 
         /* SIDEBAR */
         .sidebar { width: 260px; background: #000; border-right: 2px solid var(--verde); display: flex; flex-direction: column; flex-shrink: 0; }
-        .logo { padding: 30px; font-size: 35px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 3px; cursor: pointer; user-select: none; }
-        .nav-item { padding: 18px 25px; cursor: pointer; border-left: 4px solid transparent; transition: 0.3s; font-weight: 700; text-transform: uppercase; color: #666; font-size: 14px; }
+        .logo { padding: 30px; font-size: 35px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 3px; cursor: pointer; }
+        .nav-item { padding: 18px 25px; cursor: pointer; border-left: 4px solid transparent; transition: 0.3s; font-weight: 700; text-transform: uppercase; color: #666; }
         .nav-item:hover, .nav-item.active { color: white; background: rgba(46, 204, 113, 0.1); border-left-color: var(--verde); }
-        .logout-container { margin-top: auto; padding: 20px; border-top: 1px solid var(--border); }
 
-        /* MAIN AREA */
-        .main { flex: 1; padding: 40px; overflow-y: auto; background: #0a0a0a; }
+        /* MAIN */
+        .main { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .user-profile { display: flex; align-items: center; gap: 12px; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--verde); object-fit: cover; }
         .sold { border: 2px solid var(--verde); padding: 8px 20px; color: var(--verde); font-weight: 800; border-radius: 5px; font-size: 18px; }
 
-        /* CARDS & UI */
-        .hub-card { background: var(--panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; margin-bottom: 20px; }
-        .btn { width: 100%; padding: 12px; background: var(--verde); color: black; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; border-radius: 4px; transition: 0.2s; font-family: 'Rajdhani'; }
-        .btn:hover { background: white; transform: scale(1.02); }
-        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; font-family: 'Rajdhani'; border-radius: 4px; }
-
-        /* NOTIFICARI */
-        .toast { position: fixed; top: 20px; right: 20px; background: var(--panel); border-left: 4px solid var(--verde); padding: 15px 25px; z-index: 10002; box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-radius: 4px; }
+        /* NOTIFICARI MODERNE */
+        #notification-container { position: fixed; top: 20px; right: 20px; z-index: 11000; }
+        .toast { background: #111; border-left: 4px solid var(--verde); color: white; padding: 15px 25px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s ease; }
         .toast.error { border-left-color: var(--rosu); }
 
-        /* ADMIN MODAL */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-box { background: #111; border: 2px solid var(--verde); padding: 30px; border-radius: 15px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; }
-        .request-item { background: #000; border: 1px solid var(--border); padding: 20px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .request-img { width: 100%; border-radius: 5px; cursor: pointer; transition: 0.3s; }
-        .request-img:hover { filter: brightness(1.2); }
+        /* ADMIN PANEL */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-box { background: #111; border: 2px solid var(--verde); padding: 30px; border-radius: 15px; width: 90%; max-width: 850px; max-height: 85vh; overflow-y: auto; }
+        .request-item { background: #080808; border: 1px solid #222; padding: 20px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .request-img { width: 100%; border-radius: 5px; cursor: pointer; border: 1px solid #333; }
+
+        /* UI ELEMENTS */
+        .btn { width: 100%; padding: 12px; background: var(--verde); color: black; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; border-radius: 4px; font-family: 'Rajdhani'; }
+        .btn:hover { background: white; }
+        .input-box { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; font-family: 'Rajdhani'; border-radius: 4px; }
 
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
     </style>
 </head>
 <body>
@@ -58,253 +54,202 @@
     <div id="login-overlay" style="position:fixed; inset:0; background:#0a0a0a; z-index:10001; display:flex; align-items:center; justify-content:center;">
         <div style="text-align:center; border:2px solid var(--verde); padding:50px; border-radius:15px; background:#000;">
             <h1 style="color:var(--verde); margin:0; letter-spacing:4px;">SLIDE ROMANIA</h1>
-            <p style="color:#666; margin-bottom:20px;">DASHBOARD UTILIZATOR</p>
-            <button onclick="loginDiscord()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 15px 40px;">LOGARE CU DISCORD</button>
+            <button onclick="loginDiscord()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 15px 40px; margin-top:20px;">LOGARE CU DISCORD</button>
         </div>
     </div>
 
     <div id="admin-panel" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="color:var(--verde); margin-top:0; border-bottom:1px solid #333; padding-bottom:10px;">ADMIN DASHBOARD</h2>
+            <h2 style="color:var(--verde); margin-top:0; border-bottom:1px solid #333; padding-bottom:10px;">ADMIN PANEL</h2>
             
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                <div style="background:#080808; padding:20px; border:1px solid #222; border-radius:10px;">
-                    <h3 style="margin-top:0;">➕ ADAUGARE MANUALĂ</h3>
+            <div style="background:#000; padding:20px; border:1px solid #222; border-radius:10px; margin-bottom:20px;">
+                <h3 style="margin-top:0;">➕ ADĂUGARE MANUALĂ</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <input type="text" id="adm-id" class="input-box" placeholder="ID Discord Jucător">
                     <input type="number" id="adm-amt" class="input-box" placeholder="Sumă Credite">
-                    <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător (pt. notificare)">
-                    <button class="btn" onclick="manualAdd()">ADĂUGĂ & EMAIL</button>
                 </div>
-                <div style="background:#080808; padding:20px; border:1px solid #222; border-radius:10px;">
-                    <h3 style="margin-top:0;">📊 INFO SERVER</h3>
-                    <p>Sistem EmailJS: <span style="color:var(--verde);">ACTIV</span></p>
-                    <p>Database: <span style="color:var(--verde);">CONECTAT</span></p>
-                    <p style="font-size:12px; color:#555;">Pentru a aproba cererile de site, vezi lista de mai jos.</p>
-                </div>
+                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător (pt. notificare)">
+                <button class="btn" onclick="manualAdd()">ADĂUGĂ & TRIMITE EMAIL</button>
             </div>
 
-            <h3 style="margin-top:30px; border-bottom:1px solid #333; padding-bottom:10px;">📩 CERERI DOVEZI SITE</h3>
-            <div id="requests-list">Se încarcă cererile...</div>
-            
-            <button class="btn" onclick="closeModal('admin-panel')" style="background:var(--rosu); color:white; margin-top:20px;">ÎNCHIDE PANEL</button>
+            <h3 style="border-bottom:1px solid #333; padding-bottom:10px;">📩 CERERI SITE</h3>
+            <div id="requests-list">Se încarcă...</div>
+            <button class="btn" onclick="closeModal('admin-panel')" style="background:var(--rosu); color:white; margin-top:20px;">ÎNCHIDE</button>
         </div>
     </div>
 
     <div class="sidebar">
         <div class="logo" onclick="handleLogoClick()">SLIDE</div>
         <div class="nav-item active" onclick="showPage('home')">🏠 HUB</div>
-        <div class="nav-item" onclick="showPage('shop')">⭐ SHOP BENEFICII</div>
         <div class="nav-item" onclick="showPage('dovezi')">📸 TRIMITE DOVADA</div>
-        <div class="logout-container">
-            <button class="btn" style="background:var(--rosu); color:white; font-size:12px;" onclick="location.reload()">DECONECTEAZĂ-TE</button>
-        </div>
+        <div style="margin-top:auto; padding:20px;"><button class="btn" style="background:var(--rosu); color:white; font-size:12px;" onclick="location.reload()">LOGOUT</button></div>
     </div>
 
     <div class="main">
         <div class="header">
-            <div class="user-profile">
-                <img id="u-avatar" class="avatar" style="display:none;">
-                <div style="font-weight: 700;">SALUT, <span id="u-name" style="color:var(--verde);">...</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img id="u-avatar" style="width:45px; height:45px; border-radius:50%; border:2px solid var(--verde); display:none;">
+                <div style="font-weight:700; font-size:18px;">SALUT, <span id="u-name" style="color:var(--verde);">...</span></div>
             </div>
             <div class="sold"><span id="u-sold">0</span> CREDITE</div>
         </div>
 
         <div id="home" class="page active">
-            <div class="hub-card">
-                <h1 style="margin-top:0;">BINE AI REVENIT!</h1>
-                <p>Acesta este panoul tău de control. De aici poți cumpăra VIP, Mașini sau poți încărca dovezi de plată.</p>
-                <div style="background:rgba(46, 204, 113, 0.1); padding:15px; border-radius:8px; border-left:4px solid var(--verde);">
-                    <b>NOTĂ:</b> Toate plățile sunt verificate manual de echipa administrativă.
-                </div>
+            <div style="background:var(--panel); padding:30px; border-radius:15px; border-left:5px solid var(--verde);">
+                <h1>BINE AI VENIT PE HUB!</h1>
+                <p style="color:#888;">Folosește meniul din stânga pentru a naviga. Orice donație este verificată de admini.</p>
             </div>
-            <a href="https://discord.gg/slideromania" target="_blank" style="text-decoration:none; display:block; background:var(--discord); color:white; text-align:center; padding:15px; border-radius:8px; font-weight:800;">SERVER DE DISCORD</a>
         </div>
 
         <div id="dovezi" class="page">
-            <h2>TRIMITE DOVADA PLATĂ</h2>
-            <div class="hub-card" style="max-width:500px;">
-                <label style="font-size:12px; color:#666;">EMAIL (UNDE PRIMESTI CONFIRMAREA):</label>
-                <input type="email" id="d-email" class="input-box" placeholder="Ex: nume@gmail.com">
-                <label style="font-size:12px; color:#666;">ID-UL DIN JOC:</label>
-                <input type="text" id="d-idjoc" class="input-box" placeholder="Ex: 24">
-                <label style="font-size:12px; color:#666;">SUMA DONATĂ (CREDITE):</label>
-                <input type="number" id="d-credite" class="input-box" placeholder="Ex: 1000">
-                <label style="font-size:12px; color:#666;">SCREENSHOT PLATĂ:</label>
+            <h2>📸 TRIMITE DOVADA</h2>
+            <div style="max-width:500px; background:var(--panel); padding:30px; border-radius:15px; border:1px solid var(--border);">
+                <input type="email" id="d-email" class="input-box" placeholder="Email-ul tău (pt. confirmare)">
+                <input type="text" id="d-idjoc" class="input-box" placeholder="ID-ul tău din joc">
+                <input type="number" id="d-credite" class="input-box" placeholder="Suma de credite donată">
                 <input type="file" id="d-file" class="input-box" accept="image/*" style="padding:10px;">
-                <button class="btn" onclick="sendDovada()">TRIMITE SPRE APROBARE</button>
+                <button class="btn" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
-        </div>
-        
-        <div id="shop" class="page">
-            <h2>SHOP BENEFICII</h2>
-            <p>Modulele de shop vor fi activate imediat ce creditele tale sunt aprobate.</p>
         </div>
     </div>
 
     <script>
-        // CONFIGURARE FIREBASE
+        // CONFIG
         const firebaseConfig = { databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        
-        // CONFIGURARE DISCORD WEBHOOK
         const WEBHOOK = "https://discord.com/api/webhooks/1392066262015934484/3oRr_5nkjthX7JQHgmJpW0JIQkp_NeMixIUhYOgCqBcFX1HEA6oEBuEPXFepwrrOC7Ln";
         
-        // INITIALIZARE EMAILJS CU CHEIA TA
-        emailjs.init("j1cFRV1nuCdva_QHu"); 
+        // EMAILJS INIT
+        emailjs.init("j1cFRV1nuCdva_QHu");
 
         let user = null;
         let logoClicks = 0;
 
         function notify(msg, type = 'success') {
             const container = document.getElementById('notification-container');
-            const t = document.createElement('div'); 
-            t.className = `toast ${type === 'error' ? 'error' : ''}`; 
-            t.innerText = msg;
-            container.appendChild(t); 
-            setTimeout(() => t.remove(), 4000);
+            const t = document.createElement('div'); t.className = `toast ${type === 'error' ? 'error' : ''}`;
+            t.innerText = msg; container.appendChild(t); setTimeout(() => t.remove(), 4500);
         }
 
-        // --- FUNCȚII JUCĂTOR ---
-
+        // JUCATOR: TRIMITE DOVADA
         async function sendDovada() {
             const email = document.getElementById('d-email').value;
             const idj = document.getElementById('d-idjoc').value;
             const amt = document.getElementById('d-credite').value;
             const file = document.getElementById('d-file').files[0];
-            if(!email || !idj || !amt || !file) return notify("Te rugăm să completezi toate câmpurile!", "error");
+            if(!email || !idj || !amt || !file) return notify("Completează toate câmpurile!", "error");
 
-            notify("Se procesează dovada...");
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = async () => {
                 const base64 = reader.result;
                 const reqId = Date.now();
                 
-                // Salvăm în Firebase
                 await db.ref('pending_donations/' + reqId).set({
                     uid: user.id, username: user.username, email: email, id_joc: idj, amount: parseInt(amt), image: base64
                 });
 
-                // Trimitem pe Discord Webhook
                 const formData = new FormData();
                 formData.append('payload_json', JSON.stringify({
-                    content: `📩 **CERERE NOUĂ SITE**\n👤 De la: <@${user.id}>\n🎮 ID Joc: \`${idj}\`\n💎 Credite: **${amt}**\n📧 Email: \`${email}\``
+                    content: `📩 **DOVADĂ NOUĂ SITE**\n👤 De la: <@${user.id}>\n🎮 ID Joc: \`${idj}\`\n💎 Credite: **${amt}**\n📧 Email: \`${email}\``
                 }));
                 formData.append('file', file);
                 await fetch(WEBHOOK, { method: 'POST', body: formData });
 
-                notify("Dovada a fost trimisă! Vei primi un email când este aprobată.");
-                document.getElementById('d-idjoc').value = "";
-                document.getElementById('d-credite').value = "";
-                document.getElementById('d-file').value = "";
+                notify("Dovada a fost trimisă!");
+                document.getElementById('d-idjoc').value = ""; document.getElementById('d-credite').value = "";
             };
         }
 
-        // --- FUNCȚII ADMIN ---
-
-        function handleLogoClick() { 
-            logoClicks++; 
-            if(logoClicks >= 5) { openAdminInbox(); logoClicks=0; } 
-            setTimeout(()=>logoClicks=0, 2000); 
-        }
-
-        function openAdminInbox() {
-            document.getElementById('admin-panel').style.display = 'flex';
-            const list = document.getElementById('requests-list');
-            db.ref('pending_donations').on('value', snap => {
-                list.innerHTML = "";
-                const data = snap.val();
-                if(!data) { list.innerHTML = "<p style='color:#555;'>Nicio cerere în așteptare.</p>"; return; }
-                for(let id in data) {
-                    const r = data[id];
-                    const div = document.createElement('div');
-                    div.className = 'request-item';
-                    div.innerHTML = `
-                        <img src="${r.image}" class="request-img" onclick="window.open(this.src)">
-                        <div>
-                            <p style="margin-top:0;"><b>Utilizator:</b> ${r.username}</p>
-                            <p><b>ID Joc:</b> ${r.id_joc}</p>
-                            <p><b>Suma:</b> <span style="color:var(--verde); font-weight:800;">${r.amount} Credite</span></p>
-                            <button class="btn" onclick="approve('${id}', '${r.uid}', ${r.amount}, '${r.email}', '${r.username}')">APROBĂ & TRIMITE EMAIL</button>
-                            <button class="btn" style="background:var(--rosu); color:white; margin-top:5px; font-size:11px;" onclick="db.ref('pending_donations/${id}').remove()">REFUZĂ CEREREA</button>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                }
-            });
-        }
-
+        // ADMIN: APROBARE + EMAIL
         async function approve(reqId, uid, amt, email, name) {
-            const snap = await db.ref('users/' + uid + '/credits').once('value');
-            const current = snap.val() || 0;
-            await db.ref('users/' + uid).update({ credits: current + amt });
-            await db.ref('pending_donations/' + reqId).remove();
-            
-            // Webhook Log
-            fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({
-                content: `✅ **APROBAT**\n👤 Admin: <@${user.id}>\n👤 Jucător: <@${uid}>\n💰 Sumă: **${amt} credite**`
-            })});
+            try {
+                // 1. Bagă credite
+                const snap = await db.ref('users/' + uid + '/credits').once('value');
+                const current = snap.val() || 0;
+                await db.ref('users/' + uid).update({ credits: current + amt });
+                
+                // 2. Trimite Email
+                console.log("Trimitere email catre:", email);
+                emailjs.send("service_2gd65tf", "template_750es5r", {
+                    to_email: email, 
+                    to_name: name,
+                    amount: amt
+                }).then(() => {
+                    console.log("Email trimis!");
+                    notify("Aprobat și Email trimis!");
+                }).catch(err => {
+                    console.error("Eroare EmailJS:", err);
+                    notify("Credite date, dar e-mail-ul a eșuat!", "error");
+                });
 
-            // TRIMITE EMAIL PRIN EMAILJS
-            emailjs.send("service_2gd65tf", "template_750es5r", {
-                to_email: email,
-                amount: amt,
-                to_name: name
-            });
+                // 3. Șterge cererea & Log Discord
+                await db.ref('pending_donations/' + reqId).remove();
+                fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({
+                    content: `✅ **DONAȚIE APROBATĂ**\n👤 Admin: <@${user.id}>\n👤 Jucător: <@${uid}>\n💰 Sumă: **${amt} credite**`
+                })});
 
-            notify("Donatie aprobată și email trimis!");
+            } catch (e) { notify("Eroare la procesare!", "error"); }
         }
 
+        // ADMIN: ADAUGARE MANUALA + EMAIL
         async function manualAdd() {
             const tid = document.getElementById('adm-id').value;
             const amt = parseInt(document.getElementById('adm-amt').value);
             const email = document.getElementById('adm-email').value;
-            if(!tid || isNaN(amt)) return notify("ID sau Sumă invalidă!", "error");
+            if(!tid || isNaN(amt)) return notify("Date invalide!", "error");
 
             const snap = await db.ref('users/' + tid + '/credits').once('value');
             const current = snap.val() || 0;
             await db.ref('users/' + tid).update({ credits: current + amt });
 
             if(email) {
-                emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, amount: amt, to_name: tid });
-                notify("Credite adăugate și Email trimis!");
+                emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: tid, amount: amt })
+                .then(() => notify("Credite & Email trimis!"))
+                .catch(() => notify("Credite date, dar Email EȘUAT", "error"));
             } else {
-                notify("Credite adăugate (fără email).");
+                notify("Credite adăugate manual!");
             }
             
-            document.getElementById('adm-id').value = "";
-            document.getElementById('adm-amt').value = "";
+            fetch(WEBHOOK, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({
+                content: `🛠️ **MANUAL ADD**\n👤 Admin: <@${user.id}>\n👤 Primitor: \`${tid}\`\n💰 Sumă: **${amt} credite**`
+            })});
         }
 
-        // --- CORE ---
+        // CORE UTILS
+        function handleLogoClick() { logoClicks++; if(logoClicks >= 5) { openAdminPanel(); logoClicks=0; } setTimeout(()=>logoClicks=0, 2000); }
+        function openAdminPanel() {
+            document.getElementById('admin-panel').style.display = 'flex';
+            const list = document.getElementById('requests-list');
+            db.ref('pending_donations').on('value', snap => {
+                list.innerHTML = "";
+                const data = snap.val();
+                if(!data) { list.innerHTML = "Nicio cerere."; return; }
+                for(let id in data) {
+                    const r = data[id];
+                    const div = document.createElement('div'); div.className = 'request-item';
+                    div.innerHTML = `<img src="${r.image}" class="request-img" onclick="window.open(this.src)">
+                        <div><p><b>${r.username}</b> (ID Joc: ${r.id_joc})</p><p>Suma: ${r.amount} cr</p>
+                        <button class="btn" onclick="approve('${id}', '${r.uid}', ${r.amount}, '${r.email}', '${r.username}')">APROBĂ</button>
+                        <button class="btn" style="background:var(--rosu); color:white; margin-top:5px; font-size:10px;" onclick="db.ref('pending_donations/${id}').remove()">REFUZĂ</button></div>`;
+                    list.appendChild(div);
+                }
+            });
+        }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(event) event.currentTarget.classList.add('active');
-        }
-
-        function loginDiscord() {
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`;
-        }
-
+        function showPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function loginDiscord() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
         async function checkAuth() {
             const frag = new URLSearchParams(window.location.hash.slice(1));
             const token = frag.get('access_token');
             if (token) {
                 const res = await fetch('https://discord.com/api/users/@me', { headers: { authorization: `Bearer ${token}` } });
                 user = await res.json();
-                window.history.replaceState({}, document.title, window.location.pathname);
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('u-name').innerText = user.username.toUpperCase();
-                if(user.avatar) { 
-                    document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`; 
-                    document.getElementById('u-avatar').style.display = 'block'; 
-                }
+                if(user.avatar) { document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`; document.getElementById('u-avatar').style.display='block'; }
                 db.ref('users/' + user.id + '/credits').on('value', s => { document.getElementById('u-sold').innerText = s.val() || 0; });
-                notify(`Bine ai venit, ${user.username}!`);
             }
         }
         checkAuth();
