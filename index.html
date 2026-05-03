@@ -25,15 +25,12 @@
 
         /* SIDEBAR */
         .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
-        .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; cursor: pointer; text-shadow: var(--glow); }
+        .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
         
         .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
         .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
-        
-        .sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding: 20px; background: rgba(0,0,0,0.5); }
-        .u-info { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .u-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--verde); box-shadow: var(--glow); }
+        .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
 
         /* MAIN CONTENT */
         .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
@@ -45,11 +42,12 @@
         .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
         .btn-buy:hover { background: white; transform: scale(1.02); }
+        .btn-danger { background: var(--rosu); color: white; }
 
         .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
         .input-box:focus { border-color: var(--verde); box-shadow: var(--glow); }
 
-        /* OVERLAYS & MODALS */
+        /* MODALS */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
         @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -73,15 +71,21 @@
         </div>
     </div>
 
+    <div id="password-modal" class="overlay">
+        <div class="modal" style="max-width: 400px;">
+            <h2 style="color:var(--rosu);">ACCES RESTRICȚIONAT</h2>
+            <p>Introdu parola de Fondator:</p>
+            <input type="password" id="admin-pass-input" class="input-box" placeholder="••••••••">
+            <button class="btn btn-buy" onclick="verifyAdminPass()">AUTENTIFICARE</button>
+            <button class="btn" style="margin-top:10px; background:transparent; color:#555;" onclick="closeModal('password-modal')">ANULEAZĂ</button>
+        </div>
+    </div>
+
     <div id="confirm-modal" class="overlay">
         <div class="modal">
-            <div style="font-size:50px; margin-bottom:10px;">🛒</div>
             <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
-            <p id="conf-desc" style="color:#888; font-size:18px; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
-            <div style="text-align:left; margin-bottom:15px;">
-                <label style="font-size:12px; color:var(--verde); font-weight:800;">ID JOCUL TĂU:</label>
-                <input type="text" id="shop-id-verify" class="input-box" placeholder="Ex: 1522" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-top:5px;">
-            </div>
+            <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
+            <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             <div style="display:flex; gap:15px;">
                 <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
                 <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZA</button>
@@ -91,33 +95,38 @@
 
     <div id="admin-modal" class="overlay">
         <div class="modal" style="text-align:left;">
-            <h2 style="color:var(--verde);">PANOU CONTROL FONDATOR</h2>
+            <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
             <div style="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px;">
-                <h4 style="margin:0 0 15px 0;">ADAUGA CREDITE MANUAL</h4>
+                <h4 style="margin:0 0 15px 0;">GESTIONARE CREDITE (MANUAL)</h4>
                 <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="email" id="adm-email" class="input-box" placeholder="Email (notificare)">
-                <button class="btn btn-buy" onclick="adminManual()">ADAUGA BALANTA & TRIMITE EMAIL</button>
+                <input type="text" id="adm-amt" class="input-box" placeholder="Suma (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="email" id="adm-email" class="input-box" placeholder="Email Utilizator">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ CREDITE</button>
+                    <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
+                </div>
             </div>
-            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING</h4>
+            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂȚI)</h4>
             <div id="admin-req-list" style="max-height:300px; overflow-y:auto; padding-right:10px;"></div>
-            <button class="btn" style="background:var(--rosu); color:white; margin-top:20px;" onclick="closeModal('admin-modal')">INCHIDE PANOU</button>
+            <button class="btn" style="background:#222; color:white; margin-top:20px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div class="logo" onclick="openAdmin()">SLIDE</div>
+        <div class="logo">SLIDE</div>
         <div class="nav-item active" id="btn-home" onclick="showPage('home')">🏠 HUB PRINCIPAL</div>
         <div class="nav-item" id="btn-donate" onclick="showPage('donate')">💎 VREAU SA DONEZ</div>
         <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
         <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
         <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
+        
+        <div class="nav-item nav-admin" onclick="openAdminWithPass()">⚙️ ADMIN PANEL</div>
+
         <div class="sidebar-footer">
             <div class="u-info">
                 <img id="u-avatar" src="" class="u-avatar" style="display:none;">
                 <span id="u-name" style="font-weight:800; letter-spacing:1px;">...</span>
             </div>
-            <a href="https://discord.gg/ESyJU2k5" target="_blank" class="btn" style="background:var(--discord); color:white; text-decoration:none; display:block; text-align:center; padding:10px; margin-bottom:10px; font-size:12px;">SERVER DISCORD</a>
             <button onclick="logout()" class="btn" style="background:transparent; color:var(--rosu); border:1px solid var(--rosu); padding:8px; font-size:12px;">DECONECTARE</button>
         </div>
     </div>
@@ -132,41 +141,38 @@
         </div>
 
         <div id="home" class="page active">
-            <div class="card">
-                <h3 style="color:var(--verde); margin-top:0;">BINE AI REVENIT!</h3>
-                <p style="color:#aaa;">Panoul tau personal Slide Romania. Gestioneaza creditele si magazinul.</p>
-            </div>
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stânga pentru a naviga.</p></div>
         </div>
 
         <div id="donate" class="page">
             <div class="card" style="text-align:center;">
                 <h2>DONATII TIPEEESTREAM</h2>
-                <button class="btn" style="background:#ff4500; color:white; width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATA</button>
+                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATA</button>
             </div>
         </div>
 
         <div id="confirm" class="page">
             <div class="card" style="max-width:550px; margin:auto;">
                 <h3>TRIMITE DOVADA PLATA</h3>
-                <input type="email" id="d-email" class="input-box" placeholder="Adresa de email">
+                <input type="email" id="d-email" class="input-box" placeholder="Email pentru notificare">
                 <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <input type="file" id="d-file" style="margin-bottom:20px; display:block; width:100%;">
                 <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
         </div>
 
         <div id="vip" class="page">
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-                <div class="card"><h3>VIP GOLD</h3><div style="font-size:24px; margin:15px 0;">5.000 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
-                <div class="card"><h3>VIP SILVER</h3><div style="font-size:24px; margin:15px 0;">2.500 Cr</div><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
+                <div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
             </div>
         </div>
 
         <div id="cars" class="page">
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
-                <div class="card"><h3>BMW M5 CS</h3><div style="font-size:24px; margin:15px 0;">8.000 Cr</div><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
-                <div class="card"><h3>MERCEDES G63</h3><div style="font-size:24px; margin:15px 0;">7.500 Cr</div><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
+                <div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
             </div>
         </div>
     </div>
@@ -176,18 +182,17 @@
         const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
         const FONDATOR_TAG = "1391730473817870459";
+        const ADMIN_PASS = "ss-croc";
 
-        const firebaseConfig = { databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" };
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
         const db = firebase.database();
         emailjs.init("j1cFRV1nuCdva_QHu");
 
         let user = null;
-        let admClicks = 0;
 
         function notify(text) {
             const n = document.createElement('div');
-            n.style = 'background:rgba(0,0,0,0.9); color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; box-shadow:var(--glow); border:1px solid #333;';
+            n.style = 'background:#000; color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333;';
             n.innerText = text; document.getElementById('notif-container').appendChild(n);
             setTimeout(() => n.remove(), 4000);
         }
@@ -202,173 +207,125 @@
                 user = await r.json();
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('u-name').innerText = user.username.toUpperCase();
-                if(user.avatar) {
-                    const img = document.getElementById('u-avatar');
-                    img.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                    img.style.display = 'block';
-                }
-                db.ref('users/' + user.id + '/credits').on('value', s => {
-                    document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString();
-                });
+                if(user.avatar) document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`, document.getElementById('u-avatar').style.display = 'block';
+                db.ref('users/' + user.id + '/credits').on('value', s => document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString());
             }
         }
 
+        // ADMIN ACCESS
+        function openAdminWithPass() {
+            document.getElementById('admin-pass-input').value = "";
+            document.getElementById('password-modal').style.display = 'flex';
+        }
+
+        function verifyAdminPass() {
+            const p = document.getElementById('admin-pass-input').value;
+            if(p === ADMIN_PASS) {
+                closeModal('password-modal');
+                document.getElementById('admin-modal').style.display = 'flex';
+                loadAdminReqs();
+            } else {
+                notify("PAROLĂ INCORRECTĂ!");
+            }
+        }
+
+        // ADMIN ACTIONS (ADD / REMOVE)
+        async function adminActionManual(type) {
+            const target = document.getElementById('adm-uid').value;
+            const amt = parseInt(document.getElementById('adm-amt').value);
+            const email = document.getElementById('adm-email').value;
+
+            if(!target || !amt) return notify("ID ȘI SUMĂ OBLIGATORII!");
+
+            const s = await db.ref('users/' + target + '/credits').once('value');
+            let current = s.val() || 0;
+            let newTotal = type === 'add' ? current + amt : current - amt;
+            if(newTotal < 0) newTotal = 0;
+
+            await db.ref('users/' + target).update({ credits: newTotal });
+
+            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator", amount: amt, approved_by: user.username });
+            
+            fetch(WH_LOGS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE' : 'SCOASE'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
+            });
+
+            notify("BALANȚĂ ACTUALIZATĂ!");
+        }
+
+        // SHOP / DOVEZI (EXISTENTE)
         async function sendDovada() {
             const email = document.getElementById('d-email').value;
             const idj = document.getElementById('d-idj').value;
             const amt = document.getElementById('d-amt').value;
             const file = document.getElementById('d-file').files[0];
-
-            if(!email || !idj || !amt || !file) return notify("COMPLETAEAZA TOATE CAMPURILE!");
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
+            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
+            const reader = new FileReader(); reader.readAsDataURL(file);
             reader.onload = async () => {
                 const rid = Date.now();
-                await db.ref('pending_donations/' + rid).set({
-                    uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result
-                });
-
+                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
                 const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({
-                    content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUA**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎮 ID Joc: \`${idj}\`\n📧 Email: \`${email}\`\n💰 Suma: **${amt} Credite**`
-                }));
+                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUA**\n👤 Jucator: **${user.username}**\n📧 Email: \`${email}\`\n💰 Suma: **${amt} Cr**` }));
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("CERERE TRIMISA!");
-                showPage('home');
+                notify("TRIMIS!"); showPage('home');
             };
         }
 
         function askBuy(name, price) {
-            document.getElementById('conf-desc').innerText = `Vrei sa cumperi ${name} pentru ${price} credite?`;
-            document.getElementById('shop-id-verify').value = ""; 
+            document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
 
         async function finalizeBuy(name, price) {
             const idJoc = document.getElementById('shop-id-verify').value;
-            if(!idJoc) return notify("INTRODU ID-UL DIN JOC PENTRU A CONTINUA!");
-
+            if(!idJoc) return notify("INTRODU ID JOC!");
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             const current = s.val() || 0;
-
-            if(current < price) {
-                closeModal('confirm-modal');
-                return notify("CREDITE INSUFICIENTE!");
-            }
-
+            if(current < price) return notify("CREDITE INSUFICIENTE!");
             await db.ref('users/' + user.id).update({ credits: current - price });
             closeModal('confirm-modal');
-
-            fetch(WH_SHOP, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    content: `🛒 **ACHIZITIE NOUĂ**\n👤 Jucator: **${user.username}** (<@${user.id}>)\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n💸 Pret: **${price} Cr**`
-                })
-            });
-
+            fetch(WH_SHOP, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `🛒 **ACHIZITIE**\n👤 Jucator: **${user.username}**\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**` }) });
             notify("ACHIZITIE REUSITA!");
-        }
-
-        function openAdmin() {
-            admClicks++;
-            if(admClicks >= 5) {
-                document.getElementById('admin-modal').style.display = 'flex';
-                loadAdminReqs();
-            }
-            setTimeout(() => admClicks = 0, 2000);
-        }
-
-        async function adminManual() {
-            const target = document.getElementById('adm-uid').value;
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            const email = document.getElementById('adm-email').value;
-            if(!target || !amt) return notify("ID SI SUMA OBLIGATORII!");
-
-            const s = await db.ref('users/' + target + '/credits').once('value');
-            await db.ref('users/' + target).update({ credits: (s.val() || 0) + amt });
-
-            // Trimitere Email cu numărul de credite (variabila amount)
-            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { 
-                to_email: email, 
-                to_name: "Utilizator " + target, 
-                amount: amt, 
-                approved_by: user.username 
-            });
-            
-            fetch(WH_LOGS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `⚙️ **MANUAL ADD**\n👤 Admin: **${user.username}**\n👤 Catre: <@${target}>\n💰 Suma: **${amt} Cr**` })
-            });
-
-            notify("BALANTA ACTUALIZATA!");
-            document.getElementById('adm-uid').value = "";
-            document.getElementById('adm-amt').value = "";
-            document.getElementById('adm-email').value = "";
         }
 
         function loadAdminReqs() {
             db.ref('pending_donations').on('value', s => {
-                const list = document.getElementById('admin-req-list');
-                list.innerHTML = "";
-                const data = s.val();
-                if(!data) return list.innerHTML = "Nicio cerere.";
+                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
+                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
                 Object.keys(data).forEach(id => {
                     const r = data[id];
-                    const d = document.createElement('div');
-                    d.className = 'req-item';
-                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px; margin-bottom:10px;">
-                        <p>👤 ${r.username} | 🎮 ID: ${r.idj} | 💰 ${r.amount} Cr</p>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn btn-buy" onclick="adminAction('${id}', true)">APROBA</button>
-                            <button class="btn" style="background:var(--rosu); color:white;" onclick="adminAction('${id}', false)">RESPINGE</button>
-                        </div>`;
+                    const d = document.createElement('div'); d.className = 'req-item';
+                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
+                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
+                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
                     list.appendChild(d);
                 });
             });
         }
 
-        async function adminAction(rid, approved) {
+        async function adminReqAction(rid, approved) {
             const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val();
-            if(!r) return;
+            const r = s.val(); if(!r) return;
             if(approved) {
                 const us = await db.ref('users/' + r.uid + '/credits').once('value');
                 await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                fetch(WH_LOGS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: `✅ **APROBAT**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>\n💰 Suma: **${r.amount} Cr**` })
-                });
-                
-                // Trimitere Email cu numărul de credite aprobat
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { 
-                    to_email: r.email, 
-                    to_name: r.username, 
-                    amount: r.amount, 
-                    approved_by: user.username 
-                });
-            } else {
-                fetch(WH_LOGS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: `❌ **RESPINS**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>` })
-                });
+                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
             }
+            fetch(WH_LOGS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATA' : 'RESPINSA'}**\nAdmin: ${user.username}\nJucator: <@${r.uid}>` }) });
             await db.ref('pending_donations/' + rid).remove();
-            notify(approved ? "APROBAT!" : "RESPINS!");
+            notify("ACȚIUNE FINALIZATĂ!");
         }
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('btn-' + id).classList.add('active');
-            document.getElementById('page-name').innerText = id.replace('-', ' ').toUpperCase();
+            if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active');
+            document.getElementById('page-name').innerText = id.toUpperCase();
         }
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
