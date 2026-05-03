@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Slide Romania | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --verde: #2ecc71; --discord: #7289da; --bg: #0a0a0a; }
+        body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: white; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .box { background: #111; padding: 40px; border-radius: 15px; border: 2px solid var(--verde); text-align: center; }
+        .btn-discord { background: var(--discord); color: white; padding: 15px 30px; border: none; border-radius: 5px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-block; }
+        .user-card { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-section" class="box">
+        <h1>SLIDE ROMANIA</h1>
+        <p>Conectează-te pentru a accesa dashboard-ul</p>
+        <button onclick="login()" class="btn-discord">LOGARE CU DISCORD</button>
+    </div>
+
+    <div id="dashboard" class="box" style="display:none;">
+        <img id="avatar" src="" style="width:100px; border-radius:50%; border:3px solid var(--verde);">
+        <h1 id="username">---</h1>
+        <p>ID DISCORD: <span id="userid" style="color:var(--verde);">---</span></p>
+        <button onclick="logout()" style="background:#e74c3c; color:white; border:none; padding:10px; cursor:pointer;">LOGOUT</button>
+    </div>
+
+    <script>
+        // DATELE TALE:
+        const CLIENT_ID = '1399681327741272096';
+        const REDIRECT_URI = window.location.href.split('#')[0].split('?')[0];
+
+        function login() {
+            // Generăm URL-ul corect pentru browser (implicit grant)
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+            window.location.href = url;
+        }
+
+        async function init() {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const token = fragment.get('access_token');
+
+            if (token) {
+                // Dacă avem token, cerem datele de la Discord
+                const res = await fetch('https://discord.com/api/users/@me', {
+                    headers: { authorization: `Bearer ${token}` }
+                });
+                const user = await res.json();
+
+                if (user.id) {
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('username').innerText = user.username;
+                    document.getElementById('userid').innerText = user.id;
+                    if(user.avatar) {
+                        document.getElementById('avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                    }
+                    // Ștergem token-ul din URL pentru estetică
+                    window.history.replaceState({}, document.title, REDIRECT_URI);
+                }
+            }
+        }
+
+        function logout() {
+            window.location.href = REDIRECT_URI;
+        }
+
+        init();
+    </script>
+</body>
+</html>
