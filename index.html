@@ -41,6 +41,7 @@
         .avatar-overlay { position: absolute; inset: 0; background: rgba(46, 204, 113, 0.8); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: black; font-size: 9px; font-weight: 800; }
         .avatar-container:hover .avatar-overlay { opacity: 1; }
 
+        /* Butoane Footer */
         .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
         .btn-small { padding: 8px; border-radius: 8px; border: none; font-family: 'Rajdhani'; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; text-align: center; text-decoration: none; display: block; }
         .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
@@ -59,14 +60,15 @@
         .btn-danger { background: var(--rosu); color: white; }
 
         .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
-
+        
+        /* MODALS */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-        
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         .page { display: none; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .req-item { background: #000; border: 1px solid #222; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
     </style>
@@ -259,46 +261,12 @@
             fetch(WH_LOGS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE' : 'SCOASE'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
+                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
             });
             notify("BALANȚĂ ACTUALIZATĂ!");
         }
 
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
-            if(approved) {
-                const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
-            }
-            fetch(WH_LOGS, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATA' : 'RESPINSA'}**\n👤 Admin: **${user.username}**\n👤 Jucator: <@${r.uid}>\n💰 Suma: **${r.amount} Cr**` 
-                }) 
-            });
-            await db.ref('pending_donations/' + rid).remove();
-            notify("ACȚIUNE FINALIZATĂ!");
-        }
-
-        function loadAdminReqs() {
-            db.ref('pending_donations').on('value', s => {
-                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
-                Object.keys(data).forEach(id => {
-                    const r = data[id];
-                    const d = document.createElement('div'); d.className = 'req-item';
-                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
-                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
-                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
-                    list.appendChild(d);
-                });
-            });
-        }
-
-        function sendDovada() {
+        async function sendDovada() {
             const email = document.getElementById('d-email').value;
             const idj = document.getElementById('d-idj').value;
             const amt = document.getElementById('d-amt').value;
@@ -330,8 +298,60 @@
             if(current < price) return notify("CREDITE INSUFICIENTE!");
             await db.ref('users/' + user.id).update({ credits: current - price });
             closeModal('confirm-modal');
-            fetch(WH_SHOP, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `🛒 **ACHIZITIE**\n👤 Jucator: **${user.username}**\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**` }) });
+            fetch(WH_SHOP, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `🛒 **ACHIZITIE**\n👤 Jucator: **${user.username}**\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n💰 Preț: **${price} Cr**` }) });
             notify("ACHIZITIE REUSITA!");
+        }
+
+        function loadAdminReqs() {
+            db.ref('pending_donations').on('value', s => {
+                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
+                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
+                Object.keys(data).forEach(id => {
+                    const r = data[id];
+                    const d = document.createElement('div'); d.className = 'req-item';
+                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
+                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
+                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
+                    list.appendChild(d);
+                });
+            });
+        }
+
+        async function adminReqAction(rid, approved) {
+            const s = await db.ref('pending_donations/' + rid).once('value');
+            const r = s.val(); 
+            if(!r) return;
+
+            if(approved) {
+                const us = await db.ref('users/' + r.uid + '/credits').once('value');
+                const currentCredits = us.val() || 0;
+                await db.ref('users/' + r.uid).update({ credits: currentCredits + r.amount });
+                
+                if(r.email) {
+                    emailjs.send("service_2gd65tf", "template_750es5r", { 
+                        to_email: r.email, 
+                        to_name: r.username, 
+                        amount: r.amount, 
+                        approved_by: user.username 
+                    });
+                }
+            }
+
+            // LOG ACTUALIZAT PENTRU DISCORD
+            fetch(WH_LOGS, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n` +
+                             `👤 Admin: **${user.username}**\n` +
+                             `👤 Jucător: <@${r.uid}>\n` +
+                             `💰 Sumă Credite: **${r.amount} Cr**\n` +
+                             `📊 Status: ${approved ? 'Adăugate în balanță' : 'Anulată'}`
+                }) 
+            });
+
+            await db.ref('pending_donations/' + rid).remove();
+            notify("ACȚIUNE FINALIZATĂ!");
         }
 
         function showPage(id) {
