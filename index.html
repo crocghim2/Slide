@@ -3,186 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Premium Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <title>Slide Romania | Dashboard Oficial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --verde: #00ff88; 
-            --verde-glow: rgba(0, 255, 136, 0.3);
-            --bg: #050505; 
-            --card-bg: rgba(15, 15, 15, 0.8);
-            --border: rgba(255, 255, 255, 0.05);
-            --discord: #5865F2;
-        }
-
-        * { box-sizing: border-box; outline: none; transition: all 0.2s ease-in-out; }
-        
-        body { 
-            font-family: 'Rajdhani', sans-serif; 
-            margin: 0; 
-            background: var(--bg); 
-            color: white; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #112211 0%, #050505 80%);
-        }
+        :root { --verde: #2ecc71; --discord: #7289da; --bg: #0a0a0a; --panel: #111; --border: #222; }
+        * { box-sizing: border-box; outline: none; }
+        body { font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
 
         /* LOGIN OVERLAY */
-        #login-overlay { 
-            position: fixed; inset: 0; background: var(--bg); z-index: 9999; 
-            display: flex; align-items: center; justify-content: center;
-        }
-        .login-card { 
-            background: var(--card-bg); padding: 60px; border-radius: 30px; 
-            border: 1px solid var(--verde); text-align: center; 
-            box-shadow: 0 0 50px var(--verde-glow);
-            backdrop-filter: blur(10px);
-        }
-        .login-card h1 { font-family: 'Orbitron', sans-serif; font-size: 32px; letter-spacing: 5px; margin-bottom: 30px; }
+        #login-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .login-card { background: #111; padding: 50px; border-radius: 20px; border: 2px solid var(--verde); text-align: center; }
 
         /* SIDEBAR */
-        .sidebar { 
-            width: 300px; background: rgba(0,0,0,0.6); 
-            border-right: 1px solid var(--border); display: flex; 
-            flex-direction: column; backdrop-filter: blur(20px);
-        }
-        .side-title { 
-            padding: 50px 20px; font-family: 'Orbitron', sans-serif; 
-            font-size: 38px; font-weight: 900; color: var(--verde); 
-            text-align: center; text-shadow: 0 0 15px var(--verde);
-        }
-        .nav-btn { 
-            padding: 18px 40px; cursor: pointer; font-size: 16px; font-weight: 700; 
-            color: #888; border-left: 4px solid transparent; 
-            text-transform: uppercase; letter-spacing: 2px;
-        }
-        .nav-btn:hover { color: white; background: rgba(255,255,255,0.03); }
-        .nav-btn.active { 
-            color: var(--verde); background: rgba(0, 255, 136, 0.05); 
-            border-left: 4px solid var(--verde); 
-        }
+        .sidebar { width: 280px; background: #000; border-right: 2px solid var(--verde); display: flex; flex-direction: column; z-index: 1000; }
+        .side-title { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; text-transform: uppercase; cursor: pointer; }
+        .nav-btn { padding: 20px 30px; cursor: pointer; font-size: 17px; font-weight: 700; color: #555; border-left: 5px solid transparent; transition: 0.3s; text-transform: uppercase; }
+        .nav-btn:hover, .nav-btn.active { color: white; background: linear-gradient(90deg, rgba(46, 204, 113, 0.1) 0%, transparent 100%); border-left: 5px solid var(--verde); }
 
         /* MAIN CONTENT */
-        .main { flex: 1; overflow-y: auto; padding-bottom: 50px; }
-        .top-nav { 
-            padding: 25px 50px; display: flex; justify-content: space-between; 
-            align-items: center; border-bottom: 1px solid var(--border);
-            background: rgba(0,0,0,0.3);
-        }
-        .credit-box { 
-            background: rgba(0, 255, 136, 0.1); border: 1px solid var(--verde); 
-            padding: 12px 30px; border-radius: 12px; color: var(--verde); 
-            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 18px;
-            box-shadow: 0 0 15px var(--verde-glow);
-        }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .avatar { width: 45px; height: 45px; border-radius: 12px; border: 2px solid var(--verde); }
+        .main { flex: 1; overflow-y: auto; background: radial-gradient(circle at top right, #1a1a1a, #0d0d0d); position: relative; }
+        .top-nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); position: sticky; top: 0; border-bottom: 1px solid var(--border); z-index: 500; }
+        .credit-box { background: #000; border: 2px solid var(--verde); padding: 10px 25px; border-radius: 5px; color: var(--verde); font-weight: 800; font-size: 20px; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--verde); }
 
         /* PAGINI */
-        .pagina { display: none; padding: 60px 100px; animation: slideUp 0.5s ease forwards; }
-        .pagina.activa { display: block; }
+        .pagina { display: none; padding: 40px; animation: fadeIn 0.4s ease; }
+        .pagina.activa { display: block !important; }
         
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* BUTOANE & INPUTS */
+        .btn { width: 100%; padding: 12px; background: var(--verde); color: black; border: none; border-radius: 5px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-family: 'Rajdhani'; transition: 0.2s; text-decoration: none; display: block; text-align: center; }
+        .btn:hover { background: white; transform: scale(1.02); }
+        .input-style { width:100%; padding:15px; margin-bottom:15px; background:#000; border:1px solid #333; color:white; font-family: 'Rajdhani'; border-radius: 5px; font-size: 16px; }
 
-        /* CARDURI & BUTOANE */
-        .glass-card { 
-            background: var(--card-bg); border: 1px solid var(--border); 
-            padding: 40px; border-radius: 25px; position: relative; overflow: hidden;
-        }
-        .glass-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03), transparent);
-        }
-
-        .btn-premium { 
-            width: 100%; padding: 20px; background: var(--verde); color: black; 
-            border: none; border-radius: 12px; font-weight: 900; cursor: pointer; 
-            text-transform: uppercase; font-family: 'Orbitron', sans-serif; 
-            letter-spacing: 2px; box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
-            text-decoration: none; display: block; text-align: center;
-        }
-        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0, 255, 136, 0.6); background: white; }
-
-        .input-premium { 
-            width: 100%; padding: 18px; margin-bottom: 20px; background: rgba(0,0,0,0.5); 
-            border: 1px solid var(--border); color: white; border-radius: 12px; 
-            font-family: 'Rajdhani', sans-serif; font-size: 18px;
-        }
-        .input-premium:focus { border-color: var(--verde); box-shadow: 0 0 10px var(--verde-glow); }
-
-        h2 { font-family: 'Orbitron', sans-serif; font-size: 30px; margin-bottom: 30px; border-left: 5px solid var(--verde); padding-left: 20px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
-            <h1>SLIDE ROMANIA</h1>
-            <p style="color:#aaa; font-size: 18px; margin-bottom: 40px;">ACCESEAZĂ DASHBOARD-UL PREMIUM</p>
-            <button onclick="loginDiscord()" class="btn-premium" style="background:var(--discord); color:white; width:350px;">
-                CONECTARE CU DISCORD
+            <h1 style="color:var(--verde); margin-bottom: 10px;">SLIDE ROMANIA</h1>
+            <p style="color:#666; margin-bottom:30px;">Conectează-te cu Discord pentru a continua.</p>
+            <button onclick="loginDiscord()" class="btn" style="background:var(--discord); color:white; width:280px; padding:18px;">
+                LOGARE CU DISCORD
             </button>
         </div>
     </div>
 
     <div class="sidebar">
         <div class="side-title">SLIDE</div>
-        <div class="nav-btn active" onclick="navigatie('home')">🏠 OVERVIEW</div>
-        <div class="nav-btn" onclick="navigatie('donate')">💸 DEPOZITARE</div>
-        <div class="nav-btn" onclick="navigatie('dovezi')">📸 DOVEZI PLATA</div>
+        <div class="nav-btn active" onclick="navigatie('home')">🏠 HUB</div>
+        <div class="nav-btn" onclick="navigatie('donate')">💸 VREAU SĂ DONEZ</div>
+        <div class="nav-btn" onclick="navigatie('dovezi')">📸 TRIMITE DOVADA</div>
         
-        <div style="margin-top:auto; padding:30px;">
-            <button onclick="location.reload()" class="btn-premium" style="background:#111; color:#555; font-size:12px; box-shadow:none;">LOGOUT SYSTEM</button>
+        <div style="margin-top:auto; padding:20px;">
+            <button onclick="location.reload()" class="btn" style="background:#222; color:white; font-size:12px;">LOGOUT</button>
         </div>
     </div>
 
     <div class="main">
         <div class="top-nav">
             <div class="user-info">
-                <img id="u-avatar" class="avatar" src="https://via.placeholder.com/45" style="display:none;">
-                <div style="font-weight: 700; font-size: 20px; letter-spacing: 1px;">
-                    USER: <span id="u-name" style="color:var(--verde);">...</span>
-                </div>
+                <img id="u-avatar" class="avatar" src="" style="display:none;">
+                <div style="font-weight: 800;"><span id="u-name" style="color:var(--verde);">Incarcare...</span></div>
             </div>
             <div class="credit-box" id="sold-credite">0 CREDITE</div>
         </div>
 
         <div id="home" class="pagina activa">
-            <div class="glass-card">
-                <h1 style="font-family:'Orbitron'; font-size: 45px; margin:0;">WELCOME TO <span style="color:var(--verde);">SLIDE</span></h1>
-                <p style="color:#666; font-size: 20px; letter-spacing: 3px;">STATUS: <span style="color:var(--verde)">ONLINE</span></p>
-                <div style="margin-top: 40px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
-                    <p style="margin:0; color:#888;">ID-UL TĂU UNIC DISCORD</p>
-                    <code id="u-id" style="font-size: 24px; color:white;">---</code>
-                </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 50px; border-radius: 20px; border: 1px solid #222; text-align: center;">
+                <h1 id="welcome-text" style="font-size: 50px; margin: 0; color: var(--verde);">SLIDE ROMANIA</h1>
+                <p style="color:#888;">ID DISCORD: <span id="u-id" style="color:white; font-weight:800;">---</span></p>
             </div>
         </div>
 
         <div id="donate" class="pagina">
-            <h2>REÎNCĂRCARE CONT</h2>
-            <div class="glass-card" style="text-align:center; max-width:700px;">
-                <p style="color:#aaa; font-size: 18px; margin-bottom: 40px;">
-                    Folosim platforma securizată <b>Tipestream</b> pentru procesarea donațiilor. 
-                    Creditele vor fi adăugate după verificarea dovezii.
-                </p>
-                <a href="https://www.tipestream.com/slide-romania/donation" target="_blank" class="btn-premium" style="padding: 30px; font-size: 22px;">
-                    ADĂUGARE CREDITE PRIN TIPESTREAM
+            <h2 style="text-align:center;">💸 REÎNCARCĂ PRIN TIPESTREAM</h2>
+            <div style="background:#111; padding:50px; border-radius:20px; border:2px solid var(--verde); text-align:center; max-width:600px; margin: 0 auto;">
+                <p style="font-size: 18px; margin-bottom: 30px;">Apasă butonul de mai jos pentru a deschide pagina oficială de donații.</p>
+                <a href="https://www.tipestream.com/slide-romania/donation" target="_blank" class="btn" style="font-size:24px; padding:30px; background: #9b59b6; color: white;">
+                    🚀 DESCHIDE TIPESTREAM
                 </a>
+                <p style="color:#555; margin-top:25px; font-size: 14px;">După ce ai finalizat plata, fă un screenshot și mergi la secțiunea <b>TRIMITE DOVADA</b>.</p>
             </div>
         </div>
 
         <div id="dovezi" class="pagina">
-            <h2>TRIMITE DOVADA</h2>
-            <div class="glass-card" style="max-width:600px;">
-                <input type="text" id="d-idjoc" class="input-premium" placeholder="ID DIN JOC (Ex: 1234)">
-                <input type="number" id="d-suma" class="input-premium" placeholder="SUMA DEPUSĂ (€)">
-                <p style="color:#555; margin-bottom:10px;">ÎNCARCĂ SCREENSHOT-UL PLĂȚII:</p>
-                <input type="file" id="d-file" class="input-premium" style="font-size: 14px; padding: 10px;">
-                <button class="btn-premium" onclick="sendDovada()">TRIMITE PENTRU VERIFICARE</button>
+            <h2 style="text-align:center;">📸 TRIMITE DOVADA (TAG ADMIN)</h2>
+            <div style="max-width:500px; margin: 0 auto; background:#111; padding:30px; border-radius:15px; border:1px solid var(--verde);">
+                <input type="text" id="d-idjoc" class="input-style" placeholder="ID DIN JOC">
+                <input type="number" id="d-suma" class="input-style" placeholder="SUMA (€)">
+                <input type="file" id="d-file" class="input-style">
+                <button class="btn" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
         </div>
     </div>
@@ -224,11 +137,11 @@
             const suma = document.getElementById('d-suma').value;
             const file = document.getElementById('d-file').files[0];
 
-            if(!idj || !suma || !file) return alert("TE RUGĂM SĂ COMPLETEZI TOATE CÂMPURILE!");
+            if(!idj || !suma || !file) return alert("Completează toate câmpurile!");
 
             const formData = new FormData();
             const payload = {
-                content: `🚀 **TRANZACȚIE NOUĂ ÎN AȘTEPTARE**\n━━━━━━━━━━━━━━━━━━━━\n👤 Client: <@${user.id}>\n🆔 ID FiveM: \`${idj}\`\n💰 Sumă: \`${suma}€\`\n━━━━━━━━━━━━━━━━━━━━\n@everyone - Verificați tranzacția!`
+                content: `🚨 **DOVADĂ NOUĂ TIPESTREAM**\n━━━━━━━━━━━━━━━━━━━━\n👤 Jucător: <@${user.id}>\n🆔 ID Joc: **${idj}**\n💰 Sumă: **${suma}€**\n━━━━━━━━━━━━━━━━━━━━\n@everyone - Verificați screenshot-ul!`
             };
 
             formData.append('payload_json', JSON.stringify(payload));
@@ -236,8 +149,8 @@
 
             try {
                 const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
-                if(res.ok) alert("DOVADA A FOST TRIMISĂ! ADMINII TE VOR CONTACTA.");
-            } catch (e) { alert("EROARE LA SERVER. ÎNCEARCĂ DIN NOU."); }
+                if(res.ok) alert("Dovada a fost trimisă cu succes! Vei primi un tag pe Discord când creditele sunt procesate.");
+            } catch (e) { alert("Eroare la trimiterea dovezii."); }
         }
 
         function navigatie(id) {
