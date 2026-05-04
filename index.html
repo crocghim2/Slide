@@ -304,8 +304,8 @@
                 await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), type, img: reader.result });
                 const fd = new FormData();
                 fd.append('payload_json', JSON.stringify({ 
-                    content: `${STAFF_TAG} 🔔 Cerere nouă de plată!`,
-                    embeds: [{ title: "📩 CERERE NOUĂ PLATĂ", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, { name: "🎮 ID Joc", value: idj, inline: true }, { name: "📧 Email", value: email }] }] 
+                    content: `@everyone 🔔 **CERERE NOUĂ DE PLATĂ!**`, 
+                    embeds: [{ title: "📩 DETALII TRANZACȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, { name: "🎮 ID Joc", value: idj, inline: true }, { name: "📧 Email", value: email }] }] 
                 }));
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
@@ -373,8 +373,8 @@
                     emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, idj: r.idj, approved_by: user.username.toUpperCase() });
                 }
                 fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                    content: `${STAFF_TAG} ✅ O plată a fost aprobată!`,
-                    embeds: [{ title: "✅ PLATĂ APROBATĂ", color: 3066993, description: `**Jucător:** <@${r.uid}>\n**Suma:** ${r.amount} Cr\n**Admin:** ${user.username}` }] 
+                    content: `@everyone ✅ **O PLATĂ A FOST APROBATĂ!**`, 
+                    embeds: [{ title: "DETALII", color: 3066993, description: `**Jucător:** <@${r.uid}>\n**Suma:** ${r.amount} Cr\n**Admin:** ${user.username}` }] 
                 }) });
             }
             await db.ref('pending_donations/' + rid).remove();
@@ -396,8 +396,8 @@
                         const ownerSnap = await db.ref('users/' + c.ownerId + '/credits').once('value');
                         await db.ref('users/' + c.ownerId).update({ credits: (ownerSnap.val() || 0) + rev });
                         fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                            content: `${STAFF_TAG} 🎙️ Profit nou creator!`,
-                            embeds: [{ title: "🎙️ PROFIT CREATOR", color: 15844367, fields: [{ name: "🎟️ Cod", value: codeInput, inline: true }, { name: "👤 Creator", value: `<@${c.ownerId}>`, inline: true }, { name: "💸 Profit", value: `**${rev} Cr**`, inline: true }] }] 
+                            content: `@everyone 🎙️ **PROFIT NOU CREATOR!**`, 
+                            embeds: [{ title: "DETALII", color: 15844367, fields: [{ name: "🎟️ Cod", value: codeInput, inline: true }, { name: "👤 Creator", value: `<@${c.ownerId}>`, inline: true }, { name: "💸 Profit", value: `**${rev} Cr**`, inline: true }] }] 
                         }) });
                     } else { infoTxt = `Cod Reducere: **${codeInput}**`; }
                 }
@@ -406,8 +406,8 @@
             if((s.val() || 0) < finalPrice) return notify("CREDITE INSUFICIENTE!");
             await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
             fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                content: `${STAFF_TAG} 🛒 Achiziție nouă shop!`,
-                embeds: [{ title: "🛒 ACHIZIȚIE JUCĂTOR", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "ℹ️ Info", value: infoTxt, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] 
+                content: `@everyone 🛒 **ACHIZIȚIE NOUĂ SHOP!**`, 
+                embeds: [{ title: "DETALII ACHIZIȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "ℹ️ Info", value: infoTxt, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] 
             }) });
             closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
