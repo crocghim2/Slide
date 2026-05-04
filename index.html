@@ -23,7 +23,6 @@
             background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        /* SIDEBAR */
         .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
         .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
         
@@ -32,7 +31,6 @@
         .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
         .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
 
-        /* SIDEBAR FOOTER (USER INFO) */
         .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
         .u-info { display: flex; align-items: center; gap: 12px; }
         
@@ -41,14 +39,11 @@
         .avatar-overlay { position: absolute; inset: 0; background: rgba(46, 204, 113, 0.8); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: black; font-size: 9px; font-weight: 800; }
         .avatar-container:hover .avatar-overlay { opacity: 1; }
 
-        /* Butoane Footer */
         .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
         .btn-small { padding: 8px; border-radius: 8px; border: none; font-family: 'Rajdhani'; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; text-align: center; text-decoration: none; display: block; }
         .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
         .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
-        .btn-small:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
-        /* MAIN CONTENT */
         .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
         .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
         .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
@@ -61,7 +56,6 @@
 
         .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
         
-        /* MODALS */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
         @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -70,7 +64,7 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .req-item { background: #000; border: 1px solid #222; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
+        #coupon-status { font-size: 14px; font-weight: 800; margin-bottom: 15px; display: block; }
     </style>
 </head>
 <body>
@@ -100,9 +94,11 @@
             <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
             <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
             <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON REDUCERE (Opțional)" style="text-transform: uppercase;">
+            <span id="coupon-status"></span>
             <div style="display:flex; gap:15px;">
                 <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
-                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZA</button>
+                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZĂ</button>
             </div>
         </div>
     </div>
@@ -133,7 +129,6 @@
         <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
         <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
         <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
-        
         <div class="nav-item nav-admin" onclick="openAdminWithPass()">⚙️ ADMIN PANEL</div>
 
         <div class="sidebar-footer">
@@ -144,7 +139,6 @@
                 </div>
                 <span id="u-name" style="font-weight:800; letter-spacing:1px; color: #fff;">...</span>
             </div>
-            
             <div class="footer-btns">
                 <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">COMUNITATE DISCORD</a>
                 <button onclick="logout()" class="btn-small btn-logout">DECONECTARE</button>
@@ -167,8 +161,8 @@
 
         <div id="donate" class="page">
             <div class="card" style="text-align:center;">
-                <h2>DONATII TIPEEESTREAM</h2>
-                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATA</button>
+                <h2>DONAȚII TIPEEESTREAM</h2>
+                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button>
             </div>
         </div>
 
@@ -277,7 +271,7 @@
                 const rid = Date.now();
                 await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
                 const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUA**\n👤 Jucator: **${user.username}**\n📧 Email: \`${email}\`\n💰 Suma: **${amt} Cr**` }));
+                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**` }));
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
                 notify("TRIMIS!"); showPage('home');
@@ -285,21 +279,50 @@
         }
 
         function askBuy(name, price) {
+            const status = document.getElementById('coupon-status');
+            const couponInput = document.getElementById('shop-coupon');
             document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
+            couponInput.value = ""; 
+            status.innerText = "PREȚ: " + price + " Cr";
+            status.style.color = "#888";
+            couponInput.oninput = () => {
+                let currentVal = couponInput.value.toUpperCase().trim();
+                if(currentVal === "BLABLA") {
+                    let discounted = Math.floor(price * 0.8);
+                    status.innerText = "CUPON ACTIVAT! PREȚ FINAL: " + discounted + " Cr";
+                    status.style.color = "var(--verde)";
+                } else {
+                    status.innerText = "PREȚ: " + price + " Cr";
+                    status.style.color = "#888";
+                }
+            };
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
 
         async function finalizeBuy(name, price) {
             const idJoc = document.getElementById('shop-id-verify').value;
+            const cupon = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
+            let finalPrice = price;
+            let cuponMesaj = "Niciunul";
+            if(cupon === "BLABLA") {
+                finalPrice = Math.floor(price * 0.8);
+                cuponMesaj = "BLABLA (-20%)";
+            }
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             const current = s.val() || 0;
-            if(current < price) return notify("CREDITE INSUFICIENTE!");
-            await db.ref('users/' + user.id).update({ credits: current - price });
+            if(current < finalPrice) return notify("NU AI DESTULE CREDITE!");
+            await db.ref('users/' + user.id).update({ credits: current - finalPrice });
             closeModal('confirm-modal');
-            fetch(WH_SHOP, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: `🛒 **ACHIZITIE**\n👤 Jucator: **${user.username}**\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n💰 Preț: **${price} Cr**` }) });
-            notify("ACHIZITIE REUSITA!");
+            fetch(WH_SHOP, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    content: `🛒 **ACHIZIȚIE NOUĂ**\n👤 Jucător: <@${user.id}>\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Cupon: **${cuponMesaj}**\n💰 Preț Final: **${finalPrice} Cr**` 
+                }) 
+            });
+            notify("ACHIZIȚIE REUȘITĂ!");
         }
 
         function loadAdminReqs() {
@@ -319,37 +342,19 @@
 
         async function adminReqAction(rid, approved) {
             const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); 
-            if(!r) return;
-
+            const r = s.val(); if(!r) return;
             if(approved) {
                 const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                const currentCredits = us.val() || 0;
-                await db.ref('users/' + r.uid).update({ credits: currentCredits + r.amount });
-                
-                if(r.email) {
-                    emailjs.send("service_2gd65tf", "template_750es5r", { 
-                        to_email: r.email, 
-                        to_name: r.username, 
-                        amount: r.amount, 
-                        approved_by: user.username 
-                    });
-                }
+                await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
+                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
             }
-
-            // LOG ACTUALIZAT PENTRU DISCORD
             fetch(WH_LOGS, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n` +
-                             `👤 Admin: **${user.username}**\n` +
-                             `👤 Jucător: <@${r.uid}>\n` +
-                             `💰 Sumă Credite: **${r.amount} Cr**\n` +
-                             `📊 Status: ${approved ? 'Adăugate în balanță' : 'Anulată'}`
+                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n💰 Sumă Credite: **${r.amount} Cr**`
                 }) 
             });
-
             await db.ref('pending_donations/' + rid).remove();
             notify("ACȚIUNE FINALIZATĂ!");
         }
