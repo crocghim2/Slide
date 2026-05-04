@@ -335,7 +335,6 @@
         async function adminActionManual(type) {
             const target = document.getElementById('adm-uid').value.trim();
             const amt = parseInt(document.getElementById('adm-amt').value);
-            const email = document.getElementById('adm-email').value.trim() || "Nespecificat";
             if(!target || isNaN(amt)) return notify("DATE INCOMPLETE!");
             const snap = await db.ref('users/' + target + '/credits').once('value');
             let nTotal = type === 'add' ? (snap.val() || 0) + amt : (snap.val() || 0) - amt;
@@ -407,7 +406,9 @@
                 } else {
                     const us = await db.ref('users/' + r.uid + '/credits').once('value');
                     await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                    notify("CREDITE ADĂUGATE!");
+                    // MAIL NOU PENTRU CREDITE
+                    emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, idj: r.idj });
+                    notify("CREDITE ADĂUGATE ȘI MAIL TRIMIS!");
                 }
             }
             await db.ref('pending_donations/' + rid).remove();
