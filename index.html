@@ -65,6 +65,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         #coupon-status { font-size: 14px; font-weight: 800; margin-bottom: 15px; display: block; }
+        
+        .admin-section { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; }
     </style>
 </head>
 <body>
@@ -106,18 +108,29 @@
     <div id="admin-modal" class="overlay">
         <div class="modal" style="text-align:left;">
             <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
-            <div style="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px;">
+            
+            <div class="admin-section">
                 <h4 style="margin:0 0 15px 0;">GESTIONARE CREDITE (MANUAL)</h4>
                 <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <input type="text" id="adm-amt" class="input-box" placeholder="Suma (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="email" id="adm-email" class="input-box" placeholder="Email Utilizator">
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ CREDITE</button>
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
                 </div>
             </div>
+
+            <div class="admin-section">
+                <h4 style="margin:0 0 15px 0;">⚙️ GESTIONARE COPOANE REDUCERE</h4>
+                <input type="text" id="new-coupon-name" class="input-box" placeholder="NUME COD (ex: SLIDE20)" style="text-transform:uppercase;">
+                <input type="text" id="new-coupon-percent" class="input-box" placeholder="PROCENT REDUCERE (ex: 20)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <button class="btn btn-buy" onclick="addPromoCode()">CREEAZĂ / ACTUALIZEAZĂ COD</button>
+                
+                <div id="coupon-list" style="margin-top:15px; max-height:150px; overflow-y:auto; font-size:14px;">
+                    </div>
+            </div>
+
             <h4 style="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂȚI)</h4>
-            <div id="admin-req-list" style="max-height:300px; overflow-y:auto; padding-right:10px;"></div>
+            <div id="admin-req-list" style="max-height:200px; overflow-y:auto;"></div>
             <button class="btn" style="background:#222; color:white; margin-top:20px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
         </div>
     </div>
@@ -133,10 +146,7 @@
 
         <div class="sidebar-footer">
             <div class="u-info">
-                <div class="avatar-container">
-                    <img id="u-avatar" src="" class="u-avatar">
-                    <div class="avatar-overlay">USER</div>
-                </div>
+                <div class="avatar-container"><img id="u-avatar" src="" class="u-avatar"><div class="avatar-overlay">USER</div></div>
                 <span id="u-name" style="font-weight:800; letter-spacing:1px; color: #fff;">...</span>
             </div>
             <div class="footer-btns">
@@ -155,22 +165,15 @@
             </div>
         </div>
 
-        <div id="home" class="page active">
-            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stânga pentru a naviga.</p></div>
-        </div>
-
-        <div id="donate" class="page">
-            <div class="card" style="text-align:center;">
-                <h2>DONAȚII TIPEEESTREAM</h2>
-                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button>
-            </div>
-        </div>
+        <div id="home" class="page active"><div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stânga pentru a naviga.</p></div></div>
+        
+        <div id="donate" class="page"><div class="card" style="text-align:center;"><h2>DONAȚII TIPEEESTREAM</h2><button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button></div></div>
 
         <div id="confirm" class="page">
             <div class="card" style="max-width:550px; margin:auto;">
                 <h3>TRIMITE DOVADA PLATA</h3>
                 <input type="email" id="d-email" class="input-box" placeholder="Email pentru notificare">
-                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <input type="file" id="d-file" style="margin-bottom:20px; display:block; width:100%;">
                 <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
@@ -193,17 +196,21 @@
     </div>
 
     <script>
-        const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx";
-        const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
+        // CONFIGURATII
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
-        const FONDATOR_TAG = "1391730473817870459";
         const ADMIN_PASS = "ss-croc";
 
         firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
         const db = firebase.database();
-        emailjs.init("j1cFRV1nuCdva_QHu");
 
         let user = null;
+        let activePromoCodes = {};
+
+        // Incarcam codurile promo la start
+        db.ref('promo_codes').on('value', s => {
+            activePromoCodes = s.val() || {};
+            updateCouponList();
+        });
 
         function notify(text) {
             const n = document.createElement('div');
@@ -212,8 +219,6 @@
             setTimeout(() => n.remove(), 4000);
         }
 
-        function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
-        
         async function checkAuth() {
             const h = new URLSearchParams(window.location.hash.slice(1));
             const t = h.get('access_token');
@@ -227,57 +232,35 @@
             }
         }
 
-        function openAdminWithPass() {
-            document.getElementById('admin-pass-input').value = "";
-            document.getElementById('password-modal').style.display = 'flex';
+        // FUNCTII ADMIN PENTRU CODOURI
+        async function addPromoCode() {
+            const name = document.getElementById('new-coupon-name').value.toUpperCase().trim();
+            const percent = parseInt(document.getElementById('new-coupon-percent').value);
+            if(!name || isNaN(percent)) return notify("INTRODU NUME SI PROCENT VALID!");
+            await db.ref('promo_codes/' + name).set({ percent: percent });
+            notify("COD " + name + " SALVAT (" + percent + "%)");
+            document.getElementById('new-coupon-name').value = "";
+            document.getElementById('new-coupon-percent').value = "";
         }
 
-        function verifyAdminPass() {
-            const p = document.getElementById('admin-pass-input').value;
-            if(p === ADMIN_PASS) {
-                closeModal('password-modal');
-                document.getElementById('admin-modal').style.display = 'flex';
-                loadAdminReqs();
-            } else { notify("PAROLĂ INCORRECTĂ!"); }
+        async function deletePromoCode(name) {
+            await db.ref('promo_codes/' + name).remove();
+            notify("COD STERS!");
         }
 
-        async function adminActionManual(type) {
-            const target = document.getElementById('adm-uid').value;
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            const email = document.getElementById('adm-email').value;
-            if(!target || !amt) return notify("ID ȘI SUMĂ OBLIGATORII!");
-            const s = await db.ref('users/' + target + '/credits').once('value');
-            let current = s.val() || 0;
-            let newTotal = type === 'add' ? current + amt : current - amt;
-            if(newTotal < 0) newTotal = 0;
-            await db.ref('users/' + target).update({ credits: newTotal });
-            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator", amount: amt, approved_by: user.username });
-            fetch(WH_LOGS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
+        function updateCouponList() {
+            const list = document.getElementById('coupon-list');
+            list.innerHTML = "";
+            Object.keys(activePromoCodes).forEach(code => {
+                const item = document.createElement('div');
+                item.style = "display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #222; align-items:center;";
+                item.innerHTML = `<span><b>${code}</b> - ${activePromoCodes[code].percent}%</span> 
+                                  <button onclick="deletePromoCode('${code}')" style="background:var(--rosu); border:none; color:white; padding:2px 8px; border-radius:5px; cursor:pointer;">STERGE</button>`;
+                list.appendChild(item);
             });
-            notify("BALANȚĂ ACTUALIZATĂ!");
         }
 
-        async function sendDovada() {
-            const email = document.getElementById('d-email').value;
-            const idj = document.getElementById('d-idj').value;
-            const amt = document.getElementById('d-amt').value;
-            const file = document.getElementById('d-file').files[0];
-            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const rid = Date.now();
-                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
-                const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**` }));
-                fd.append('file', file);
-                fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("TRIMIS!"); showPage('home');
-            };
-        }
-
+        // LOGICA CUMPARARE CU CODOURI DIN FIREBASE
         function askBuy(name, price) {
             const status = document.getElementById('coupon-status');
             const couponInput = document.getElementById('shop-coupon');
@@ -285,17 +268,20 @@
             couponInput.value = ""; 
             status.innerText = "PREȚ: " + price + " Cr";
             status.style.color = "#888";
+
             couponInput.oninput = () => {
                 let currentVal = couponInput.value.toUpperCase().trim();
-                if(currentVal === "BLABLA") {
-                    let discounted = Math.floor(price * 0.8);
-                    status.innerText = "CUPON ACTIVAT! PREȚ FINAL: " + discounted + " Cr";
+                if(activePromoCodes[currentVal]) {
+                    let discPercent = activePromoCodes[currentVal].percent;
+                    let discounted = Math.floor(price * (1 - discPercent/100));
+                    status.innerText = "COD ACTIV! " + discPercent + "% REDUCERE | FINAL: " + discounted + " Cr";
                     status.style.color = "var(--verde)";
                 } else {
                     status.innerText = "PREȚ: " + price + " Cr";
                     status.style.color = "#888";
                 }
             };
+
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
@@ -304,17 +290,22 @@
             const idJoc = document.getElementById('shop-id-verify').value;
             const cupon = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
+
             let finalPrice = price;
             let cuponMesaj = "Niciunul";
-            if(cupon === "BLABLA") {
-                finalPrice = Math.floor(price * 0.8);
-                cuponMesaj = "BLABLA (-20%)";
+            
+            if(activePromoCodes[cupon]) {
+                finalPrice = Math.floor(price * (1 - activePromoCodes[cupon].percent/100));
+                cuponMesaj = cupon + " (-" + activePromoCodes[cupon].percent + "%)";
             }
+
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             const current = s.val() || 0;
             if(current < finalPrice) return notify("NU AI DESTULE CREDITE!");
+
             await db.ref('users/' + user.id).update({ credits: current - finalPrice });
             closeModal('confirm-modal');
+
             fetch(WH_SHOP, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
@@ -325,50 +316,14 @@
             notify("ACHIZIȚIE REUȘITĂ!");
         }
 
-        function loadAdminReqs() {
-            db.ref('pending_donations').on('value', s => {
-                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
-                Object.keys(data).forEach(id => {
-                    const r = data[id];
-                    const d = document.createElement('div'); d.className = 'req-item';
-                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
-                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
-                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
-                    list.appendChild(d);
-                });
-            });
-        }
-
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
-            if(approved) {
-                const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
-            }
-            fetch(WH_LOGS, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n💰 Sumă Credite: **${r.amount} Cr**`
-                }) 
-            });
-            await db.ref('pending_donations/' + rid).remove();
-            notify("ACȚIUNE FINALIZATĂ!");
-        }
-
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active');
-            document.getElementById('page-name').innerText = id.toUpperCase();
-        }
-
+        // Functii de baza (Login, Admin Pass, etc - aceleasi)
+        function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
+        function openAdminWithPass() { document.getElementById('admin-pass-input').value = ""; document.getElementById('password-modal').style.display = 'flex'; }
+        function verifyAdminPass() { if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { closeModal('password-modal'); document.getElementById('admin-modal').style.display = 'flex'; } else { notify("PAROLA GRESITA!"); } }
+        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('page-name').innerText = id.toUpperCase(); }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function logout() { window.location.hash = ""; window.location.reload(); }
+        
         checkAuth();
     </script>
 </body>
