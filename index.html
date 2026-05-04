@@ -81,7 +81,7 @@
 
     <div id="password-modal" class="overlay">
         <div class="modal" style="max-width: 400px;">
-            <h2 style="color:var(--rosu);">ACCES RESTRICȚIONAT</h2>
+            <h2 style="color:var(--rosu);">ACCES RESTRICtIONAT</h2>
             <p>Introdu parola de Fondator:</p>
             <input type="password" id="admin-pass-input" class="input-box" placeholder="••••••••">
             <button class="btn btn-buy" onclick="verifyAdminPass()">AUTENTIFICARE</button>
@@ -91,10 +91,10 @@
 
     <div id="confirm-modal" class="overlay">
         <div class="modal">
-            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
+            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZItIA</h2>
             <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
             <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON REDUCERE (Opțional)" style="text-transform: uppercase;">
+            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON REDUCERE (Optional)" style="text-transform: uppercase;">
             <span id="coupon-status"></span>
             <div style="display:flex; gap:15px;">
                 <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
@@ -116,7 +116,7 @@
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
                 </div>
             </div>
-            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂȚI)</h4>
+            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂtI)</h4>
             <div id="admin-req-list" style="max-height:300px; overflow-y:auto; padding-right:10px;"></div>
             <button class="btn" style="background:#222; color:white; margin-top:20px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
         </div>
@@ -156,12 +156,12 @@
         </div>
 
         <div id="home" class="page active">
-            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stânga pentru a naviga.</p></div>
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stanga pentru a naviga.</p></div>
         </div>
 
         <div id="donate" class="page">
             <div class="card" style="text-align:center;">
-                <h2>DONAȚII TIPEEESTREAM</h2>
+                <h2>DONAtII TIPEEESTREAM</h2>
                 <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button>
             </div>
         </div>
@@ -255,9 +255,9 @@
             fetch(WH_LOGS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${newTotal} Cr**` })
+                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balantă Nouă: **${newTotal} Cr**` })
             });
-            notify("BALANȚĂ ACTUALIZATĂ!");
+            notify("BALANtĂ ACTUALIZATĂ!");
         }
 
         async function sendDovada() {
@@ -283,16 +283,16 @@
             const couponInput = document.getElementById('shop-coupon');
             document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
             couponInput.value = ""; 
-            status.innerText = "PREȚ: " + price + " Cr";
+            status.innerText = "PREt: " + price + " Cr";
             status.style.color = "#888";
             couponInput.oninput = () => {
                 let currentVal = couponInput.value.toUpperCase().trim();
                 if(currentVal === "BLABLA") {
                     let discounted = Math.floor(price * 0.8);
-                    status.innerText = "CUPON ACTIVAT! PREȚ FINAL: " + discounted + " Cr";
+                    status.innerText = "CUPON ACTIVAT! PREt FINAL: " + discounted + " Cr";
                     status.style.color = "var(--verde)";
                 } else {
-                    status.innerText = "PREȚ: " + price + " Cr";
+                    status.innerText = "PREt: " + price + " Cr";
                     status.style.color = "#888";
                 }
             };
@@ -319,10 +319,10 @@
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    content: `🛒 **ACHIZIȚIE NOUĂ**\n👤 Jucător: <@${user.id}>\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Cupon: **${cuponMesaj}**\n💰 Preț Final: **${finalPrice} Cr**` 
+                    content: `🛒 **ACHIZItIE NOUĂ**\n👤 Jucător: <@${user.id}>\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Cupon: **${cuponMesaj}**\n💰 Pret Final: **${finalPrice} Cr**` 
                 }) 
             });
-            notify("ACHIZIȚIE REUȘITĂ!");
+            notify("ACHIZItIE REUȘITĂ!");
         }
 
         function loadAdminReqs() {
@@ -356,7 +356,7 @@
                 }) 
             });
             await db.ref('pending_donations/' + rid).remove();
-            notify("ACȚIUNE FINALIZATĂ!");
+            notify("ACtIUNE FINALIZATĂ!");
         }
 
         function showPage(id) {
