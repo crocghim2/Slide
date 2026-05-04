@@ -3,284 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Ultimate Shop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <title>Slide Romania | Hub Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        :root {
-            --primary: #2ecc71;
-            --primary-glow: rgba(46, 204, 113, 0.4);
-            --danger: #ff4757;
-            --bg-dark: #050505;
-            --card-bg: #0f0f0f;
-            --sidebar-bg: rgba(0, 0, 0, 0.95);
-            --text-main: #ffffff;
-            --text-dim: #777777;
-            --border: #1a1a1a;
-            --accent-blue: #00d2ff;
+        :root { 
+            --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; 
+            --border: #222; --discord: #7289da; --glow: 0 0 20px rgba(46, 204, 113, 0.4); 
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        body {
-            background: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
-            display: flex;
-            height: 100vh;
-        }
-
-        /* Fundal Animat */
-        .bg-mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% -20%, #1e3a2a, transparent),
-                        radial-gradient(circle at 0% 100%, #101010, transparent);
-            opacity: 0.5;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; padding: 30px 0; z-index: 100; backdrop-filter: blur(20px);
-        }
-
-        .logo-area { text-align: center; margin-bottom: 50px; }
-        .logo-text { font-size: 45px; font-weight: 800; letter-spacing: 10px; color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); }
-        .logo-sub { font-size: 12px; color: var(--text-dim); letter-spacing: 3px; }
-
-        .nav-links { flex: 1; padding: 0 15px; }
-        .nav-link {
-            display: flex; align-items: center; padding: 15px 20px; margin-bottom: 8px;
-            border-radius: 12px; cursor: pointer; color: var(--text-dim); font-weight: 700; font-size: 16px;
-            text-decoration: none; border: 1px solid transparent;
-        }
-        .nav-link:hover { color: var(--primary); background: rgba(46, 204, 113, 0.05); transform: translateX(10px); }
-        .nav-link.active { color: white; background: rgba(46, 204, 113, 0.1); border-color: var(--primary); box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .nav-admin { border-color: var(--danger) !important; color: var(--danger) !important; margin-top: 30px; }
-
-        /* User Profile Sidebar */
-        .user-card {
-            margin: 20px; padding: 20px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 15px;
-            display: flex; align-items: center; gap: 15px;
-        }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; }
-        .user-meta { display: flex; flex-direction: column; }
-        .username { font-weight: 800; font-size: 18px; }
-        .logout-btn { font-size: 11px; color: var(--danger); cursor: pointer; text-transform: uppercase; font-weight: 700; }
-
-        /* Main Content */
-        .content { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .stats-bar { display: flex; gap: 20px; }
-        .stat-item { background: var(--card-bg); padding: 15px 30px; border-radius: 15px; border-bottom: 3px solid var(--primary); }
-        .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
-        .stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
-
-        /* Magazin */
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .item-card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px;
-            position: relative; overflow: hidden; display: flex; flex-direction: column;
-        }
-        .item-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--primary);
-        }
-        .item-card:hover { border-color: var(--primary); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .item-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-        .item-desc { color: var(--text-dim); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
-        .item-price { font-size: 32px; font-weight: 800; color: var(--primary); margin-top: auto; }
         
-        .btn-buy {
-            width: 100%; padding: 15px; margin-top: 20px; border-radius: 12px; border: none;
-            background: var(--primary); color: #000; font-weight: 800; cursor: pointer; text-transform: uppercase;
-        }
-        .btn-buy:hover { background: #fff; transform: scale(1.05); }
-
-        /* Modals */
-        .overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
-            backdrop-filter: blur(15px); align-items: center; justify-content: center;
-        }
-        .modal {
-            background: #0a0a0a; border: 1px solid var(--primary); padding: 40px; border-radius: 30px;
-            width: 100%; max-width: 500px; position: relative; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
-        .input-box {
-            width: 100%; padding: 15px; background: #000; border: 1px solid var(--border);
-            color: white; border-radius: 12px; font-size: 16px; font-weight: 600;
-        }
-        .input-box:focus { border-color: var(--primary); }
-
-        /* Admin Section Custom */
-        .admin-row { display: flex; gap: 10px; margin-bottom: 15px; }
-
-        #login-screen {
-            position: fixed; inset: 0; background: #000; z-index: 10000;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body { 
+            font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; 
+            display: flex; height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        .page { display: none; }
+        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
+        .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
+        
+        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
+        .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
+        .u-info { display: flex; align-items: center; gap: 12px; }
+        
+        .avatar-container { position: relative; width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid #333; flex-shrink: 0; }
+        .u-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+        .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
+        .btn-small { padding: 8px; border-radius: 8px; border: none; font-family: 'Rajdhani'; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; text-align: center; text-decoration: none; display: block; }
+        .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
+
+        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
+        .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
+
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
+        .btn-buy:hover { background: white; transform: scale(1.02); }
+        .btn-danger { background: var(--rosu); color: white; }
+
+        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
+        
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 650px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .page { display: none; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .admin-sec { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; text-align: left; }
+        .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .item-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag-item { background: #111; border: 1px solid #333; padding: 5px 12px; border-radius: 5px; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+        .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="bg-mesh"></div>
-    <div id="notif-container" style="position: fixed; top: 30px; right: 30px; z-index: 11000;"></div>
+    <div id="notif-container" style="position:fixed; top:30px; right:30px; z-index:10000;"></div>
 
-    <div id="login-screen">
-        <div class="logo-area" style="margin-bottom: 30px;">
-            <div class="logo-text">SLIDE</div>
-            <div class="logo-sub">REDEFINE YOUR GAMING EXPERIENCE</div>
-        </div>
-        <button onclick="login()" class="btn-buy" style="width: auto; padding: 20px 60px; font-size: 18px;">CONECTARE CU DISCORD</button>
-    </div>
-
-    <div class="sidebar">
-        <div class="logo-area">
-            <div class="logo-text">SLIDE</div>
-            <div class="logo-sub">PREMIUM STORE</div>
-        </div>
-
-        <div class="nav-links">
-            <div class="nav-link active" onclick="showPage('home', this)">🏠 DASHBOARD</div>
-            <div class="nav-link" onclick="showPage('vip', this)">⭐ PACHETE VIP</div>
-            <div class="nav-link" onclick="showPage('cars', this)">🚗 VEHICULE IMPORT</div>
-            <div class="nav-link" onclick="showPage('donatii', this)">💎 DONAȚII / CREDITE</div>
-            <div class="nav-link nav-admin" onclick="openAdmin()">⚙️ ADMIN CONTROL</div>
-        </div>
-
-        <div class="user-card" id="user-display" style="display:none;">
-            <img id="u-avatar" src="" class="avatar">
-            <div class="user-meta">
-                <span class="username" id="u-name">NAME</span>
-                <span class="logout-btn" onclick="logout()">Deconectare</span>
-            </div>
+    <div id="login-screen" style="position:fixed; inset:0; background:#000; z-index:10001; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+            <h1 style="color:var(--verde); font-size:70px; letter-spacing:15px; margin:0;">SLIDE</h1>
+            <p style="color:#444; letter-spacing:5px; margin-bottom:40px;">DASHBOARD PREMIUM</p>
+            <button onclick="login()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 18px 60px; font-size:18px;">AUTENTIFICARE DISCORD</button>
         </div>
     </div>
 
-    <div class="content">
-        <div class="header">
-            <h1 id="page-title">DASHBOARD</h1>
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-label">Balanță Credite</div>
-                    <div class="stat-value" id="u-credits">0</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="home" class="page active">
-            <div class="item-card" style="margin-bottom: 30px;">
-                <h2 class="item-title">NOUTĂȚI SERVER</h2>
-                <p class="item-desc">Sistemul de shop a fost actualizat. Acum poți vedea balanța în timp real și achizițiile se procesează prin tichete automate pe Discord.</p>
-            </div>
-            <div class="shop-grid">
-                <div class="item-card">
-                    <h3 class="item-title">REDUCERE 20%</h3>
-                    <p class="item-desc">Toate mașinile din categoria Import au reducere săptămâna aceasta!</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="vip" class="page">
-            <div class="shop-grid" id="vip-items">
-                </div>
-        </div>
-
-        <div id="cars" class="page">
-            <div class="shop-grid" id="car-items">
-                </div>
-        </div>
-
-        <div id="donatii" class="page">
-            <div class="item-card" style="text-align: center; max-width: 600px; margin: auto;">
-                <h2 class="item-title">REÎNCĂRCARE CREDITE</h2>
-                <p class="item-desc">Plata se face prin TipeeeStream. După ce ai finalizat plata, suma va fi adăugată manual de un Fondator pe baza dovezii.</p>
-                <div class="item-price" style="margin-bottom: 20px;">1€ = 1000 CR</div>
-                <button class="btn-buy" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">MERGI LA PLATĂ</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="buy-modal" class="overlay">
-        <div class="modal">
-            <h2 id="m-buy-title" class="item-title">CONFIRMĂ ACHIZIȚIA</h2>
-            <p id="m-buy-desc" class="item-desc">Vrei să cumperi acest produs?</p>
-            <div class="input-group">
-                <label>ID JOC (PENTRU LIVRARE)</label>
-                <input type="text" id="buy-id-joc" class="input-box" placeholder="Ex: 2401">
-            </div>
-            <button class="btn-buy" id="btn-confirm-final">CONFIRMĂ ȘI CUMPĂRĂ</button>
-            <button class="btn-buy" style="background: transparent; color: #555;" onclick="closeModal('buy-modal')">ÎNCHIDE</button>
+    <div id="password-modal" class="overlay">
+        <div class="modal" style="max-width: 400px;">
+            <h2 style="color:var(--rosu);">ACCES RESTRICȚIONAT</h2>
+            <p>Introdu parola de Fondator:</p>
+            <input type="password" id="admin-pass-input" class="input-box" placeholder="••••••••">
+            <button class="btn btn-buy" onclick="verifyAdminPass()">AUTENTIFICARE</button>
+            <button class="btn" style="margin-top:10px; background:transparent; color:#555;" onclick="closeModal('password-modal')">ANULEAZĂ</button>
         </div>
     </div>
 
     <div id="admin-modal" class="overlay">
-        <div class="modal" style="max-width: 600px;">
-            <h2 class="item-title" style="color: var(--danger);">CONSOLE ADMIN</h2>
+        <div class="modal" style="text-align:left; max-width: 700px;">
+            <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
             
-            <div class="input-group">
-                <label>DISCORD USER ID</label>
-                <input type="text" id="adm-uid" class="input-box" placeholder="ID-ul utilizatorului">
+            <div class="admin-sec">
+                <h4>💎 GESTIONARE CREDITE (MANUAL)</h4>
+                <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID">
+                <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite">
+                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ</button>
+                    <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE</button>
+                </div>
             </div>
-            <div class="input-group">
-                <label>SUMĂ CREDITE</label>
-                <input type="number" id="adm-amt" class="input-box" placeholder="Ex: 5000">
+
+            <div class="admin-sec">
+                <h4>🎟️ CUPOANE REDUCERE</h4>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="adm-cp-name" class="input-box" placeholder="COD">
+                    <input type="text" id="adm-cp-pct" class="input-box" placeholder="%" style="width:100px;">
+                    <button class="btn btn-buy" style="width:auto; padding:0 20px; height:50px;" onclick="saveCoupon()">+ ADD</button>
+                </div>
+                <div id="admin-coupons-list" class="item-list"></div>
             </div>
-            <div class="admin-row">
-                <button class="btn-buy" onclick="adminMod(1)" style="flex: 1;">ADĂUGĂ</button>
-                <button class="btn-buy" onclick="adminMod(0)" style="flex: 1; background: var(--danger);">SCOATE</button>
+
+            <div class="admin-sec">
+                <h4>🎙️ CREATOR CODES</h4>
+                <input type="text" id="adm-cc-id" class="input-box" placeholder="Discord ID Creator">
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="adm-cc-name" class="input-box" placeholder="COD">
+                    <input type="text" id="adm-cc-disc" class="input-box" placeholder="Reducere % Client">
+                    <input type="text" id="adm-cc-rev" class="input-box" placeholder="Profit % Creator">
+                </div>
+                <button class="btn" style="background:var(--discord); color:white;" onclick="saveCreatorCode()">SALVEAZĂ CREATOR</button>
+                <div id="admin-creators-list" style="margin-top:15px;"></div>
             </div>
-            <button class="btn-buy" style="background: #222; color: #fff;" onclick="closeModal('admin-modal')">ÎNCHIDE CONSOLA</button>
+
+            <div class="admin-sec">
+                <h4>📸 CERERI PLĂȚI PENDING</h4>
+                <div id="admin-req-list" style="max-height:250px; overflow-y:auto;"></div>
+            </div>
+
+            <button class="btn" style="background:#222; color:white; margin-top:10px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="overlay">
+        <div class="modal">
+            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
+            <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
+            <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU">
+            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON SAU COD CREATOR" style="text-transform: uppercase;">
+            <span id="coupon-status"></span>
+            <div style="display:flex; gap:15px; margin-top: 15px;">
+                <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
+                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZĂ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo">SLIDE</div>
+        <div class="nav-item active" id="btn-home" onclick="showPage('home')">🏠 HUB PRINCIPAL</div>
+        <div class="nav-item" id="btn-donate" onclick="showPage('donate')">💎 VREAU SA DONEZ</div>
+        <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
+        <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
+        <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
+        <div class="nav-item nav-admin" onclick="openAdminWithPass()">⚙️ ADMIN PANEL</div>
+
+        <div class="sidebar-footer">
+            <div class="u-info">
+                <div class="avatar-container">
+                    <img id="u-avatar" src="" class="u-avatar">
+                </div>
+                <span id="u-name" style="font-weight:800; color: #fff;">...</span>
+            </div>
+            <div class="footer-btns">
+                <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">DISCORD</a>
+                <button onclick="logout()" class="btn-small btn-logout">DECONECTARE</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header-box">
+            <h2 id="page-name" style="margin:0;">HUB PRINCIPAL</h2>
+            <div style="text-align:right;">
+                <div style="font-size:12px; color:#555;">BALANTA CREDITE</div>
+                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde);">0</div>
+            </div>
+        </div>
+
+        <div id="home" class="page active">
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>Navighează folosind meniul din stânga pentru a accesa magazinul sau pentru a confirma o donație.</p></div>
+        </div>
+
+        <div id="donate" class="page">
+            <div class="card" style="text-align:center;">
+                <h2>DONAȚII TIPEEESTREAM</h2>
+                <p>După ce ai donat, nu uita să trimiți dovada la secțiunea "Confirma Plata"!</p>
+                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button>
+            </div>
+        </div>
+
+        <div id="confirm" class="page">
+            <div class="card" style="max-width:550px; margin:auto;">
+                <h3>TRIMITE DOVADA PLATA</h3>
+                <input type="email" id="d-email" class="input-box" placeholder="Email (OBLIGATORIU)">
+                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC">
+                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite">
+                <input type="file" id="d-file" style="margin-bottom:20px; display:block;">
+                <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
+            </div>
+        </div>
+
+        <div id="vip" class="page">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
+                <div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
+            </div>
+        </div>
+
+        <div id="cars" class="page">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
+                <div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIG
-        const CONFIG = {
-            wh_shop: "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0",
-            admin_pass: "ss-croc"
-        };
+        const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx";
+        const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
+        const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
+        const WH_CREATOR_LOGS = "https://discord.com/api/webhooks/1500870470101368912/T_ZSRWGUIb_kk_T8gQD0rF27129heA36ofGxN_F79Ul6A2vY8TjcbCoruntp2LNlor6l";
+        const FONDATOR_TAG = "1391730473817870459";
+        const ADMIN_PASS = "ss-croc";
 
         firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
         const db = firebase.database();
+        emailjs.init("j1cFRV1nuCdva_QHu");
+
         let user = null;
 
-        // ITEME SHOP
-        const PRODUCTS = {
-            vip: [
-                { id: 'v1', name: 'VIP SILVER', price: 2500, desc: 'Acces la comenzi basic și chat colorat.' },
-                { id: 'v2', name: 'VIP GOLD', price: 5000, desc: 'Prioritate la conectare și mașini exclusive.' },
-                { id: 'v3', name: 'VIP DIAMOND', price: 10000, desc: 'Grad suprem, acces la toate facilitățile serverului.' }
-            ],
-            cars: [
-                { id: 'c1', name: 'BMW M5 CS', price: 8000, desc: 'Performanță de top, manevrabilitate sportivă.' },
-                { id: 'c2', name: 'MERCEDES G63', price: 7500, desc: 'Lux, putere și prezență impunătoare pe drum.' },
-                { id: 'c3', name: 'PORSCHE 911', price: 9500, desc: 'Legendă pe asfalt, accelerație instantanee.' }
-            ]
-        };
-
-        function notify(text, color = "var(--primary)") {
+        function notify(text) {
             const n = document.createElement('div');
-            n.style = `background:#000; color:${color}; padding:15px 30px; border-left:5px solid ${color}; border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #222; box-shadow:0 10px 30px rgba(0,0,0,0.5);`;
+            n.style = 'background:#000; color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333;';
             n.innerText = text; document.getElementById('notif-container').appendChild(n);
-            gsap.from(n, { x: 100, opacity: 0 });
-            setTimeout(() => gsap.to(n, { x: 100, opacity: 0, onComplete: () => n.remove() }), 4000);
+            setTimeout(() => n.remove(), 4000);
         }
 
-        // AUTH
-        function login() { 
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; 
-        }
-
+        function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
+        
         async function checkAuth() {
             const h = new URLSearchParams(window.location.hash.slice(1));
             const t = h.get('access_token');
@@ -288,119 +251,241 @@
                 const r = await fetch('https://discord.com/api/users/@me', { headers: { authorization: `Bearer ${t}` } });
                 user = await r.json();
                 document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('user-display').style.display = 'flex';
                 document.getElementById('u-name').innerText = user.username.toUpperCase();
-                if(user.avatar) document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                
-                db.ref('users/' + user.id + '/credits').on('value', s => {
-                    document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString();
-                });
-                renderShop();
+                if(user.avatar) {
+                    document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                    document.getElementById('u-avatar').style.display = 'block';
+                }
+                db.ref('users/' + user.id + '/credits').on('value', s => document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString());
             }
         }
 
-        // RENDER SHOP
-        function renderShop() {
-            const vCont = document.getElementById('vip-items');
-            const cCont = document.getElementById('car-items');
-            
-            PRODUCTS.vip.forEach(p => {
-                vCont.innerHTML += `
-                    <div class="item-card">
-                        <div class="item-title">${p.name}</div>
-                        <p class="item-desc">${p.desc}</p>
-                        <div class="item-price">${p.price.toLocaleString()} CR</div>
-                        <button class="btn-buy" onclick="openBuy('${p.name}', ${p.price})">CUMPĂRĂ ACUM</button>
-                    </div>
-                `;
-            });
-
-            PRODUCTS.cars.forEach(p => {
-                cCont.innerHTML += `
-                    <div class="item-card" style="border-top: 5px solid var(--accent-blue);">
-                        <div class="item-title">${p.name}</div>
-                        <p class="item-desc">${p.desc}</p>
-                        <div class="item-price" style="color:var(--accent-blue)">${p.price.toLocaleString()} CR</div>
-                        <button class="btn-buy" style="background:var(--accent-blue)" onclick="openBuy('${p.name}', ${p.price})">CUMPĂRĂ ACUM</button>
-                    </div>
-                `;
-            });
+        function openAdminWithPass() {
+            document.getElementById('admin-pass-input').value = "";
+            document.getElementById('password-modal').style.display = 'flex';
         }
 
-        function openBuy(name, price) {
-            document.getElementById('m-buy-title').innerText = name;
-            document.getElementById('m-buy-desc').innerText = `Ești pe cale să cheltuiești ${price.toLocaleString()} credite.`;
-            document.getElementById('buy-modal').style.display = 'flex';
-            document.getElementById('btn-confirm-final').onclick = () => finalizePurchase(name, price);
+        function verifyAdminPass() {
+            if(document.getElementById('admin-pass-input').value === ADMIN_PASS) {
+                closeModal('password-modal');
+                document.getElementById('admin-modal').style.display = 'flex';
+                loadAdminReqs(); loadCoupons(); loadCreators();
+            } else { notify("PAROLĂ INCORRECTĂ!"); }
         }
 
-        async function finalizePurchase(name, price) {
-            const idJoc = document.getElementById('buy-id-joc').value;
-            if(!idJoc) return notify("INTRODU ID-UL DE JOC!", "var(--danger)");
-
-            const s = await db.ref('users/' + user.id + '/credits').once('value');
-            const current = s.val() || 0;
-
-            if(current < price) return notify("NU AI DESTULE CREDITE!", "var(--danger)");
-
-            await db.ref('users/' + user.id).update({ credits: current - price });
-
-            // Webhook Discord
-            fetch(CONFIG.wh_shop, {
+        async function adminActionManual(type) {
+            const target = document.getElementById('adm-uid').value.trim();
+            const amt = parseInt(document.getElementById('adm-amt').value);
+            const email = document.getElementById('adm-email').value.trim() || "Nespecificat";
+            if(!target || isNaN(amt)) return notify("ID SI SUMA SUNT OBLIGATORII!");
+            const snap = await db.ref('users/' + target + '/credits').once('value');
+            const current = snap.val() || 0;
+            let nTotal = type === 'add' ? current + amt : current - amt;
+            if(nTotal < 0) nTotal = 0;
+            await db.ref('users/' + target).update({ credits: nTotal });
+            fetch(WH_LOGS, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    embeds: [{
-                        title: "🛒 ACHIZIȚIE NOUĂ SITE",
-                        color: 3066993,
-                        fields: [
-                            { name: "Jucător", value: `<@${user.id}>`, inline: true },
-                            { name: "ID Joc", value: idJoc, inline: true },
-                            { name: "Produs", value: name, inline: true },
-                            { name: "Preț", value: price + " CR", inline: true }
-                        ],
-                        footer: { text: "Slide Romania Automations" },
-                        timestamp: new Date()
-                    }]
+                    content: `${type === 'add' ? '✅' : '❌'} **MODIFICARE MANUALĂ CREDITE**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${target}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${nTotal} Cr**`
                 })
             });
-
-            closeModal('buy-modal');
-            notify("ACHIZIȚIE REUȘITĂ! VERIFICĂ DISCORD.");
+            notify("BALANȚĂ ACTUALIZATĂ!");
         }
 
-        // ADMIN
-        function openAdmin() {
-            const p = prompt("PAROLA FONDATOR:");
-            if(p === CONFIG.admin_pass) document.getElementById('admin-modal').style.display = 'flex';
-            else notify("ACCES INTERZIS!", "var(--danger)");
+        async function sendDovada() {
+            const email = document.getElementById('d-email').value.trim();
+            const idj = document.getElementById('d-idj').value;
+            const amt = document.getElementById('d-amt').value;
+            const file = document.getElementById('d-file').files[0];
+            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const rid = Date.now();
+                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
+                const fd = new FormData();
+                fd.append('payload_json', JSON.stringify({ 
+                    content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**` 
+                }));
+                fd.append('file', file);
+                fetch(WH_CERERI, { method: 'POST', body: fd });
+                notify("TRIMIS!"); showPage('home');
+            };
         }
 
-        async function adminMod(type) {
-            const uid = document.getElementById('adm-uid').value;
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            if(!uid || isNaN(amt)) return notify("COMPLETEAZĂ DATELE!");
+        async function adminReqAction(rid, approved) {
+            const s = await db.ref('pending_donations/' + rid).once('value');
+            const r = s.val(); if(!r) return;
+            if(approved) {
+                const us = await db.ref('users/' + r.uid + '/credits').once('value');
+                const newTotal = (us.val() || 0) + r.amount;
+                await db.ref('users/' + r.uid).update({ credits: newTotal });
+                fetch(WH_LOGS, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `✅ **CERERE APROBATĂ**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n📧 Email: \`${r.email}\`\n💰 Sumă Credite: **${r.amount} Cr**\n📊 Balanță Finală: **${newTotal} Cr**`
+                    })
+                });
+                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
+            } else {
+                fetch(WH_LOGS, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `❌ **CERERE RESPINSĂ**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n📧 Email: \`${r.email}\`\n💰 Sumă Vizată: **${r.amount} Cr**`
+                    })
+                });
+            }
+            await db.ref('pending_donations/' + rid).remove();
+            notify("ACȚIUNE FINALIZATĂ!");
+        }
 
-            const s = await db.ref('users/' + uid + '/credits').once('value');
+        async function saveCoupon() {
+            const code = document.getElementById('adm-cp-name').value.toUpperCase().trim();
+            const pct = parseInt(document.getElementById('adm-cp-pct').value);
+            if(code && pct) { await db.ref('coupons/' + code).set({ percent: pct }); notify("SALVAT!"); }
+        }
+
+        function loadCoupons() {
+            db.ref('coupons').on('value', s => {
+                const list = document.getElementById('admin-coupons-list'); list.innerHTML = "";
+                if(s.val()) Object.keys(s.val()).forEach(c => {
+                    const el = document.createElement('div'); el.className = 'tag-item';
+                    el.innerHTML = `<span>${c} (-${s.val()[c].percent}%)</span> <span class="tag-del" onclick="db.ref('coupons/${c}').remove()">✕</span>`;
+                    list.appendChild(el);
+                });
+            });
+        }
+
+        async function saveCreatorCode() {
+            const uid = document.getElementById('adm-cc-id').value.trim();
+            const code = document.getElementById('adm-cc-name').value.toUpperCase().trim();
+            const d = parseInt(document.getElementById('adm-cc-disc').value);
+            const r = parseInt(document.getElementById('adm-cc-rev').value);
+            if(uid && code) { await db.ref('creators/' + code).set({ ownerId: uid, discount: d, revenuePct: r }); notify("CREATOR SALVAT!"); }
+        }
+
+        function loadCreators() {
+            db.ref('creators').on('value', s => {
+                const list = document.getElementById('admin-creators-list'); list.innerHTML = "";
+                if(s.val()) Object.keys(s.val()).forEach(c => {
+                    const el = document.createElement('div'); el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between;";
+                    el.innerHTML = `<div><b>${c}</b> (ID: ${s.val()[c].ownerId})<br><small>Disc: ${s.val()[c].discount}% | Rev: ${s.val()[c].revenuePct}%</small></div>
+                    <button class="tag-del" style="background:none; border:none;" onclick="db.ref('creators/${c}').remove()">ȘTERGE</button>`;
+                    list.appendChild(el);
+                });
+            });
+        }
+
+        function askBuy(name, price) {
+            const status = document.getElementById('coupon-status');
+            const cpInput = document.getElementById('shop-coupon');
+            const idVerify = document.getElementById('shop-id-verify');
+            
+            document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
+            cpInput.value = ""; idVerify.value = ""; 
+            status.innerText = `PREȚ: ${price} Cr`;
+            status.style.color = "#888";
+
+            cpInput.oninput = async () => {
+                const code = cpInput.value.toUpperCase().trim();
+                const snapC = await db.ref('coupons/' + code).once('value');
+                const snapCr = await db.ref('creators/' + code).once('value');
+                if(snapCr.exists()) {
+                    let pFinal = Math.floor(price * (1 - snapCr.val().discount / 100));
+                    status.innerText = `COD CREATOR ACTIV! PREȚ FINAL: ${pFinal} Cr`; status.style.color = "var(--verde)";
+                } else if(snapC.exists()) {
+                    let pFinal = Math.floor(price * (1 - snapC.val().percent / 100));
+                    status.innerText = `CUPON ACTIV! PREȚ FINAL: ${pFinal} Cr`; status.style.color = "var(--verde)";
+                } else {
+                    status.innerText = `PREȚ: ${price} Cr`; status.style.color = "#888";
+                }
+            };
+            document.getElementById('confirm-modal').style.display = 'flex';
+            document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
+        }
+
+        async function finalizeBuy(name, price) {
+            const idJoc = document.getElementById('shop-id-verify').value.trim();
+            const code = document.getElementById('shop-coupon').value.toUpperCase().trim();
+            if(!idJoc) return notify("INTRODU ID JOC!");
+
+            let finalPrice = price; 
+            let info = "Fără cod"; 
+            let creatorData = null;
+
+            const snapC = await db.ref('coupons/' + code).once('value');
+            const snapCr = await db.ref('creators/' + code).once('value');
+
+            if(snapCr.exists()) { 
+                creatorData = snapCr.val(); 
+                finalPrice = Math.floor(price * (1 - creatorData.discount / 100)); 
+                info = `Cod Creator: ${code}`;
+            } else if(snapC.exists()) { 
+                finalPrice = Math.floor(price * (1 - snapC.val().percent / 100)); 
+                info = `Cupon: ${code}`; 
+            }
+
+            const s = await db.ref('users/' + user.id + '/credits').once('value');
             const cur = s.val() || 0;
-            const nTotal = type ? cur + amt : cur - amt;
+            if(cur < finalPrice) return notify("CREDITE INSUFICIENTE!");
 
-            await db.ref('users/' + uid).update({ credits: nTotal });
-            notify("BALANȚĂ ACTUALIZATĂ CU SUCCES!");
+            // Tranzactie
+            await db.ref('users/' + user.id).update({ credits: cur - finalPrice });
+
+            if(creatorData) {
+                const rev = Math.floor(finalPrice * (creatorData.revenuePct / 100));
+                const snapUC = await db.ref('users/' + creatorData.ownerId + '/credits').once('value');
+                await db.ref('users/' + creatorData.ownerId).update({ credits: (snapUC.val() || 0) + rev });
+
+                // LOG CREATOR
+                fetch(WH_CREATOR_LOGS, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `💰 **PROFIT CREATOR**\n✨ Cod: **${code}**\n👤 Creator: <@${creatorData.ownerId}>\n🛒 Produs: **${name}**\n👤 Client: <@${user.id}>\n💸 Profit: **${rev} Cr** (${creatorData.revenuePct}%)`
+                    })
+                });
+            }
+
+            // LOG SHOP
+            fetch(WH_SHOP, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({ content: `🛒 **ACHIZIȚIE**\n👤 Jucător: <@${user.id}>\n🎮 ID: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Info: **${info}**\n💰 Preț: **${finalPrice} Cr**` })
+            });
+
+            closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
-        // UI HELPERS
-        function showPage(id, el) {
+        function loadAdminReqs() {
+            db.ref('pending_donations').on('value', s => {
+                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
+                if(!s.val()) return list.innerHTML = "Nicio cerere.";
+                Object.keys(s.val()).forEach(id => {
+                    const r = s.val()[id];
+                    const d = document.createElement('div'); d.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #222;";
+                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:5px; margin-bottom:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr<br><small>📧 ${r.email}</small></p>
+                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ ✅</button>
+                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE ❌</button>`;
+                    list.appendChild(d);
+                });
+            });
+        }
+
+        function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-            document.getElementById('page-title').innerText = id.toUpperCase();
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const page = document.getElementById(id);
+            if(page) page.classList.add('active');
+            const nav = document.getElementById('btn-' + id);
+            if(nav) nav.classList.add('active');
+            document.getElementById('page-name').innerText = id.toUpperCase();
         }
-
+        
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function logout() { window.location.hash = ""; window.location.reload(); }
-
         checkAuth();
     </script>
 </body>
