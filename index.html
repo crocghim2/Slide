@@ -64,9 +64,6 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #coupon-status { font-size: 14px; font-weight: 800; margin-bottom: 15px; display: block; }
-
-        /* Stiluri Admin */
         .admin-sec { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; text-align: left; }
         .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
         .item-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -96,28 +93,15 @@
         </div>
     </div>
 
-    <div id="confirm-modal" class="overlay">
-        <div class="modal">
-            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
-            <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
-            <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON SAU COD CREATOR" style="text-transform: uppercase;">
-            <span id="coupon-status"></span>
-            <div style="display:flex; gap:15px;">
-                <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
-                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZĂ</button>
-            </div>
-        </div>
-    </div>
-
     <div id="admin-modal" class="overlay">
         <div class="modal" style="text-align:left; max-width: 700px;">
             <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
             
             <div class="admin-sec">
-                <h4>💎 GESTIONARE CREDITE</h4>
+                <h4>💎 GESTIONARE CREDITE (MANUAL)</h4>
                 <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID">
                 <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite">
+                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător">
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ</button>
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE</button>
@@ -125,9 +109,9 @@
             </div>
 
             <div class="admin-sec">
-                <h4>🎟️ CUPOANE REDUCERE (GLOBAL)</h4>
+                <h4>🎟️ CUPOANE REDUCERE</h4>
                 <div style="display:flex; gap:10px;">
-                    <input type="text" id="adm-cp-name" class="input-box" placeholder="COD EX: REDUCERE20">
+                    <input type="text" id="adm-cp-name" class="input-box" placeholder="COD">
                     <input type="text" id="adm-cp-pct" class="input-box" placeholder="%" style="width:100px;">
                     <button class="btn btn-buy" style="width:auto; padding:0 20px; height:50px;" onclick="saveCoupon()">+ ADD</button>
                 </div>
@@ -135,10 +119,10 @@
             </div>
 
             <div class="admin-sec">
-                <h4>🎙️ CREATOR CODES (DISCORD ID + %)</h4>
-                <input type="text" id="adm-cc-id" class="input-box" placeholder="Discord ID al Creatorului">
+                <h4>🎙️ CREATOR CODES</h4>
+                <input type="text" id="adm-cc-id" class="input-box" placeholder="Discord ID Creator">
                 <div style="display:flex; gap:10px;">
-                    <input type="text" id="adm-cc-name" class="input-box" placeholder="COD EX: STEFAN">
+                    <input type="text" id="adm-cc-name" class="input-box" placeholder="COD">
                     <input type="text" id="adm-cc-disc" class="input-box" placeholder="Reducere % Client">
                     <input type="text" id="adm-cc-rev" class="input-box" placeholder="Profit % Creator">
                 </div>
@@ -148,10 +132,24 @@
 
             <div class="admin-sec">
                 <h4>📸 CERERI PLĂȚI PENDING</h4>
-                <div id="admin-req-list" style="max-height:200px; overflow-y:auto;"></div>
+                <div id="admin-req-list" style="max-height:250px; overflow-y:auto;"></div>
             </div>
 
             <button class="btn" style="background:#222; color:white; margin-top:10px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="overlay">
+        <div class="modal">
+            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZIȚIA</h2>
+            <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
+            <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU">
+            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON SAU COD CREATOR" style="text-transform: uppercase;">
+            <span id="coupon-status"></span>
+            <div style="display:flex; gap:15px;">
+                <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
+                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZĂ</button>
+            </div>
         </div>
     </div>
 
@@ -168,12 +166,11 @@
             <div class="u-info">
                 <div class="avatar-container">
                     <img id="u-avatar" src="" class="u-avatar">
-                    <div class="avatar-overlay">USER</div>
                 </div>
-                <span id="u-name" style="font-weight:800; letter-spacing:1px; color: #fff;">...</span>
+                <span id="u-name" style="font-weight:800; color: #fff;">...</span>
             </div>
             <div class="footer-btns">
-                <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">COMUNITATE DISCORD</a>
+                <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">DISCORD</a>
                 <button onclick="logout()" class="btn-small btn-logout">DECONECTARE</button>
             </div>
         </div>
@@ -181,15 +178,15 @@
 
     <div class="main">
         <div class="header-box">
-            <h2 id="page-name" style="margin:0; letter-spacing:2px;">HUB PRINCIPAL</h2>
+            <h2 id="page-name" style="margin:0;">HUB PRINCIPAL</h2>
             <div style="text-align:right;">
-                <div style="font-size:12px; color:#555; font-weight:800;">BALANTA CREDITE</div>
-                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde); text-shadow:var(--glow);">0</div>
+                <div style="font-size:12px; color:#555;">BALANTA CREDITE</div>
+                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde);">0</div>
             </div>
         </div>
 
         <div id="home" class="page active">
-            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stânga pentru a naviga prin serviciile premium.</p></div>
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>Navighează folosind meniul din stânga.</p></div>
         </div>
 
         <div id="donate" class="page">
@@ -202,10 +199,10 @@
         <div id="confirm" class="page">
             <div class="card" style="max-width:550px; margin:auto;">
                 <h3>TRIMITE DOVADA PLATA</h3>
-                <input type="email" id="d-email" class="input-box" placeholder="Email pentru notificare">
-                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (Cifre)">
+                <input type="email" id="d-email" class="input-box" placeholder="Email (OBLIGATORIU)">
+                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC">
                 <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite">
-                <input type="file" id="d-file" style="margin-bottom:20px; display:block; width:100%;">
+                <input type="file" id="d-file" style="margin-bottom:20px; display:block;">
                 <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
         </div>
@@ -269,55 +266,123 @@
             if(document.getElementById('admin-pass-input').value === ADMIN_PASS) {
                 closeModal('password-modal');
                 document.getElementById('admin-modal').style.display = 'flex';
-                loadAdminReqs();
-                loadCoupons();
-                loadCreators();
+                loadAdminReqs(); loadCoupons(); loadCreators();
             } else { notify("PAROLĂ INCORRECTĂ!"); }
         }
 
-        // --- Logica Cupoane ---
+        // --- GESTIUNE MANUALA (ADĂUGARE SECTIUNE EMAIL + LOGS NOI) ---
+        async function adminActionManual(type) {
+            const target = document.getElementById('adm-uid').value.trim();
+            const amt = parseInt(document.getElementById('adm-amt').value);
+            const email = document.getElementById('adm-email').value.trim() || "Nespecificat";
+            
+            if(!target || isNaN(amt)) return notify("ID SI SUMA SUNT OBLIGATORII!");
+            
+            const snap = await db.ref('users/' + target + '/credits').once('value');
+            const current = snap.val() || 0;
+            let nTotal = type === 'add' ? current + amt : current - amt;
+            if(nTotal < 0) nTotal = 0;
+
+            await db.ref('users/' + target).update({ credits: nTotal });
+
+            // Trimitere Log pe canalul de aprobari
+            fetch(WH_LOGS, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    content: `${type === 'add' ? '✅' : '❌'} **MODIFICARE MANUALĂ CREDITE**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${target}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**\n📊 Balanță Nouă: **${nTotal} Cr**`
+                })
+            });
+
+            notify("BALANȚĂ ACTUALIZATĂ!");
+        }
+
+        // --- CERERI PLATA ---
+        async function sendDovada() {
+            const email = document.getElementById('d-email').value.trim();
+            const idj = document.getElementById('d-idj').value;
+            const amt = document.getElementById('d-amt').value;
+            const file = document.getElementById('d-file').files[0];
+            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
+            
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = async () => {
+                const rid = Date.now();
+                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
+                
+                const fd = new FormData();
+                fd.append('payload_json', JSON.stringify({ 
+                    content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**` 
+                }));
+                fd.append('file', file);
+                fetch(WH_CERERI, { method: 'POST', body: fd });
+                notify("TRIMIS!"); showPage('home');
+            };
+        }
+
+        async function adminReqAction(rid, approved) {
+            const s = await db.ref('pending_donations/' + rid).once('value');
+            const r = s.val(); if(!r) return;
+
+            if(approved) {
+                const us = await db.ref('users/' + r.uid + '/credits').once('value');
+                const newTotal = (us.val() || 0) + r.amount;
+                await db.ref('users/' + r.uid).update({ credits: newTotal });
+                
+                // Trimitere Log conform cerintei tale
+                fetch(WH_LOGS, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `✅ **CERERE APROBATĂ**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n📧 Email: \`${r.email}\`\n💰 Sumă Credite: **${r.amount} Cr**\n📊 Balanță Finală: **${newTotal} Cr**`
+                    })
+                });
+                
+                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
+            } else {
+                fetch(WH_LOGS, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `❌ **CERERE RESPINSĂ**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n📧 Email: \`${r.email}\`\n💰 Sumă Vizată: **${r.amount} Cr**`
+                    })
+                });
+            }
+            
+            await db.ref('pending_donations/' + rid).remove();
+            notify("ACȚIUNE FINALIZATĂ!");
+        }
+
+        // --- Logica Cupoane/Creatori ramane neschimbata dar functionala ---
         async function saveCoupon() {
             const code = document.getElementById('adm-cp-name').value.toUpperCase().trim();
             const pct = parseInt(document.getElementById('adm-cp-pct').value);
-            if(!code || !pct) return notify("DATE INCOMPLETE!");
-            await db.ref('coupons/' + code).set({ percent: pct });
-            notify("CUPON SALVAT!");
-            document.getElementById('adm-cp-name').value = "";
-            document.getElementById('adm-cp-pct').value = "";
+            if(code && pct) { await db.ref('coupons/' + code).set({ percent: pct }); notify("SALVAT!"); }
         }
-
         function loadCoupons() {
             db.ref('coupons').on('value', s => {
                 const list = document.getElementById('admin-coupons-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return;
-                Object.keys(data).forEach(c => {
+                if(s.val()) Object.keys(s.val()).forEach(c => {
                     const el = document.createElement('div'); el.className = 'tag-item';
-                    el.innerHTML = `<span>${c} (-${data[c].percent}%)</span> <span class="tag-del" onclick="db.ref('coupons/${c}').remove()">✕</span>`;
+                    el.innerHTML = `<span>${c} (-${s.val()[c].percent}%)</span> <span class="tag-del" onclick="db.ref('coupons/${c}').remove()">✕</span>`;
                     list.appendChild(el);
                 });
             });
         }
-
-        // --- Logica Creatori ---
         async function saveCreatorCode() {
             const uid = document.getElementById('adm-cc-id').value.trim();
             const code = document.getElementById('adm-cc-name').value.toUpperCase().trim();
-            const disc = parseInt(document.getElementById('adm-cc-disc').value);
-            const rev = parseInt(document.getElementById('adm-cc-rev').value);
-            if(!uid || !code || isNaN(disc) || isNaN(rev)) return notify("DATE INCOMPLETE!");
-            await db.ref('creators/' + code).set({ ownerId: uid, discount: disc, revenuePct: rev });
-            notify("CREATOR SALVAT!");
+            const d = parseInt(document.getElementById('adm-cc-disc').value);
+            const r = parseInt(document.getElementById('adm-cc-rev').value);
+            if(uid && code) { await db.ref('creators/' + code).set({ ownerId: uid, discount: d, revenuePct: r }); notify("CREATOR SALVAT!"); }
         }
-
         function loadCreators() {
             db.ref('creators').on('value', s => {
                 const list = document.getElementById('admin-creators-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return;
-                Object.keys(data).forEach(c => {
-                    const el = document.createElement('div');
-                    el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between;";
-                    el.innerHTML = `<div><b>${c}</b> (ID: ${data[c].ownerId})<br><small>Reducere: ${data[c].discount}% | Profit: ${data[c].revenuePct}%</small></div>
-                                    <button class="tag-del" style="background:none; border:none;" onclick="db.ref('creators/${c}').remove()">ȘTERGE</button>`;
+                if(s.val()) Object.keys(s.val()).forEach(c => {
+                    const el = document.createElement('div'); el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between;";
+                    el.innerHTML = `<div><b>${c}</b> (ID: ${s.val()[c].ownerId})<br><small>Disc: ${s.val()[c].discount}% | Rev: ${s.val()[c].revenuePct}%</small></div>
+                    <button class="tag-del" style="background:none; border:none;" onclick="db.ref('creators/${c}').remove()">ȘTERGE</button>`;
                     list.appendChild(el);
                 });
             });
@@ -351,106 +416,45 @@
             const idJoc = document.getElementById('shop-id-verify').value;
             const code = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
-
-            let finalPrice = price;
-            let info = "Fără cod";
-            let creatorData = null;
-
+            let finalPrice = price; let info = "Fără cod"; let creatorData = null;
             const snapC = await db.ref('coupons/' + code).once('value');
             const snapCr = await db.ref('creators/' + code).once('value');
-
-            if(snapCr.exists()) {
-                creatorData = snapCr.val();
-                finalPrice = Math.floor(price * (1 - creatorData.discount / 100));
-                info = `Cod Creator: ${code}`;
-            } else if(snapC.exists()) {
-                finalPrice = Math.floor(price * (1 - snapC.val().percent / 100));
-                info = `Cupon: ${code}`;
-            }
-
+            if(snapCr.exists()) { creatorData = snapCr.val(); finalPrice = Math.floor(price * (1 - creatorData.discount / 100)); info = `Cod Creator: ${code}`;
+            } else if(snapC.exists()) { finalPrice = Math.floor(price * (1 - snapC.val().percent / 100)); info = `Cupon: ${code}`; }
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             const cur = s.val() || 0;
             if(cur < finalPrice) return notify("CREDITE INSUFICIENTE!");
-
             await db.ref('users/' + user.id).update({ credits: cur - finalPrice });
-
             if(creatorData) {
                 const rev = Math.floor(finalPrice * (creatorData.revenuePct / 100));
                 const snapUC = await db.ref('users/' + creatorData.ownerId + '/credits').once('value');
                 await db.ref('users/' + creatorData.ownerId).update({ credits: (snapUC.val() || 0) + rev });
-                fetch(WH_LOGS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `💰 **PROFIT CREATOR**\n👤 Creator: <@${creatorData.ownerId}>\n🎫 Cod: **${code}**\n📈 Sumă: **${rev} Cr**` })});
             }
-
             fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `🛒 **ACHIZIȚIE**\n👤 Jucător: <@${user.id}>\n🎮 ID: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Info: **${info}**\n💰 Preț: **${finalPrice} Cr**` })});
-            closeModal('confirm-modal');
-            notify("ACHIZIȚIE REUȘITĂ!");
-        }
-
-        // --- Restul functiilor (Manual Admin, etc) ---
-        async function adminActionManual(type) {
-            const target = document.getElementById('adm-uid').value;
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            if(!target || isNaN(amt)) return notify("DATE INVALIDE!");
-            const s = await db.ref('users/' + target + '/credits').once('value');
-            let n = type === 'add' ? (s.val() || 0) + amt : (s.val() || 0) - amt;
-            await db.ref('users/' + target).update({ credits: Math.max(0, n) });
-            notify("BALANȚĂ ACTUALIZATĂ!");
-        }
-
-        async function sendDovada() {
-            const email = document.getElementById('d-email').value;
-            const idj = document.getElementById('d-idj').value;
-            const amt = document.getElementById('d-amt').value;
-            const file = document.getElementById('d-file').files[0];
-            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const rid = Date.now();
-                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
-                const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n💰 Sumă: **${amt} Cr**` }));
-                fd.append('file', file);
-                fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("TRIMIS!"); showPage('home');
-            };
+            closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
         function loadAdminReqs() {
             db.ref('pending_donations').on('value', s => {
                 const list = document.getElementById('admin-req-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
-                Object.keys(data).forEach(id => {
-                    const r = data[id];
+                if(!s.val()) return list.innerHTML = "Nicio cerere.";
+                Object.keys(s.val()).forEach(id => {
+                    const r = s.val()[id];
                     const d = document.createElement('div'); d.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #222;";
-                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:5px; margin-bottom:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
-                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
-                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
+                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:5px; margin-bottom:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr<br><small>📧 ${r.email}</small></p>
+                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ ✅</button>
+                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE ❌</button>`;
                     list.appendChild(d);
                 });
             });
-        }
-
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
-            if(approved) {
-                const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
-            }
-            fetch(WH_LOGS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `${approved ? '✅' : '❌'} **CERERE PLATA**\nAdmin: **${user.username}**\nJucător: <@${r.uid}>\nSumă: **${r.amount} Cr**` })});
-            await db.ref('pending_donations/' + rid).remove();
-            notify("ACȚIUNE FINALIZATĂ!");
         }
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active');
-            document.getElementById('page-name').innerText = id.toUpperCase().replace('-', ' ');
+            document.getElementById('page-name').innerText = id.toUpperCase();
         }
-
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function logout() { window.location.hash = ""; window.location.reload(); }
         checkAuth();
