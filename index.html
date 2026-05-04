@@ -1,375 +1,375 @@
-<!DOCTYPE html>
-<html lang="ro">
+<!DOCTYPE hTml>
+<hTml lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Hub Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <meTa charseT="UTF-8">
+    <meTa name="viewporT" conTenT="widTh=device-widTh, iniTial-scale=1.0">
+    <TiTle>Slide Romania | Hub Premium</TiTle>
+    <link href="hTTps://fonTs.googleapis.com/css2?family=Rajdhani:wghT@600;700;800&display=swap" rel="sTylesheeT">
+    <scripT src="hTTps://www.gsTaTic.com/firebasejs/9.22.0/firebase-app-compaT.js"></scripT>
+    <scripT src="hTTps://www.gsTaTic.com/firebasejs/9.22.0/firebase-daTabase-compaT.js"></scripT>
+    <scripT src="hTTps://cdn.jsdelivr.neT/npm/@emailjs/browser@3/disT/email.min.js"></scripT>
 
-    <style>
-        :root { 
+    <sTyle>
+        :rooT { 
             --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; 
             --border: #222; --discord: #7289da; --glow: 0 0 20px rgba(46, 204, 113, 0.4); 
         }
         
-        * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; ouTline: none; TransiTion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
         body { 
-            font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; 
-            display: flex; height: 100vh; overflow: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
+            fonT-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: whiTe; 
+            display: flex; heighT: 100vh; overflow: hidden;
+            background-image: radial-gradienT(circle aT 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
-        .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
+        .sidebar { widTh: 280px; background: rgba(0,0,0,0.8); border-righT: 2px solid var(--verde); display: flex; flex-direcTion: column; backdrop-filTer: blur(10px); z-index: 100; }
+        .logo { padding: 40px 20px; fonT-size: 42px; fonT-weighT: 800; color: var(--verde); TexT-align: cenTer; leTTer-spacing: 5px; TexT-shadow: var(--glow); }
         
-        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
-        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
-        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
-        .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
+        .nav-iTem { padding: 18px 30px; cursor: poinTer; border-lefT: 5px solid TransparenT; color: #555; fonT-weighT: 700; fonT-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
+        .nav-iTem:hover { color: whiTe; background: rgba(255,255,255,0.05); Transform: TranslaTeX(5px); }
+        .nav-iTem.acTive { color: whiTe; background: rgba(46, 204, 113, 0.15); border-lefT-color: var(--verde); box-shadow: inseT 10px 0 20px rgba(46, 204, 113, 0.05); }
+        .nav-admin { border-lefT-color: var(--rosu) !imporTanT; color: #ff7675; }
 
-        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
-        .u-info { display: flex; align-items: center; gap: 12px; }
+        .sidebar-fooTer { padding: 20px; border-Top: 1px solid var(--border); margin-Top: auTo; background: rgba(0,0,0,0.5); display: flex; flex-direcTion: column; gap: 10px; }
+        .u-info { display: flex; align-iTems: cenTer; gap: 12px; }
         
-        .avatar-container { position: relative; width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid #333; flex-shrink: 0; }
-        .u-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .avatar-overlay { position: absolute; inset: 0; background: rgba(46, 204, 113, 0.8); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; color: black; font-size: 9px; font-weight: 800; }
-        .avatar-container:hover .avatar-overlay { opacity: 1; }
+        .avaTar-conTainer { posiTion: relaTive; widTh: 45px; heighT: 45px; border-radius: 50%; overflow: hidden; border: 2px solid #333; flex-shrink: 0; }
+        .u-avaTar { widTh: 100%; heighT: 100%; objecT-fiT: cover; display: none; }
+        .avaTar-overlay { posiTion: absoluTe; inseT: 0; background: rgba(46, 204, 113, 0.8); display: flex; align-iTems: cenTer; jusTify-conTenT: cenTer; opaciTy: 0; TransiTion: 0.3s; color: black; fonT-size: 9px; fonT-weighT: 800; }
+        .avaTar-conTainer:hover .avaTar-overlay { opaciTy: 1; }
 
-        .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
-        .btn-small { padding: 8px; border-radius: 8px; border: none; font-family: 'Rajdhani'; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 11px; text-align: center; text-decoration: none; display: block; }
-        .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
+        .fooTer-bTns { display: flex; flex-direcTion: column; gap: 8px; margin-Top: 5px; }
+        .bTn-small { padding: 8px; border-radius: 8px; border: none; fonT-family: 'Rajdhani'; fonT-weighT: 700; cursor: poinTer; TexT-Transform: uppercase; fonT-size: 11px; TexT-align: cenTer; TexT-decoraTion: none; display: block; }
+        .bTn-discord-join { background: var(--discord); color: whiTe; border: 1px solid rgba(255,255,255,0.1); }
+        .bTn-logouT { background: TransparenT; color: var(--rosu); border: 1px solid var(--rosu); }
 
-        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
-        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
-        .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
+        .main { flex: 1; padding: 50px; overflow-y: auTo; posiTion: relaTive; }
+        .header-box { display: flex; jusTify-conTenT: space-beTween; align-iTems: cenTer; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-boTTom: 40px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; posiTion: relaTive; overflow: hidden; margin-boTTom: 20px; }
+        .card:hover { border-color: var(--verde); Transform: TranslaTeY(-5px); box-shadow: var(--glow); }
 
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
-        .btn-buy:hover { background: white; transform: scale(1.02); }
-        .btn-danger { background: var(--rosu); color: white; }
+        .bTn { widTh: 100%; padding: 15px; border-radius: 10px; border: none; fonT-family: 'Rajdhani'; fonT-weighT: 800; cursor: poinTer; TexT-Transform: uppercase; leTTer-spacing: 1px; }
+        .bTn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
+        .bTn-buy:hover { background: whiTe; Transform: scale(1.02); }
+        .bTn-danger { background: var(--rosu); color: whiTe; }
 
-        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
+        .inpuT-box { widTh: 100%; padding: 15px; margin-boTTom: 15px; background: #000; border: 1px solid #333; color: whiTe; border-radius: 10px; fonT-family: 'Rajdhani'; fonT-size: 16px; }
         
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 600px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .overlay { display: none; posiTion: fixed; inseT: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-iTems: cenTer; jusTify-conTenT: cenTer; backdrop-filTer: blur(10px); }
+        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; widTh: 100%; max-widTh: 600px; TexT-align: cenTer; animaTion: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-heighT: 90vh; overflow-y: auTo; }
+        @keyframes modalPop { from { Transform: scale(0.8); opaciTy: 0; } To { Transform: scale(1); opaciTy: 1; } }
 
-        .page { display: none; animation: fadeIn 0.5s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; animaTion: fadeIn 0.5s ease; }
+        .page.acTive { display: block; }
+        @keyframes fadeIn { from { opaciTy: 0; Transform: TranslaTeY(10px); } To { opaciTy: 1; Transform: TranslaTeY(0); } }
 
-        #coupon-status { font-size: 14px; font-weight: 800; margin-bottom: 15px; display: block; }
-    </style>
+        #coupon-sTaTus { fonT-size: 14px; fonT-weighT: 800; margin-boTTom: 15px; display: block; }
+    </sTyle>
 </head>
 <body>
 
-    <div id="notif-container" style="position:fixed; top:30px; right:30px; z-index:10000;"></div>
+    <div id="noTif-conTainer" sTyle="posiTion:fixed; Top:30px; righT:30px; z-index:10000;"></div>
 
-    <div id="login-screen" style="position:fixed; inset:0; background:#000; z-index:10001; display:flex; align-items:center; justify-content:center;">
-        <div style="text-align:center;">
-            <h1 style="color:var(--verde); font-size:70px; letter-spacing:15px; margin:0;">SLIDE</h1>
-            <p style="color:#444; letter-spacing:5px; margin-bottom:40px;">DASHBOARD PREMIUM</p>
-            <button onclick="login()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 18px 60px; font-size:18px;">AUTENTIFICARE DISCORD</button>
+    <div id="login-screen" sTyle="posiTion:fixed; inseT:0; background:#000; z-index:10001; display:flex; align-iTems:cenTer; jusTify-conTenT:cenTer;">
+        <div sTyle="TexT-align:cenTer;">
+            <h1 sTyle="color:var(--verde); fonT-size:70px; leTTer-spacing:15px; margin:0;">SLIDE</h1>
+            <p sTyle="color:#444; leTTer-spacing:5px; margin-boTTom:40px;">DASHBOARD PREMIUM</p>
+            <buTTon onclick="login()" class="bTn" sTyle="background:var(--discord); color:whiTe; widTh:auTo; padding: 18px 60px; fonT-size:18px;">AUTENTIFICARE DISCORD</buTTon>
         </div>
     </div>
 
     <div id="password-modal" class="overlay">
-        <div class="modal" style="max-width: 400px;">
-            <h2 style="color:var(--rosu);">ACCES RESTRICtIONAT</h2>
-            <p>Introdu parola de Fondator:</p>
-            <input type="password" id="admin-pass-input" class="input-box" placeholder="••••••••">
-            <button class="btn btn-buy" onclick="verifyAdminPass()">AUTENTIFICARE</button>
-            <button class="btn" style="margin-top:10px; background:transparent; color:#555;" onclick="closeModal('password-modal')">ANULEAZĂ</button>
+        <div class="modal" sTyle="max-widTh: 400px;">
+            <h2 sTyle="color:var(--rosu);">ACCES RESTRICTIONAT</h2>
+            <p>InTrodu parola de FondaTor:</p>
+            <inpuT Type="password" id="admin-pass-inpuT" class="inpuT-box" placeholder="••••••••">
+            <buTTon class="bTn bTn-buy" onclick="verifyAdminPass()">AUTENTIFICARE</buTTon>
+            <buTTon class="bTn" sTyle="margin-Top:10px; background:TransparenT; color:#555;" onclick="closeModal('password-modal')">ANULEAZĂ</buTTon>
         </div>
     </div>
 
     <div id="confirm-modal" class="overlay">
         <div class="modal">
-            <h2 id="conf-title" style="color:var(--verde); margin:0;">CONFIRMĂ ACHIZItIA</h2>
-            <p id="conf-desc" style="color:#888; margin:15px 0;">Vrei sa achizitionezi acest produs?</p>
-            <input type="text" id="shop-id-verify" class="input-box" placeholder="ID JOCUL TĂU (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            <input type="text" id="shop-coupon" class="input-box" placeholder="CUPON REDUCERE (Optional)" style="text-transform: uppercase;">
-            <span id="coupon-status"></span>
-            <div style="display:flex; gap:15px;">
-                <button class="btn btn-buy" id="confirm-yes-btn">DA, CUMPĂRĂ</button>
-                <button class="btn" style="background:#222; color:white;" onclick="closeModal('confirm-modal')">ANULEAZĂ</button>
+            <h2 id="conf-TiTle" sTyle="color:var(--verde); margin:0;">CONFIRMĂ ACHIZITIA</h2>
+            <p id="conf-desc" sTyle="color:#888; margin:15px 0;">Vrei sa achiziTionezi acesT produs?</p>
+            <inpuT Type="TexT" id="shop-id-verify" class="inpuT-box" placeholder="ID JOCUL TĂU (Cifre)" oninpuT="This.value = This.value.replace(/[^0-9]/g, '')">
+            <inpuT Type="TexT" id="shop-coupon" class="inpuT-box" placeholder="CUPON REDUCERE (OpTional)" sTyle="TexT-Transform: uppercase;">
+            <span id="coupon-sTaTus"></span>
+            <div sTyle="display:flex; gap:15px;">
+                <buTTon class="bTn bTn-buy" id="confirm-yes-bTn">DA, CUMPĂRĂ</buTTon>
+                <buTTon class="bTn" sTyle="background:#222; color:whiTe;" onclick="closeModal('confirm-modal')">ANULEAZĂ</buTTon>
             </div>
         </div>
     </div>
 
     <div id="admin-modal" class="overlay">
-        <div class="modal" style="text-align:left;">
-            <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
-            <div style="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px;">
-                <h4 style="margin:0 0 15px 0;">GESTIONARE CREDITE (MANUAL)</h4>
-                <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="adm-amt" class="input-box" placeholder="Suma (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="email" id="adm-email" class="input-box" placeholder="Email Utilizator">
-                <div style="display:flex; gap:10px;">
-                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ CREDITE</button>
-                    <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
+        <div class="modal" sTyle="TexT-align:lefT;">
+            <h2 sTyle="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
+            <div sTyle="background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-boTTom:20px;">
+                <h4 sTyle="margin:0 0 15px 0;">GESTIONARE CREDITE (MANUAL)</h4>
+                <inpuT Type="TexT" id="adm-uid" class="inpuT-box" placeholder="Discord User ID" oninpuT="This.value = This.value.replace(/[^0-9]/g, '')">
+                <inpuT Type="TexT" id="adm-amT" class="inpuT-box" placeholder="Suma (Cifre)" oninpuT="This.value = This.value.replace(/[^0-9]/g, '')">
+                <inpuT Type="email" id="adm-email" class="inpuT-box" placeholder="Email UTilizaTor">
+                <div sTyle="display:flex; gap:10px;">
+                    <buTTon class="bTn bTn-buy" onclick="adminAcTionManual('add')">ADĂUGĂ CREDITE</buTTon>
+                    <buTTon class="bTn bTn-danger" onclick="adminAcTionManual('remove')">SCOATE CREDITE</buTTon>
                 </div>
             </div>
-            <h4 style="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂtI)</h4>
-            <div id="admin-req-list" style="max-height:300px; overflow-y:auto; padding-right:10px;"></div>
-            <button class="btn" style="background:#222; color:white; margin-top:20px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
+            <h4 sTyle="margin: 20px 0 10px 0;">CERERI PENDING (DOVEZI PLĂTI)</h4>
+            <div id="admin-req-lisT" sTyle="max-heighT:300px; overflow-y:auTo; padding-righT:10px;"></div>
+            <buTTon class="bTn" sTyle="background:#222; color:whiTe; margin-Top:20px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</buTTon>
         </div>
     </div>
 
     <div class="sidebar">
         <div class="logo">SLIDE</div>
-        <div class="nav-item active" id="btn-home" onclick="showPage('home')">🏠 HUB PRINCIPAL</div>
-        <div class="nav-item" id="btn-donate" onclick="showPage('donate')">💎 VREAU SA DONEZ</div>
-        <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
-        <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
-        <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
-        <div class="nav-item nav-admin" onclick="openAdminWithPass()">⚙️ ADMIN PANEL</div>
+        <div class="nav-iTem acTive" id="bTn-home" onclick="showPage('home')">🏠 HUB PRINCIPAL</div>
+        <div class="nav-iTem" id="bTn-donaTe" onclick="showPage('donaTe')">💎 VREAU SA DONEZ</div>
+        <div class="nav-iTem" id="bTn-confirm" onclick="showPage('confirm')">📸 CONFIRMA PLATA</div>
+        <div class="nav-iTem" id="bTn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
+        <div class="nav-iTem" id="bTn-cars" onclick="showPage('cars')">🚗 MASINI IMPORT</div>
+        <div class="nav-iTem nav-admin" onclick="openAdminWiThPass()">⚙️ ADMIN PANEL</div>
 
-        <div class="sidebar-footer">
+        <div class="sidebar-fooTer">
             <div class="u-info">
-                <div class="avatar-container">
-                    <img id="u-avatar" src="" class="u-avatar">
-                    <div class="avatar-overlay">USER</div>
+                <div class="avaTar-conTainer">
+                    <img id="u-avaTar" src="" class="u-avaTar">
+                    <div class="avaTar-overlay">USER</div>
                 </div>
-                <span id="u-name" style="font-weight:800; letter-spacing:1px; color: #fff;">...</span>
+                <span id="u-name" sTyle="fonT-weighT:800; leTTer-spacing:1px; color: #fff;">...</span>
             </div>
-            <div class="footer-btns">
-                <a href="https://discord.gg/hVrNuWUSCv" target="_blank" class="btn-small btn-discord-join">COMUNITATE DISCORD</a>
-                <button onclick="logout()" class="btn-small btn-logout">DECONECTARE</button>
+            <div class="fooTer-bTns">
+                <a href="hTTps://discord.gg/hVrNuWUSCv" TargeT="_blank" class="bTn-small bTn-discord-join">COMUNITATE DISCORD</a>
+                <buTTon onclick="logouT()" class="bTn-small bTn-logouT">DECONECTARE</buTTon>
             </div>
         </div>
     </div>
 
     <div class="main">
         <div class="header-box">
-            <h2 id="page-name" style="margin:0; letter-spacing:2px;">HUB PRINCIPAL</h2>
-            <div style="text-align:right;">
-                <div style="font-size:12px; color:#555; font-weight:800;">BALANTA CREDITE</div>
-                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde); text-shadow:var(--glow);">0</div>
+            <h2 id="page-name" sTyle="margin:0; leTTer-spacing:2px;">HUB PRINCIPAL</h2>
+            <div sTyle="TexT-align:righT;">
+                <div sTyle="fonT-size:12px; color:#555; fonT-weighT:800;">BALANTA CREDITE</div>
+                <div id="u-crediTs" sTyle="fonT-size:32px; fonT-weighT:800; color:var(--verde); TexT-shadow:var(--glow);">0</div>
             </div>
         </div>
 
-        <div id="home" class="page active">
-            <div class="card"><h3>BINE AI REVENIT!</h3><p>Folosește meniul din stanga pentru a naviga.</p></div>
+        <div id="home" class="page acTive">
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>FoloseșTe meniul din sTanga penTru a naviga.</p></div>
         </div>
 
-        <div id="donate" class="page">
-            <div class="card" style="text-align:center;">
-                <h2>DONAtII TIPEEESTREAM</h2>
-                <button class="btn btn-buy" style="width:auto; padding:15px 50px;" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINA DE PLATĂ</button>
+        <div id="donaTe" class="page">
+            <div class="card" sTyle="TexT-align:cenTer;">
+                <h2>DONATII TIPEEESTREAM</h2>
+                <buTTon class="bTn bTn-buy" sTyle="widTh:auTo; padding:15px 50px;" onclick="window.open('hTTps://www.TipeeesTream.com/sTefan-sTanica/donaTion')">PAGINA DE PLATĂ</buTTon>
             </div>
         </div>
 
         <div id="confirm" class="page">
-            <div class="card" style="max-width:550px; margin:auto;">
+            <div class="card" sTyle="max-widTh:550px; margin:auTo;">
                 <h3>TRIMITE DOVADA PLATA</h3>
-                <input type="email" id="d-email" class="input-box" placeholder="Email pentru notificare">
-                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (Cifre)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <input type="file" id="d-file" style="margin-bottom:20px; display:block; width:100%;">
-                <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
+                <inpuT Type="email" id="d-email" class="inpuT-box" placeholder="Email penTru noTificare">
+                <inpuT Type="TexT" id="d-idj" class="inpuT-box" placeholder="ID JOC (Cifre)" oninpuT="This.value = This.value.replace(/[^0-9]/g, '')">
+                <inpuT Type="TexT" id="d-amT" class="inpuT-box" placeholder="Suma CrediTe" oninpuT="This.value = This.value.replace(/[^0-9]/g, '')">
+                <inpuT Type="file" id="d-file" sTyle="margin-boTTom:20px; display:block; widTh:100%;">
+                <buTTon class="bTn bTn-buy" onclick="sendDovada()">TRIMITE DOVADA</buTTon>
             </div>
         </div>
 
         <div id="vip" class="page">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                <div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
-                <div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
+            <div sTyle="display:grid; grid-TemplaTe-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><buTTon class="bTn bTn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</buTTon></div>
+                <div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><buTTon class="bTn bTn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</buTTon></div>
             </div>
         </div>
 
         <div id="cars" class="page">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                <div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
-                <div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
+            <div sTyle="display:grid; grid-TemplaTe-columns: 1fr 1fr; gap:20px;">
+                <div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><buTTon class="bTn bTn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</buTTon></div>
+                <div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><buTTon class="bTn bTn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</buTTon></div>
             </div>
         </div>
     </div>
 
-    <script>
-        const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx";
-        const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
-        const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
-        const FONDATOR_TAG = "1391730473817870459";
-        const ADMIN_PASS = "ss-croc";
+    <scripT>
+        consT WH_CERERI = "hTTps://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKkTMiYDsYDhZT1pPJ0Gx";
+        consT WH_LOGS = "hTTps://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
+        consT WH_SHOP = "hTTps://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1TAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
+        consT FONDATOR_TAG = "1391730473817870459";
+        consT ADMIN_PASS = "ss-croc";
 
-        firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
-        const db = firebase.database();
-        emailjs.init("j1cFRV1nuCdva_QHu");
+        firebase.iniTializeApp({ daTabaseURL: "hTTps://slideromania-7db7d-defaulT-rTdb.europe-wesT1.firebasedaTabase.app" });
+        consT db = firebase.daTabase();
+        emailjs.iniT("j1cFRV1nuCdva_QHu");
 
-        let user = null;
+        leT user = null;
 
-        function notify(text) {
-            const n = document.createElement('div');
-            n.style = 'background:#000; color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333;';
-            n.innerText = text; document.getElementById('notif-container').appendChild(n);
-            setTimeout(() => n.remove(), 4000);
+        funcTion noTify(TexT) {
+            consT n = documenT.creaTeElemenT('div');
+            n.sTyle = 'background:#000; color:whiTe; padding:15px 30px; border-lefT:5px solid var(--verde); border-radius:10px; margin-boTTom:10px; fonT-weighT:800; border:1px solid #333;';
+            n.innerTexT = TexT; documenT.geTElemenTById('noTif-conTainer').appendChild(n);
+            seTTimeouT(() => n.remove(), 4000);
         }
 
-        function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
+        funcTion login() { window.locaTion.href = `hTTps://discord.com/api/oauTh2/auThorize?clienT_id=1399681327741272096&redirecT_uri=${encodeURIComponenT(window.locaTion.origin + window.locaTion.paThname)}&response_Type=Token&scope=idenTify`; }
         
-        async function checkAuth() {
-            const h = new URLSearchParams(window.location.hash.slice(1));
-            const t = h.get('access_token');
-            if(t) {
-                const r = await fetch('https://discord.com/api/users/@me', { headers: { authorization: `Bearer ${t}` } });
-                user = await r.json();
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('u-name').innerText = user.username.toUpperCase();
-                if(user.avatar) document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`, document.getElementById('u-avatar').style.display = 'block';
-                db.ref('users/' + user.id + '/credits').on('value', s => document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString());
+        async funcTion checkAuTh() {
+            consT h = new URLSearchParams(window.locaTion.hash.slice(1));
+            consT T = h.geT('access_Token');
+            if(T) {
+                consT r = awaiT feTch('hTTps://discord.com/api/users/@me', { headers: { auThorizaTion: `Bearer ${T}` } });
+                user = awaiT r.json();
+                documenT.geTElemenTById('login-screen').sTyle.display = 'none';
+                documenT.geTElemenTById('u-name').innerTexT = user.username.ToUpperCase();
+                if(user.avaTar) documenT.geTElemenTById('u-avaTar').src = `hTTps://cdn.discordapp.com/avaTars/${user.id}/${user.avaTar}.png`, documenT.geTElemenTById('u-avaTar').sTyle.display = 'block';
+                db.ref('users/' + user.id + '/crediTs').on('value', s => documenT.geTElemenTById('u-crediTs').innerTexT = (s.val() || 0).ToLocaleSTring());
             }
         }
 
-        function openAdminWithPass() {
-            document.getElementById('admin-pass-input').value = "";
-            document.getElementById('password-modal').style.display = 'flex';
+        funcTion openAdminWiThPass() {
+            documenT.geTElemenTById('admin-pass-inpuT').value = "";
+            documenT.geTElemenTById('password-modal').sTyle.display = 'flex';
         }
 
-        function verifyAdminPass() {
-            const p = document.getElementById('admin-pass-input').value;
+        funcTion verifyAdminPass() {
+            consT p = documenT.geTElemenTById('admin-pass-inpuT').value;
             if(p === ADMIN_PASS) {
                 closeModal('password-modal');
-                document.getElementById('admin-modal').style.display = 'flex';
+                documenT.geTElemenTById('admin-modal').sTyle.display = 'flex';
                 loadAdminReqs();
-            } else { notify("PAROLĂ INCORRECTĂ!"); }
+            } else { noTify("PAROLĂ INCORRECTĂ!"); }
         }
 
-        async function adminActionManual(type) {
-            const target = document.getElementById('adm-uid').value;
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            const email = document.getElementById('adm-email').value;
-            if(!target || !amt) return notify("ID ȘI SUMĂ OBLIGATORII!");
-            const s = await db.ref('users/' + target + '/credits').once('value');
-            let current = s.val() || 0;
-            let newTotal = type === 'add' ? current + amt : current - amt;
-            if(newTotal < 0) newTotal = 0;
-            await db.ref('users/' + target).update({ credits: newTotal });
-            if(email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: email, to_name: "Utilizator", amount: amt, approved_by: user.username });
-            fetch(WH_LOGS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: `${type === 'add' ? '✅' : '❌'} **CREDITE ${type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 Către: <@${target}>\n💰 Sumă: **${amt} Cr**\n📊 Balantă Nouă: **${newTotal} Cr**` })
+        async funcTion adminAcTionManual(Type) {
+            consT TargeT = documenT.geTElemenTById('adm-uid').value;
+            consT amT = parseInT(documenT.geTElemenTById('adm-amT').value);
+            consT email = documenT.geTElemenTById('adm-email').value;
+            if(!TargeT || !amT) reTurn noTify("ID ȘI SUMĂ OBLIGATORII!");
+            consT s = awaiT db.ref('users/' + TargeT + '/crediTs').once('value');
+            leT currenT = s.val() || 0;
+            leT newToTal = Type === 'add' ? currenT + amT : currenT - amT;
+            if(newToTal < 0) newToTal = 0;
+            awaiT db.ref('users/' + TargeT).updaTe({ crediTs: newToTal });
+            if(email) emailjs.send("service_2gd65Tf", "TemplaTe_750es5r", { To_email: email, To_name: "UTilizaTor", amounT: amT, approved_by: user.username });
+            feTch(WH_LOGS, {
+                meThod: 'POST',
+                headers: { 'ConTenT-Type': 'applicaTion/json' },
+                body: JSON.sTringify({ conTenT: `${Type === 'add' ? '✅' : '❌'} **CREDITE ${Type === 'add' ? 'ADĂUGATE MANUAL' : 'SCOASE MANUAL'}**\n👤 Admin: **${user.username}**\n👤 CăTre: <@${TargeT}>\n💰 Sumă: **${amT} Cr**\n📊 BalanTă Nouă: **${newToTal} Cr**` })
             });
-            notify("BALANtĂ ACTUALIZATĂ!");
+            noTify("BALANTĂ ACTUALIZATĂ!");
         }
 
-        async function sendDovada() {
-            const email = document.getElementById('d-email').value;
-            const idj = document.getElementById('d-idj').value;
-            const amt = document.getElementById('d-amt').value;
-            const file = document.getElementById('d-file').files[0];
-            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
-            const reader = new FileReader(); reader.readAsDataURL(file);
+        async funcTion sendDovada() {
+            consT email = documenT.geTElemenTById('d-email').value;
+            consT idj = documenT.geTElemenTById('d-idj').value;
+            consT amT = documenT.geTElemenTById('d-amT').value;
+            consT file = documenT.geTElemenTById('d-file').files[0];
+            if(!email || !idj || !amT || !file) reTurn noTify("DATE INCOMPLETE!");
+            consT reader = new FileReader(); reader.readAsDaTaURL(file);
             reader.onload = async () => {
-                const rid = Date.now();
-                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), img: reader.result });
-                const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 Jucător: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amt} Cr**` }));
+                consT rid = DaTe.now();
+                awaiT db.ref('pending_donaTions/' + rid).seT({ uid: user.id, username: user.username, email, idj, amounT: parseInT(amT), img: reader.resulT });
+                consT fd = new FormDaTa();
+                fd.append('payload_json', JSON.sTringify({ conTenT: `<@&${FONDATOR_TAG}> 📩 **CERERE NOUĂ**\n👤 JucăTor: <@${user.id}>\n📧 Email: \`${email}\`\n💰 Sumă: **${amT} Cr**` }));
                 fd.append('file', file);
-                fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("TRIMIS!"); showPage('home');
+                feTch(WH_CERERI, { meThod: 'POST', body: fd });
+                noTify("TRIMIS!"); showPage('home');
             };
         }
 
-        function askBuy(name, price) {
-            const status = document.getElementById('coupon-status');
-            const couponInput = document.getElementById('shop-coupon');
-            document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
-            couponInput.value = ""; 
-            status.innerText = "PREt: " + price + " Cr";
-            status.style.color = "#888";
-            couponInput.oninput = () => {
-                let currentVal = couponInput.value.toUpperCase().trim();
-                if(currentVal === "BLABLA") {
-                    let discounted = Math.floor(price * 0.8);
-                    status.innerText = "CUPON ACTIVAT! PREt FINAL: " + discounted + " Cr";
-                    status.style.color = "var(--verde)";
+        funcTion askBuy(name, price) {
+            consT sTaTus = documenT.geTElemenTById('coupon-sTaTus');
+            consT couponInpuT = documenT.geTElemenTById('shop-coupon');
+            documenT.geTElemenTById('conf-desc').innerTexT = `Cumperi ${name} penTru ${price} crediTe?`;
+            couponInpuT.value = ""; 
+            sTaTus.innerTexT = "PRET: " + price + " Cr";
+            sTaTus.sTyle.color = "#888";
+            couponInpuT.oninpuT = () => {
+                leT currenTVal = couponInpuT.value.ToUpperCase().Trim();
+                if(currenTVal === "BLABLA") {
+                    leT discounTed = MaTh.floor(price * 0.8);
+                    sTaTus.innerTexT = "CUPON ACTIVAT! PRET FINAL: " + discounTed + " Cr";
+                    sTaTus.sTyle.color = "var(--verde)";
                 } else {
-                    status.innerText = "PREt: " + price + " Cr";
-                    status.style.color = "#888";
+                    sTaTus.innerTexT = "PRET: " + price + " Cr";
+                    sTaTus.sTyle.color = "#888";
                 }
             };
-            document.getElementById('confirm-modal').style.display = 'flex';
-            document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
+            documenT.geTElemenTById('confirm-modal').sTyle.display = 'flex';
+            documenT.geTElemenTById('confirm-yes-bTn').onclick = () => finalizeBuy(name, price);
         }
 
-        async function finalizeBuy(name, price) {
-            const idJoc = document.getElementById('shop-id-verify').value;
-            const cupon = document.getElementById('shop-coupon').value.toUpperCase().trim();
-            if(!idJoc) return notify("INTRODU ID JOC!");
-            let finalPrice = price;
-            let cuponMesaj = "Niciunul";
+        async funcTion finalizeBuy(name, price) {
+            consT idJoc = documenT.geTElemenTById('shop-id-verify').value;
+            consT cupon = documenT.geTElemenTById('shop-coupon').value.ToUpperCase().Trim();
+            if(!idJoc) reTurn noTify("INTRODU ID JOC!");
+            leT finalPrice = price;
+            leT cuponMesaj = "Niciunul";
             if(cupon === "BLABLA") {
-                finalPrice = Math.floor(price * 0.8);
+                finalPrice = MaTh.floor(price * 0.8);
                 cuponMesaj = "BLABLA (-20%)";
             }
-            const s = await db.ref('users/' + user.id + '/credits').once('value');
-            const current = s.val() || 0;
-            if(current < finalPrice) return notify("NU AI DESTULE CREDITE!");
-            await db.ref('users/' + user.id).update({ credits: current - finalPrice });
+            consT s = awaiT db.ref('users/' + user.id + '/crediTs').once('value');
+            consT currenT = s.val() || 0;
+            if(currenT < finalPrice) reTurn noTify("NU AI DESTULE CREDITE!");
+            awaiT db.ref('users/' + user.id).updaTe({ crediTs: currenT - finalPrice });
             closeModal('confirm-modal');
-            fetch(WH_SHOP, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    content: `🛒 **ACHIZItIE NOUĂ**\n👤 Jucător: <@${user.id}>\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Cupon: **${cuponMesaj}**\n💰 Pret Final: **${finalPrice} Cr**` 
+            feTch(WH_SHOP, { 
+                meThod: 'POST', 
+                headers: { 'ConTenT-Type': 'applicaTion/json' }, 
+                body: JSON.sTringify({ 
+                    conTenT: `🛒 **ACHIZITIE NOUĂ**\n👤 JucăTor: <@${user.id}>\n🎮 ID Joc: \`${idJoc}\`\n🎁 Produs: **${name}**\n🎟️ Cupon: **${cuponMesaj}**\n💰 PreT Final: **${finalPrice} Cr**` 
                 }) 
             });
-            notify("ACHIZItIE REUȘITĂ!");
+            noTify("ACHIZITIE REUȘITĂ!");
         }
 
-        function loadAdminReqs() {
-            db.ref('pending_donations').on('value', s => {
-                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
-                const data = s.val(); if(!data) return list.innerHTML = "Nicio cerere.";
-                Object.keys(data).forEach(id => {
-                    const r = data[id];
-                    const d = document.createElement('div'); d.className = 'req-item';
-                    d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p>
-                        <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button>
-                        <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE</button>`;
-                    list.appendChild(d);
+        funcTion loadAdminReqs() {
+            db.ref('pending_donaTions').on('value', s => {
+                consT lisT = documenT.geTElemenTById('admin-req-lisT'); lisT.innerHTML = "";
+                consT daTa = s.val(); if(!daTa) reTurn lisT.innerHTML = "Nicio cerere.";
+                ObjecT.keys(daTa).forEach(id => {
+                    consT r = daTa[id];
+                    consT d = documenT.creaTeElemenT('div'); d.className = 'req-iTem';
+                    d.innerHTML = `<img src="${r.img}" sTyle="widTh:100%; border-radius:10px;"><p>👤 ${r.username} | 💰 ${r.amounT} Cr</p>
+                        <buTTon class="bTn bTn-buy" onclick="adminReqAcTion('${id}', True)">APROBĂ</buTTon>
+                        <buTTon class="bTn bTn-danger" sTyle="margin-Top:5px;" onclick="adminReqAcTion('${id}', false)">RESPINGE</buTTon>`;
+                    lisT.appendChild(d);
                 });
             });
         }
 
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
+        async funcTion adminReqAcTion(rid, approved) {
+            consT s = awaiT db.ref('pending_donaTions/' + rid).once('value');
+            consT r = s.val(); if(!r) reTurn;
             if(approved) {
-                const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                if(r.email) emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, approved_by: user.username });
+                consT us = awaiT db.ref('users/' + r.uid + '/crediTs').once('value');
+                awaiT db.ref('users/' + r.uid).updaTe({ crediTs: (us.val() || 0) + r.amounT });
+                if(r.email) emailjs.send("service_2gd65Tf", "TemplaTe_750es5r", { To_email: r.email, To_name: r.username, amounT: r.amounT, approved_by: user.username });
             }
-            fetch(WH_LOGS, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    content: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n👤 Admin: **${user.username}**\n👤 Jucător: <@${r.uid}>\n💰 Sumă Credite: **${r.amount} Cr**`
+            feTch(WH_LOGS, { 
+                meThod: 'POST', 
+                headers: { 'ConTenT-Type': 'applicaTion/json' }, 
+                body: JSON.sTringify({ 
+                    conTenT: `${approved ? '✅' : '❌'} **CERERE ${approved ? 'APROBATĂ' : 'RESPINSĂ'}**\n👤 Admin: **${user.username}**\n👤 JucăTor: <@${r.uid}>\n💰 Sumă CrediTe: **${r.amounT} Cr**`
                 }) 
             });
-            await db.ref('pending_donations/' + rid).remove();
-            notify("ACtIUNE FINALIZATĂ!");
+            awaiT db.ref('pending_donaTions/' + rid).remove();
+            noTify("ACTIUNE FINALIZATĂ!");
         }
 
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active');
-            document.getElementById('page-name').innerText = id.toUpperCase();
+        funcTion showPage(id) {
+            documenT.querySelecTorAll('.page').forEach(p => p.classLisT.remove('acTive'));
+            documenT.querySelecTorAll('.nav-iTem').forEach(n => n.classLisT.remove('acTive'));
+            documenT.geTElemenTById(id).classLisT.add('acTive');
+            if(documenT.geTElemenTById('bTn-' + id)) documenT.geTElemenTById('bTn-' + id).classLisT.add('acTive');
+            documenT.geTElemenTById('page-name').innerTexT = id.ToUpperCase();
         }
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function logout() { window.location.hash = ""; window.location.reload(); }
-        checkAuth();
-    </script>
+        funcTion closeModal(id) { documenT.geTElemenTById(id).sTyle.display = 'none'; }
+        funcTion logouT() { window.locaTion.hash = ""; window.locaTion.reload(); }
+        checkAuTh();
+    </scripT>
 </body>
-</html>
+</hTml>
