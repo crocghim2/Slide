@@ -3,117 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slide Romania | Shop & Gift</title>
+    <title>Slide Romania | Shop Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        :root { --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; --border: #222; }
-        * { box-sizing: border-box; outline: none; font-family: 'Rajdhani', sans-serif; }
-        body { margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+        :root { 
+            --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; 
+            --border: #222; --discord: #7289da; --glow: 0 0 20px rgba(46, 204, 113, 0.4); 
+        }
         
+        * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body { 
+            font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; 
+            display: flex; height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
+        }
+
         /* Sidebar */
-        .sidebar { width: 260px; background: #000; border-right: 2px solid var(--verde); display: flex; flex-direction: column; padding: 20px; }
-        .logo { font-size: 35px; font-weight: 800; color: var(--verde); text-align: center; margin-bottom: 30px; letter-spacing: 5px; }
-        .nav-item { padding: 15px; cursor: pointer; color: #666; font-weight: 700; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid transparent; }
-        .nav-item:hover, .nav-item.active { color: white; background: rgba(46, 204, 113, 0.1); border-left-color: var(--verde); }
-        .nav-admin { border: 1px solid var(--rosu); color: var(--rosu); margin-top: 20px; text-align: center; }
+        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
+        .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
+        
+        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
+        .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
+
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); }
+        .u-info { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .u-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #333; }
 
         /* Main Content */
-        .main { flex: 1; padding: 40px; overflow-y: auto; }
-        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-size: 16px; }
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-verde { background: var(--verde); color: #000; }
-        .btn-verde:hover { background: white; transform: scale(1.02); }
+        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
         
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 450px; text-align: center; }
+        .grid-shop { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; }
+        .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
         
-        #u-info-box { margin-top: auto; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 10px; }
-        #u-credits { font-size: 28px; color: var(--verde); font-weight: 800; }
+        .price-tag { font-size: 24px; font-weight: 800; color: var(--verde); margin: 15px 0; }
+
+        /* Utilitati */
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
+        .btn-buy:hover { background: white; transform: scale(1.02); }
+        .btn-danger { background: var(--rosu); color: white; }
+
+        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
+        
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 500px; text-align: center; }
+
+        .page { display: none; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="notif-container" style="position:fixed; top:20px; right:20px; z-index:9999;"></div>
+    <div id="notif-container" style="position:fixed; top:30px; right:30px; z-index:10000;"></div>
 
     <div id="login-screen" style="position:fixed; inset:0; background:#000; z-index:10001; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-        <h1 style="color:var(--verde); letter-spacing:15px; font-size: 60px; margin: 0;">SLIDE</h1>
-        <p style="color:#333; margin-bottom:30px;">PREMIUM SHOP SYSTEM</p>
-        <button onclick="login()" class="btn btn-verde" style="width:auto; padding:18px 50px;">AUTENTIFICARE DISCORD</button>
+        <h1 style="color:var(--verde); font-size:80px; letter-spacing:20px; margin:0;">SLIDE</h1>
+        <button onclick="login()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 20px 60px; font-size:20px; margin-top:30px;">AUTENTIFICARE DISCORD</button>
     </div>
 
     <div class="sidebar">
         <div class="logo">SLIDE</div>
-        <div class="nav-item active" id="nav-home" onclick="showPage('home')">HUB PRINCIPAL</div>
-        <div class="nav-item" id="nav-redeem" onclick="showPage('redeem')">🎁 REDEEM CODE</div>
-        <div class="nav-admin" onclick="openAdmin()">PANOUL FONDATOR</div>
-        
-        <div id="u-info-box">
-            <div id="u-name" style="font-weight: 800; color: #fff;">...</div>
-            <div id="u-credits">0 CR</div>
+        <div class="nav-item active" id="btn-home" onclick="showPage('home')">🏠 HUB PRINCIPAL</div>
+        <div class="nav-item" id="btn-donate" onclick="showPage('donate')">💎 DONEAZĂ</div>
+        <div class="nav-item" id="btn-confirm" onclick="showPage('confirm')">📸 CONFIRMĂ PLATA</div>
+        <div class="nav-item" id="btn-vip" onclick="showPage('vip')">⭐ PACHETE VIP</div>
+        <div class="nav-item" id="btn-cars" onclick="showPage('cars')">🚗 MAȘINI IMPORT</div>
+        <div class="nav-item nav-admin" onclick="openAdmin()">⚙️ ADMIN PANEL</div>
+
+        <div class="sidebar-footer">
+            <div class="u-info">
+                <img id="u-avatar" src="" class="u-avatar" style="display:none;">
+                <span id="u-name" style="font-weight:800;">...</span>
+            </div>
+            <button onclick="logout()" class="btn btn-danger" style="padding:10px; font-size:12px;">DECONECTARE</button>
         </div>
     </div>
 
     <div class="main">
-        <div id="home" class="page">
-            <div class="card">
-                <h1 style="color:var(--verde);">BINE AI VENIT!</h1>
-                <p style="color:#888; font-size: 18px;">Toate codurile cadou sunt trimise pe email-ul personal. Odată primit, introdu-l în secțiunea de Redeem.</p>
+        <div class="header-box">
+            <h2 id="page-name">HUB PRINCIPAL</h2>
+            <div style="text-align:right;">
+                <div style="font-size:12px; color:#555;">BALANȚĂ CREDITE</div>
+                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde);">0</div>
             </div>
         </div>
 
-        <div id="redeem" class="page" style="display:none;">
-            <div class="card" style="max-width:500px; margin:auto; text-align:center;">
-                <h2 style="margin-bottom:20px;">ACTIVEAZĂ CODUL</h2>
-                <input type="text" id="r-input" class="input-box" placeholder="XXXX-XXXX-XXXX" style="text-align:center; text-transform:uppercase; font-size: 20px; letter-spacing: 2px;">
-                <button class="btn btn-verde" onclick="redeemCod()">RECLAMĂ CREDITE</button>
+        <div id="home" class="page active">
+            <div class="card">
+                <h1>BINE AI VENIT PE SLIDE SHOP!</h1>
+                <p>Aici poți achiziționa pachete VIP, mașini de import și multe altele.</p>
+                <p>Toate tranzacțiile sunt procesate prin sistemul nostru securizat.</p>
+            </div>
+        </div>
+
+        <div id="donate" class="page">
+            <div class="card" style="text-align:center;">
+                <h2>METODE DE PLATĂ</h2>
+                <p>Folosește link-ul de mai jos pentru a dona (1€ = 1000 Credite).</p>
+                <button class="btn btn-buy" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">PAGINĂ TIPEEESTREAM</button>
+                <p style="margin-top:20px; color:#555;">După donație, mergi la secțiunea "Confirmă Plata".</p>
+            </div>
+        </div>
+
+        <div id="confirm" class="page">
+            <div class="card" style="max-width:600px; margin:auto;">
+                <h3>TRIMITE DOVADA PLĂȚII</h3>
+                <input type="text" id="d-idj" class="input-box" placeholder="ID JOC (ex: 1234)">
+                <input type="number" id="d-amt" class="input-box" placeholder="SUMA CREDITE (ex: 5000)">
+                <input type="file" id="d-file" class="input-box">
+                <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
+            </div>
+        </div>
+
+        <div id="vip" class="page">
+            <div class="grid-shop">
+                <div class="card">
+                    <h3>VIP GOLD</h3>
+                    <p>Acces exclusiv la vehicule și comenzi speciale.</p>
+                    <div class="price-tag">5.000 Cr</div>
+                    <button class="btn btn-buy" onclick="buyItem('VIP GOLD', 5000)">CUMPĂRĂ</button>
+                </div>
+                <div class="card">
+                    <h3>VIP DIAMOND</h3>
+                    <p>Cel mai înalt grad de beneficii pe server.</p>
+                    <div class="price-tag:">10.000 Cr</div>
+                    <button class="btn btn-buy" onclick="buyItem('VIP DIAMOND', 10000)">CUMPĂRĂ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cars" class="page">
+            <div class="grid-shop">
+                <div class="card">
+                    <h3>BMW M5 CS</h3>
+                    <p>Viteză și manevrabilitate extremă.</p>
+                    <div class="price-tag">8.000 Cr</div>
+                    <button class="btn btn-buy" onclick="buyItem('BMW M5 CS', 8000)">CUMPĂRĂ</button>
+                </div>
+                <div class="card">
+                    <h3>MERCEDES G63</h3>
+                    <p>Putere brută și lux pe 4 roți.</p>
+                    <div class="price-tag">7.500 Cr</div>
+                    <button class="btn btn-buy" onclick="buyItem('Mercedes G63', 7500)">CUMPĂRĂ</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="admin-modal" class="overlay">
+    <div id="buy-modal" class="overlay">
         <div class="modal">
-            <h2 style="color:var(--verde); margin-top:0;">GENERATOR GIFT CARD</h2>
-            
-            <div style="text-align: left; margin-bottom: 20px;">
-                <label style="font-size: 12px; color: #555;">EMAIL DESTINATAR</label>
-                <input type="email" id="adm-email" class="input-box" placeholder="exemplu@gmail.com">
-                
-                <label style="font-size: 12px; color: #555;">SUMĂ CREDITE</label>
-                <input type="number" id="adm-credits" class="input-box" placeholder="1000">
+            <h2 id="modal-item-name">CONFIRMĂ</h2>
+            <p>Ești sigur că vrei să cumperi acest produs?</p>
+            <input type="text" id="buy-idj" class="input-box" placeholder="ID JOC PENTRU LIVRARE">
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-buy" id="confirm-buy-btn">DA, CUMPĂRĂ</button>
+                <button class="btn" style="background:#222; color:white;" onclick="closeModal('buy-modal')">ANULEAZĂ</button>
             </div>
-            
-            <button class="btn btn-verde" onclick="generateAndSendCode()">TRIMITE PE EMAIL</button>
-            <button class="btn" style="background:transparent; color:#444; margin-top:10px;" onclick="closeModal()">ÎNCHIDE</button>
         </div>
     </div>
 
     <script>
-        // DATELE TALE CONFIGURATE
-        const EMAILJS_PUBLIC_KEY = "j1cFRV1nuCdva_QHu";
-        const EMAILJS_SERVICE_ID = "service_2gd65tf";
-        const EMAILJS_TEMPLATE_ID = "template_ou7sc0j";
+        // CONFIGURARE WEBHOOKS SI FIREBASE
+        const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
+        const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
         const ADMIN_PASS = "ss-croc";
 
-        emailjs.init(EMAILJS_PUBLIC_KEY);
         firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
         const db = firebase.database();
         let user = null;
 
-        function notify(msg) {
+        function notify(t) {
             const n = document.createElement('div');
-            n.style = 'background:#000; color:white; padding:15px 25px; border-left:5px solid var(--verde); border-radius:5px; margin-bottom:10px; border:1px solid #222; box-shadow: 0 5px 15px rgba(0,0,0,0.4);';
-            n.innerText = msg; document.getElementById('notif-container').appendChild(n);
+            n.style = 'background:#111; color:var(--verde); padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #222;';
+            n.innerText = t; document.getElementById('notif-container').appendChild(n);
             setTimeout(() => n.remove(), 4000);
         }
 
-        // DISCORD LOGIN
-        function login() { window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; }
-        
+        function login() { 
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=1399681327741272096&redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&response_type=token&scope=identify`; 
+        }
+
         async function checkAuth() {
             const h = new URLSearchParams(window.location.hash.slice(1));
             const t = h.get('access_token');
@@ -122,81 +200,78 @@
                 user = await r.json();
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('u-name').innerText = user.username.toUpperCase();
-                db.ref('users/' + user.id + '/credits').on('value', s => document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString() + " CR");
-            }
-        }
-
-        // ADMIN: GENERARE SI TRIMITERE
-        async function generateAndSendCode() {
-            const email = document.getElementById('adm-email').value.trim();
-            const credits = parseInt(document.getElementById('adm-credits').value);
-
-            if(!email || isNaN(credits)) return notify("⚠️ COMPLETEAZĂ TOATE DATELE!");
-
-            // Generare Cod Unic
-            const randomCode = "SLIDE-" + Math.random().toString(36).substr(2, 8).toUpperCase();
-
-            // Salvare in Firebase
-            await db.ref('gift_codes/' + randomCode).set({
-                value: credits,
-                sent_to: email,
-                timestamp: Date.now()
-            });
-
-            // Trimitere Email prin EmailJS
-            const params = {
-                to_email: email,
-                generated_code: randomCode,
-                credits: credits
-            };
-
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-                .then(() => {
-                    notify("✅ COD TRIMIS CĂTRE " + email);
-                    document.getElementById('adm-email').value = "";
-                    document.getElementById('adm-credits').value = "";
-                }, (err) => {
-                    notify("❌ EROARE EMAILJS!");
+                if(user.avatar) {
+                    document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                    document.getElementById('u-avatar').style.display = 'block';
+                }
+                db.ref('users/' + user.id + '/credits').on('value', s => {
+                    document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString();
                 });
-        }
-
-        // USER: REDEEM
-        async function redeemCod() {
-            if(!user) return notify("CONECTEAZĂ-TE!");
-            const code = document.getElementById('r-input').value.trim().toUpperCase();
-            if(!code) return notify("INTRODU UN COD!");
-
-            const snap = await db.ref('gift_codes/' + code).once('value');
-            
-            if(snap.exists()) {
-                const creditValue = snap.val().value;
-                const userSnap = await db.ref('users/' + user.id + '/credits').once('value');
-                const current = userSnap.val() || 0;
-
-                await db.ref('users/' + user.id).update({ credits: current + creditValue });
-                await db.ref('gift_codes/' + code).remove();
-
-                notify(`🔥 SUCCES! AI PRIMIT ${creditValue} CREDITE!`);
-                document.getElementById('r-input').value = "";
-            } else {
-                notify("❌ COD INVALID SAU EXPIRAT!");
             }
         }
 
         function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).style.display = 'block';
-            document.getElementById('nav-' + id).classList.add('active');
+            document.getElementById(id).classList.add('active');
+            document.getElementById('btn-' + id).classList.add('active');
+            document.getElementById('page-name').innerText = id.replace('btn-', '').toUpperCase();
+        }
+
+        function buyItem(name, price) {
+            document.getElementById('modal-item-name').innerText = name;
+            document.getElementById('buy-modal').style.display = 'flex';
+            document.getElementById('confirm-buy-btn').onclick = async () => {
+                const idj = document.getElementById('buy-idj').value;
+                if(!idj) return notify("INTRODU ID JOC!");
+                
+                const snap = await db.ref('users/' + user.id + '/credits').once('value');
+                const current = snap.val() || 0;
+                
+                if(current < price) return notify("CREDITE INSUFICIENTE!");
+                
+                await db.ref('users/' + user.id).update({ credits: current - price });
+                
+                fetch(WH_SHOP, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: `🛒 **ACHIZIȚIE NOUĂ**\n👤 User: <@${user.id}>\n🎮 ID Joc: \`${idj}\`\n📦 Produs: **${name}**\n💰 Preț: **${price} Cr**`
+                    })
+                });
+                
+                closeModal('buy-modal');
+                notify("ACHIZIȚIE REUȘITĂ!");
+            };
+        }
+
+        async function sendDovada() {
+            const idj = document.getElementById('d-idj').value;
+            const amt = document.getElementById('d-amt').value;
+            const file = document.getElementById('d-file').files[0];
+            if(!idj || !amt || !file) return notify("DATE INCOMPLETE!");
+
+            notify("SE TRIMITE...");
+            // Aici ar merge logica de upload sau trimitere catre admin
+            showPage('home');
         }
 
         function openAdmin() {
-            const p = prompt("PAROLA ADMIN:");
-            if(p === ADMIN_PASS) document.getElementById('admin-modal').style.display = 'flex';
-            else notify("PAROLA INCORECTĂ!");
+            const p = prompt("PAROLA FONDATOR:");
+            if(p === ADMIN_PASS) {
+                const target = prompt("ID DISCORD JUCATOR:");
+                const suma = prompt("SUMA CREDITE (foloseste - pentru a scade):");
+                if(target && suma) {
+                    db.ref('users/' + target + '/credits').once('value', s => {
+                        db.ref('users/' + target).update({ credits: (s.val() || 0) + parseInt(suma) });
+                        notify("BALANȚĂ ACTUALIZATĂ!");
+                    });
+                }
+            } else { alert("PAROLĂ INCORECTĂ!"); }
         }
 
-        function closeModal() { document.getElementById('admin-modal').style.display = 'none'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function logout() { window.location.hash = ""; window.location.reload(); }
 
         checkAuth();
     </script>
