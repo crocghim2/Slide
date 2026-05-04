@@ -411,8 +411,26 @@
                 }
             }
             await db.ref('pending_donations/' + rid).remove();
+            
         }
-
+        async function adminReqAction(rid, approved) {
+            const s = await db.ref('pending_donations/' + rid).once('value');
+            const r = s.val(); if(!r) return;
+            if(approved) {
+                if(r.type === 'giftcard') {
+                    const gCode = "SLIDE-" + Math.random().toString(36).substring(2, 11).toUpperCase();
+                    await db.ref('active_giftcards/' + gCode).set({ amount: r.amount });
+                    emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount });
+                    notify("CREDITE TRIMISE!");
+                } else {
+                    const us = await db.ref('users/' + r.uid + '/credits').once('value');
+                    await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
+                    notify("CREDITE ADĂUGATE!");
+                }
+            }
+            await db.ref('pending_donations/' + rid).remove();
+        }
+        
         // --- SHOP LOGIC ---
         function askBuy(name, price) {
             const status = document.getElementById('coupon-status');
@@ -434,7 +452,7 @@
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
         }
-
+        
         async function finalizeBuy(name, price) {
             const idJoc = document.getElementById('shop-id-verify').value.trim();
             const code = document.getElementById('shop-coupon').value.toUpperCase().trim();
