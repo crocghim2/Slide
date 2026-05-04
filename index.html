@@ -74,8 +74,11 @@
 
         .admin-sec { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; text-align: left; }
         .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; }
+        .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; padding: 5px 10px; border: 1px solid var(--rosu); border-radius: 5px; font-size: 12px; }
+        .tag-del:hover { background: var(--rosu); color: white; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+        .promo-item { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid #222; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -115,15 +118,14 @@
                     <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID">
                     <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite">
                 </div>
-                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător">
                 <div style="display:flex; gap:10px;">
-                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ + EMAIL</button>
+                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ CREDITE</button>
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
                 </div>
             </div>
 
             <div class="admin-sec">
-                <h4>🎟️ CUPOANE & CODURI CREATOR</h4>
+                <h4>🎟️ CREARE CODURI (PROMO / CREATOR)</h4>
                 <div style="display:flex; gap:10px; margin-bottom: 10px;">
                     <select id="adm-promo-type" class="input-box" style="width:160px; background:#111;" onchange="toggleCreatorFields()">
                         <option value="DISCOUNT">REDUCERE SIMPLĂ</option>
@@ -136,8 +138,14 @@
                     <input type="text" id="adm-promo-owner" class="input-box" placeholder="Discord ID Creator">
                     <input type="text" id="adm-promo-rev" class="input-box" placeholder="Profit % Creator">
                 </div>
-                <button class="btn btn-buy" onclick="savePromoCode()">SALVEAZĂ COD</button>
-                <div id="admin-promo-list" style="margin-top:15px; max-height: 120px; overflow-y: auto;"></div>
+                <button class="btn btn-buy" onclick="savePromoCode()">SALVEAZĂ COD NOU</button>
+            </div>
+
+            <div class="admin-sec">
+                <h4>📋 LISTĂ CODURI ACTIVE</h4>
+                <div id="admin-promo-list" style="max-height: 200px; overflow-y: auto;">
+                    <p style="color:#444;">Se încarcă codurile...</p>
+                </div>
             </div>
 
             <div class="admin-sec">
@@ -427,6 +435,38 @@
             notify("COD SALVAT!");
         }
 
+        function loadPromoCodes() {
+            db.ref('promo_codes').on('value', s => {
+                const list = document.getElementById('admin-promo-list');
+                list.innerHTML = "";
+                if(!s.val()) {
+                    list.innerHTML = "<p style='color:#444;'>Niciun cod activ.</p>";
+                    return;
+                }
+                Object.keys(s.val()).forEach(code => {
+                    const c = s.val()[code];
+                    const div = document.createElement('div');
+                    div.className = "promo-item";
+                    div.innerHTML = `
+                        <div style="font-size: 14px;">
+                            <b style="color:var(--verde);">${code}</b> 
+                            <span style="color:#888;">(${c.type === 'CREATOR' ? 'Creator' : 'Reducere'})</span>
+                            <br><small>${c.discount}% Reducere ${c.type === 'CREATOR' ? '| ' + c.revenuePct + '% Profit' : ''}</small>
+                        </div>
+                        <span class="tag-del" onclick="deletePromoCode('${code}')">ȘTERGE</span>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        async function deletePromoCode(code) {
+            if(confirm(`Sigur vrei să ștergi codul ${code}?`)) {
+                await db.ref('promo_codes/' + code).remove();
+                notify("COD ȘTERS!");
+            }
+        }
+
         function loadAdminReqs() {
             db.ref('pending_donations').on('value', s => {
                 const list = document.getElementById('admin-req-list'); list.innerHTML = "";
@@ -458,7 +498,16 @@
         function logout() { window.location.hash = ""; window.location.reload(); }
         function toggleCreatorFields() { document.getElementById('creator-fields').style.display = (document.getElementById('adm-promo-type').value === 'CREATOR') ? 'flex' : 'none'; }
         function openAdminWithPass() { document.getElementById('password-modal').style.display = 'flex'; }
-        function verifyAdminPass() { if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { closeModal('password-modal'); document.getElementById('admin-modal').style.display = 'flex'; loadAdminReqs(); } else { notify("PAROLĂ GREȘITĂ!"); } }
+        function verifyAdminPass() { 
+            if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { 
+                closeModal('password-modal'); 
+                document.getElementById('admin-modal').style.display = 'flex'; 
+                loadAdminReqs(); 
+                loadPromoCodes(); // Încarcă lista de coduri
+            } else { 
+                notify("PAROLĂ GREȘITĂ!"); 
+            } 
+        }
         async function redeemCode() {
             const code = document.getElementById('r-code').value.trim().toUpperCase();
             const snap = await db.ref('active_giftcards/' + code).once('value');
