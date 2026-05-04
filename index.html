@@ -76,8 +76,6 @@
         .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
         .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; padding: 5px 10px; border: 1px solid var(--rosu); border-radius: 5px; font-size: 12px; }
         .tag-del:hover { background: var(--rosu); color: white; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-
         .promo-item { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid #222; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -113,13 +111,14 @@
             <h2 style="color:var(--verde);">⚙️ PANOU CONTROL FONDATOR</h2>
             
             <div class="admin-sec">
-                <h4>💎 GESTIONARE CREDITE (MANUAL)</h4>
+                <h4>💎 GESTIONARE CREDITE (MANUAL + EMAIL)</h4>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID">
                     <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite">
                 </div>
+                <input type="email" id="adm-u-email" class="input-box" placeholder="Email Jucător (pt. notificare)">
                 <div style="display:flex; gap:10px;">
-                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ CREDITE</button>
+                    <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ & TRIMITE EMAIL</button>
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
                 </div>
             </div>
@@ -143,14 +142,12 @@
 
             <div class="admin-sec">
                 <h4>📋 LISTĂ CODURI ACTIVE</h4>
-                <div id="admin-promo-list" style="max-height: 200px; overflow-y: auto;">
-                    <p style="color:#444;">Se încarcă codurile...</p>
-                </div>
+                <div id="admin-promo-list" style="max-height: 150px; overflow-y: auto;"></div>
             </div>
 
             <div class="admin-sec">
                 <h4>📸 CERERI PLĂȚI PENDING</h4>
-                <div id="admin-req-list" style="max-height:200px; overflow-y:auto;"></div>
+                <div id="admin-req-list" style="max-height:150px; overflow-y:auto;"></div>
             </div>
 
             <button class="btn" style="background:#222; color:white; margin-top:10px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
@@ -229,6 +226,7 @@
             </div>
         </div>
 
+        <!-- Alte pagini (donate, confirm, etc) rămân la fel -->
         <div id="donate" class="page"><div class="card" style="text-align:center;"><h2>METODE DE DONAȚIE</h2><div style="display:flex; justify-content:center; gap:20px; margin-top:30px;"><div style="background:#1a1a1a; padding:30px; border-radius:20px; border:1px solid var(--verde); flex:1;"><h3 style="color:white;">TIPEEESTREAM</h3><p>PayPal</p><button class="btn btn-buy" onclick="window.open('https://www.tipeeestream.com/stefan-stanica/donation')">DESCHIDE PAGINA</button></div></div></div></div>
         <div id="confirm" class="page"><div class="card" style="max-width:600px; margin:auto;"><h3>📸 CONFIRMARE PLATĂ</h3><label style="font-size: 12px; color: var(--verde);">DESTINAȚIE CREDITE:</label><select id="d-type" class="input-box" style="background: #111;"><option value="credite">CREDITE DIRECT PE CONT</option><option value="giftcard">GIFT CARD (COD PE EMAIL)</option></select><input type="email" id="d-email" class="input-box" placeholder="Email-ul tău"><input type="text" id="d-idj" class="input-box" placeholder="ID Joc"><input type="text" id="d-amt" class="input-box" placeholder="Suma Credite"><p style="font-size:12px; color:#555;">UPLOAD DOVADĂ (POZĂ):</p><input type="file" id="d-file" style="margin-bottom:20px;"><button class="btn btn-buy" onclick="sendDovada()">TRIMITE SPRE APROBARE</button></div></div>
         <div id="redeem" class="page"><div class="card" style="max-width:500px; margin:auto; text-align:center;"><h2 style="color:var(--verde);">🎁 REDEEM GIFT CARD</h2><input type="text" id="r-code" class="input-box" placeholder="SLIDE-XXXX-XXXX" style="text-align:center; font-size:20px;"><button class="btn btn-buy" onclick="redeemCode()">ACTIVEAZĂ CODUL</button></div></div>
@@ -278,56 +276,72 @@
             }
         }
 
-        function loadStats() {
-            db.ref('users').orderByChild('totalDonated').limitToLast(5).on('value', snap => {
-                const list = document.getElementById('top-customers-list');
-                list.innerHTML = "";
-                let users = [];
-                snap.forEach(child => { users.push({ id: child.key, ...child.val() }); });
-                users.reverse().forEach((u, index) => {
-                    const avatar = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png` : "https://cdn.discordapp.com/embed/avatars/0.png";
-                    const row = document.createElement('div');
-                    row.className = "user-row";
-                    if(index === 0) row.style.border = "1px solid var(--aur)";
-                    row.innerHTML = `<img src="${avatar}"><div class="u-details"><span>${u.username.toUpperCase()}</span><small>Rang #${index + 1}</small></div><div class="u-amt">${(u.totalDonated || 0).toLocaleString()} Cr</div>`;
-                    list.appendChild(row);
-                });
-            });
+        // --- FUNCȚII ADMIN ---
+        async function adminActionManual(type) {
+            const targetId = document.getElementById('adm-uid').value.trim();
+            const amount = parseInt(document.getElementById('adm-amt').value);
+            const userEmail = document.getElementById('adm-u-email').value.trim();
 
-            db.ref('logs/purchases').limitToLast(5).on('value', snap => {
-                const list = document.getElementById('recent-customers-list');
+            if(!targetId || isNaN(amount)) return notify("INTRODU ID ȘI SUMA!");
+
+            const snap = await db.ref('users/' + targetId).once('value');
+            const data = snap.val() || { credits: 0, totalDonated: 0, username: "Utilizator" };
+
+            if(type === 'add') {
+                const newCredits = (data.credits || 0) + amount;
+                const newTotal = (data.totalDonated || 0) + amount;
+                await db.ref('users/' + targetId).update({ credits: newCredits, totalDonated: newTotal });
+                
+                // Trimitere Email daca exista adresa
+                if(userEmail) {
+                    emailjs.send("service_slide", "template_slide_creds", {
+                        to_email: userEmail,
+                        username: data.username,
+                        amount: amount,
+                        total: newCredits
+                    }).then(() => notify("EMAIL TRIMIS!")).catch(e => console.error(e));
+                }
+                notify("CREDITE ADĂUGATE!");
+            } else {
+                await db.ref('users/' + targetId).update({ credits: Math.max(0, (data.credits || 0) - amount) });
+                notify("CREDITE SCOASE!");
+            }
+        }
+
+        async function savePromoCode() {
+            const name = document.getElementById('adm-promo-name').value.toUpperCase().trim();
+            const disc = parseInt(document.getElementById('adm-promo-disc').value);
+            const type = document.getElementById('adm-promo-type').value;
+            if(!name || isNaN(disc)) return notify("DATE INCOMPLETE!");
+            let data = { type, discount: disc };
+            if(type === 'CREATOR') {
+                data.ownerId = document.getElementById('adm-promo-owner').value.trim();
+                data.revenuePct = parseInt(document.getElementById('adm-promo-rev').value);
+            }
+            await db.ref('promo_codes/' + name).set(data);
+            notify("COD SALVAT!");
+        }
+
+        function loadPromoCodes() {
+            db.ref('promo_codes').on('value', s => {
+                const list = document.getElementById('admin-promo-list');
                 list.innerHTML = "";
-                if(!snap.val()) return list.innerHTML = "<p style='color:#333'>Nicio achiziție recentă.</p>";
-                let logs = [];
-                snap.forEach(child => { logs.push(child.val()); });
-                logs.reverse().forEach(l => {
-                    const row = document.createElement('div');
-                    row.className = "user-row"; row.style.borderColor = "var(--albastru)";
-                    row.innerHTML = `<div class="u-details"><span>${l.username}</span><small>${l.item}</small></div><div class="u-amt" style="color:var(--rosu)">-${l.price}</div>`;
-                    list.appendChild(row);
+                if(!s.val()) return list.innerHTML = "<p style='color:#444;'>Niciun cod activ.</p>";
+                Object.keys(s.val()).forEach(code => {
+                    const c = s.val()[code];
+                    const div = document.createElement('div');
+                    div.className = "promo-item";
+                    div.innerHTML = `<div><b>${code}</b> (${c.discount}%)</div><span class="tag-del" onclick="deletePromoCode('${code}')">ȘTERGE</span>`;
+                    list.appendChild(div);
                 });
             });
         }
 
-        async function sendDovada() {
-            const type = document.getElementById('d-type').value;
-            const email = document.getElementById('d-email').value.trim();
-            const idj = document.getElementById('d-idj').value;
-            const amt = document.getElementById('d-amt').value;
-            const file = document.getElementById('d-file').files[0];
-            if(!email || !idj || !amt || !file) return notify("DATE INCOMPLETE!");
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const rid = Date.now();
-                await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), type, img: reader.result });
-                const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `@everyone 🔔 **CERERE NOUĂ!**`, embeds: [{ title: "📩 TRANZACȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, { name: "🎮 ID Joc", value: idj, inline: true }] }] }));
-                fd.append('file', file);
-                fetch(WH_CERERI, { method: 'POST', body: fd });
-                notify("CERERE TRIMISĂ!"); showPage('home');
-            };
+        async function deletePromoCode(code) {
+            if(confirm("Ștergi codul?")) { await db.ref('promo_codes/' + code).remove(); notify("ȘTERS!"); }
         }
 
+        // --- SHOP & UTILS ---
         function askBuy(name, price) {
             const status = document.getElementById('coupon-status');
             const cpInput = document.getElementById('shop-coupon');
@@ -344,9 +358,7 @@
                     const discountAmt = Math.floor(price * (c.discount / 100));
                     const pNew = price - discountAmt;
                     status.innerHTML = `<span style="color:var(--verde)">REDUCERE: -${discountAmt} Cr (${c.discount}%)</span>\n<span style="font-size:22px;">PREȚ FINAL: ${pNew} Cr</span>`;
-                } else {
-                    status.innerText = `COD INVALID\nPREȚ FINAL: ${price} Cr`;
-                }
+                } else { status.innerText = `COD INVALID\nPREȚ FINAL: ${price} Cr`; }
             };
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
@@ -375,149 +387,43 @@
             }
 
             const s = await db.ref('users/' + user.id + '/credits').once('value');
-            if((s.val() || 0) < finalPrice) return notify("CREDITE INSUFICIENTE!");
+            const credite = s.val() || 0;
+            if(credite < finalPrice) return notify("CREDITE INSUFICIENTE!");
             
-            await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
+            await db.ref('users/' + user.id).update({ credits: credite - finalPrice });
             await db.ref('logs/purchases').push({ username: user.username.toUpperCase(), item: name, price: finalPrice, timestamp: Date.now() });
 
-            // Webhook Shop
-            fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "🛒 ACHIZIȚIE SHOP", color: 3447003, fields: [{ name: "👤 Client", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] }) });
-
-            // Webhook Creator
+            // Webhooks... (Codul de webhooks de mai devreme)
+            fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "🛒 ACHIZIȚIE", fields: [{ name: "👤 Client", value: `<@${user.id}>`, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț", value: `${finalPrice} Cr`, inline: true }] }] }) });
             if(creatorLog) {
-                fetch(WH_CREATOR, { 
-                    method: 'POST', 
-                    headers: {'Content-Type': 'application/json'}, 
-                    body: JSON.stringify({ 
-                        embeds: [{ 
-                            title: "💰 PROFIT CREATOR", 
-                            color: 15105570, 
-                            fields: [
-                                { name: "🎫 Cod", value: `**${creatorLog.code}**`, inline: true },
-                                { name: "👤 Creator", value: `<@${creatorLog.owner}>`, inline: true },
-                                { name: "🎁 Produs", value: name, inline: true },
-                                { name: "👤 Client", value: `<@${user.id}>`, inline: true },
-                                { name: "📈 Profit", value: `**${creatorLog.profit} Cr** (${creatorLog.pct}%)`, inline: false }
-                            ] 
-                        }] 
-                    }) 
-                });
+                fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "💰 PROFIT CREATOR", fields: [{ name: "🎫 Cod", value: creatorLog.code }, { name: "👤 Creator", value: `<@${creatorLog.owner}>` }, { name: "📉 Profit", value: `${creatorLog.profit} Cr` }] }] }) });
             }
 
             closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
-        async function adminActionManual(type) {
-            const target = document.getElementById('adm-uid').value.trim();
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            if(!target || isNaN(amt)) return notify("DATE INVALIDE!");
-            const snap = await db.ref('users/' + target).once('value');
-            const data = snap.val() || { credits: 0, totalDonated: 0 };
-            if(type === 'add') {
-                await db.ref('users/' + target).update({ credits: (data.credits || 0) + amt, totalDonated: (data.totalDonated || 0) + amt });
-            } else {
-                await db.ref('users/' + target).update({ credits: Math.max(0, (data.credits || 0) - amt) });
-            }
-            notify("BALANȚĂ ACTUALIZATĂ!");
-        }
-
-        async function savePromoCode() {
-            const name = document.getElementById('adm-promo-name').value.toUpperCase().trim();
-            const disc = parseInt(document.getElementById('adm-promo-disc').value);
-            const type = document.getElementById('adm-promo-type').value;
-            if(!name || isNaN(disc)) return notify("DATE INCOMPLETE!");
-            let data = { type, discount: disc };
-            if(type === 'CREATOR') {
-                data.ownerId = document.getElementById('adm-promo-owner').value.trim();
-                data.revenuePct = parseInt(document.getElementById('adm-promo-rev').value);
-            }
-            await db.ref('promo_codes/' + name).set(data);
-            notify("COD SALVAT!");
-        }
-
-        function loadPromoCodes() {
-            db.ref('promo_codes').on('value', s => {
-                const list = document.getElementById('admin-promo-list');
-                list.innerHTML = "";
-                if(!s.val()) {
-                    list.innerHTML = "<p style='color:#444;'>Niciun cod activ.</p>";
-                    return;
-                }
-                Object.keys(s.val()).forEach(code => {
-                    const c = s.val()[code];
-                    const div = document.createElement('div');
-                    div.className = "promo-item";
-                    div.innerHTML = `
-                        <div style="font-size: 14px;">
-                            <b style="color:var(--verde);">${code}</b> 
-                            <span style="color:#888;">(${c.type === 'CREATOR' ? 'Creator' : 'Reducere'})</span>
-                            <br><small>${c.discount}% Reducere ${c.type === 'CREATOR' ? '| ' + c.revenuePct + '% Profit' : ''}</small>
-                        </div>
-                        <span class="tag-del" onclick="deletePromoCode('${code}')">ȘTERGE</span>
-                    `;
+        // Verificare Parole / Pagini / Stats
+        function loadStats() {
+            db.ref('users').orderByChild('totalDonated').limitToLast(5).on('value', snap => {
+                const list = document.getElementById('top-customers-list'); list.innerHTML = "";
+                let users = []; snap.forEach(c => users.push({id: c.key, ...c.val()}));
+                users.reverse().forEach((u, i) => {
+                    const div = document.createElement('div'); div.className = "user-row";
+                    div.innerHTML = `<div class="u-details"><span>${u.username}</span><small>Top ${i+1}</small></div><div class="u-amt">${u.totalDonated} Cr</div>`;
                     list.appendChild(div);
                 });
             });
         }
 
-        async function deletePromoCode(code) {
-            if(confirm(`Sigur vrei să ștergi codul ${code}?`)) {
-                await db.ref('promo_codes/' + code).remove();
-                notify("COD ȘTERS!");
-            }
-        }
-
-        function loadAdminReqs() {
-            db.ref('pending_donations').on('value', s => {
-                const list = document.getElementById('admin-req-list'); list.innerHTML = "";
-                if(!s.val()) return list.innerHTML = "<p>Fără cereri.</p>";
-                Object.keys(s.val()).forEach(rid => {
-                    const r = s.val()[rid];
-                    const div = document.createElement('div'); div.className = "admin-sec"; div.style.background = "#151515";
-                    div.innerHTML = `<b>${r.username}</b> - ${r.amount} Cr<br><a href="${r.img}" target="_blank" style="color:var(--verde)">VEZI POZA</a><br>
-                    <button class="btn btn-buy" style="padding:5px; margin-top:5px;" onclick="adminReqAction('${rid}', true)">APROBĂ</button>`;
-                    list.appendChild(div);
-                });
-            });
-        }
-
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
-            if(approved) {
-                const us = await db.ref('users/' + r.uid).once('value');
-                const uData = us.val() || { credits: 0, totalDonated: 0 };
-                await db.ref('users/' + r.uid).update({ credits: (uData.credits || 0) + r.amount, totalDonated: (uData.totalDonated || 0) + r.amount });
-                fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `✅ Plata de **${r.amount} Cr** pt <@${r.uid}> a fost aprobată!` }) });
-            }
-            await db.ref('pending_donations/' + rid).remove(); notify("FINALIZAT!");
-        }
-
-        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active'); if(document.getElementById('btn-' + id)) document.getElementById('btn-' + id).classList.add('active'); document.getElementById('page-name').innerText = id.toUpperCase().replace('-', ' '); }
+        function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('page-name').innerText = id.toUpperCase(); }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function logout() { window.location.hash = ""; window.location.reload(); }
         function toggleCreatorFields() { document.getElementById('creator-fields').style.display = (document.getElementById('adm-promo-type').value === 'CREATOR') ? 'flex' : 'none'; }
         function openAdminWithPass() { document.getElementById('password-modal').style.display = 'flex'; }
         function verifyAdminPass() { 
             if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { 
-                closeModal('password-modal'); 
-                document.getElementById('admin-modal').style.display = 'flex'; 
-                loadAdminReqs(); 
-                loadPromoCodes(); // Încarcă lista de coduri
-            } else { 
-                notify("PAROLĂ GREȘITĂ!"); 
-            } 
-        }
-        async function redeemCode() {
-            const code = document.getElementById('r-code').value.trim().toUpperCase();
-            const snap = await db.ref('active_giftcards/' + code).once('value');
-            if(snap.exists()) {
-                const amount = snap.val().amount;
-                const uSnap = await db.ref('users/' + user.id).once('value');
-                const uData = uSnap.val() || { credits: 0, totalDonated: 0 };
-                await db.ref('users/' + user.id).update({ credits: (uData.credits || 0) + amount, totalDonated: (uData.totalDonated || 0) + amount });
-                await db.ref('active_giftcards/' + code).remove(); notify(`+${amount} Cr adăugați!`);
-            } else { notify("COD INVALID!"); }
+                closeModal('password-modal'); document.getElementById('admin-modal').style.display = 'flex'; loadPromoCodes(); 
+            } else notify("GRESIT!"); 
         }
 
         window.onload = checkAuth;
