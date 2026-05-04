@@ -50,6 +50,13 @@
         .card h3 { margin-top: 0; color: var(--verde); font-size: 24px; }
         .card p { color: #888; font-size: 18px; margin: 10px 0 20px 0; }
 
+        /* CUSTOMER ROW STYLES */
+        .customer-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid #1a1a1a; margin-bottom: 8px; }
+        .customer-row img { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--verde); }
+        .cust-name { font-weight: 700; font-size: 14px; color: #fff; margin: 0; }
+        .cust-sub { font-size: 11px; color: #666; margin: 0; text-transform: uppercase; }
+        .cust-value { margin-left: auto; font-weight: 800; color: var(--verde); font-size: 15px; }
+
         .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .btn-buy { background: var(--verde); color: black; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2); }
         .btn-buy:hover { background: white; transform: scale(1.02); }
@@ -68,6 +75,8 @@
         .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
         .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -194,6 +203,25 @@
                     <b>ANUNȚ:</b> Toate plățile sunt procesate în maxim 24h. Folosește secțiunea "Confirmă Plata" după ce ai donat!
                 </div>
             </div>
+
+            <!-- CUSTOMER FEED -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- TOP CUSTOMERS -->
+                <div class="card" style="padding: 20px;">
+                    <h3 style="font-size: 18px; color: var(--aur); margin-bottom: 15px;">🏆 TOP CUSTOMERS</h3>
+                    <div id="top-cust-list">
+                        <p style="color: #444; font-size: 14px;">Se încarcă clasamentul...</p>
+                    </div>
+                </div>
+
+                <!-- RECENT CUSTOMERS -->
+                <div class="card" style="padding: 20px;">
+                    <h3 style="font-size: 18px; color: var(--albastru); margin-bottom: 15px;">🕒 RECENT CUSTOMERS</h3>
+                    <div id="recent-cust-list">
+                        <p style="color: #444; font-size: 14px;">Se încarcă activitatea...</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="donate" class="page">
@@ -288,7 +316,48 @@
                     document.getElementById('u-avatar').style.display = 'block';
                 }
                 db.ref('users/' + user.id + '/credits').on('value', s => document.getElementById('u-credits').innerText = (s.val() || 0).toLocaleString());
+                
+                // Initialize Customer Lists
+                loadCustomerFeeds();
             }
+        }
+
+        // LOAD TOP & RECENT CUSTOMERS
+        function loadCustomerFeeds() {
+            // Recent Activity (limit to 5)
+            db.ref('purchase_history').limitToLast(5).on('value', s => {
+                const list = document.getElementById('recent-cust-list');
+                list.innerHTML = "";
+                const items = [];
+                if(s.val()) Object.values(s.val()).forEach(v => items.unshift(v));
+                items.forEach(p => {
+                    list.innerHTML += `<div class="customer-row">
+                        <img src="${p.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}">
+                        <div><p class="cust-name">${p.username}</p><p class="cust-sub">A CUMPĂRAT ${p.product}</p></div>
+                        <div class="cust-value">-${p.price}</div>
+                    </div>`;
+                });
+            });
+
+            // Top Customers (limit to 5)
+            db.ref('users').on('value', s => {
+                const list = document.getElementById('top-cust-list');
+                list.innerHTML = "";
+                const usersArr = [];
+                if(s.val()) {
+                    Object.keys(s.val()).forEach(uid => {
+                        const u = s.val()[uid];
+                        if(u.total_spent) usersArr.push({ name: u.username || 'Anonim', spent: u.total_spent, avatar: u.avatar_url });
+                    });
+                }
+                usersArr.sort((a,b) => b.spent - a.spent).slice(0,5).forEach(u => {
+                    list.innerHTML += `<div class="customer-row">
+                        <img src="${u.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}">
+                        <div><p class="cust-name">${u.name}</p><p class="cust-sub">TOTAL CHELTUIT</p></div>
+                        <div class="cust-value" style="color:var(--aur)">${u.spent}</div>
+                    </div>`;
+                });
+            });
         }
 
         async function sendDovada() {
@@ -313,102 +382,45 @@
             };
         }
 
-        function toggleCreatorFields() {
-            const type = document.getElementById('adm-promo-type').value;
-            document.getElementById('creator-fields').style.display = (type === 'CREATOR') ? 'flex' : 'none';
-        }
-
-        async function savePromoCode() {
-            const type = document.getElementById('adm-promo-type').value;
-            const code = document.getElementById('adm-promo-name').value.toUpperCase().trim();
-            const disc = parseInt(document.getElementById('adm-promo-disc').value) || 0;
-            if(!code) return notify("INTRODU CODUL!");
-            let data = { type, discount: disc };
-            if(type === 'CREATOR') {
-                const owner = document.getElementById('adm-promo-owner').value.trim();
-                const rev = parseInt(document.getElementById('adm-promo-rev').value) || 0;
-                if(!owner) return notify("ID CREATOR LIPSĂ!");
-                data.ownerId = owner; data.revenuePct = rev;
-            }
-            await db.ref('promo_codes/' + code).set(data);
-            notify("COD SALVAT!");
-        }
-
-        function loadPromoCodes() {
-            db.ref('promo_codes').on('value', s => {
-                const list = document.getElementById('admin-promo-list'); list.innerHTML = "";
-                if(s.val()) Object.keys(s.val()).forEach(code => {
-                    const c = s.val()[code];
-                    const el = document.createElement('div');
-                    el.style = "background:#111; padding:8px; border-radius:8px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between; align-items:center; font-size:13px;";
-                    let info = `<b>${code}</b> [${c.type}] - ${c.discount}%`;
-                    el.innerHTML = `<div>${info}</div><button class="tag-del" onclick="db.ref('promo_codes/${code}').remove()">✕</button>`;
-                    list.appendChild(el);
-                });
-            });
-        }
-
-        async function adminActionManual(type) {
-            const target = document.getElementById('adm-uid').value.trim();
-            const amt = parseInt(document.getElementById('adm-amt').value);
-            const email = document.getElementById('adm-email').value.trim();
-            if(!target || isNaN(amt)) return notify("DATE INVALIDE!");
-            const snap = await db.ref('users/' + target + '/credits').once('value');
-            let nTotal = type === 'add' ? (snap.val() || 0) + amt : (snap.val() || 0) - amt;
-            await db.ref('users/' + target).update({ credits: Math.max(0, nTotal) });
-            notify("BALANȚĂ ACTUALIZATĂ!");
-        }
-
-        async function adminReqAction(rid, approved) {
-            const s = await db.ref('pending_donations/' + rid).once('value');
-            const r = s.val(); if(!r) return;
-            if(approved) {
-                if(r.type === 'giftcard') {
-                    const gCode = "SLIDE-" + Math.random().toString(36).substring(2, 11).toUpperCase();
-                    await db.ref('active_giftcards/' + gCode).set({ amount: r.amount });
-                    emailjs.send("service_2gd65tf", "template_ou7sc0j", { to_email: r.email, to_name: r.username, gift_code: gCode, amount: r.amount, approved_by: user.username.toUpperCase() });
-                } else {
-                    const us = await db.ref('users/' + r.uid + '/credits').once('value');
-                    await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
-                    emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, idj: r.idj, approved_by: user.username.toUpperCase() });
-                }
-                fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                    content: `@everyone ✅ **O PLATĂ A FOST APROBATĂ!**`, 
-                    embeds: [{ title: "DETALII", color: 3066993, description: `**Jucător:** <@${r.uid}>\n**Suma:** ${r.amount} Cr\n**Admin:** ${user.username}` }] 
-                }) });
-            }
-            await db.ref('pending_donations/' + rid).remove();
-            notify(approved ? "APROBAT!" : "RESPINS!");
-        }
-
         async function finalizeBuy(name, price) {
             const idJoc = document.getElementById('shop-id-verify').value.trim();
             const codeInput = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
-            let finalPrice = price; let infoTxt = "Fără Cod";
+            let finalPrice = price; 
+            
             if(codeInput) {
                 const snap = await db.ref('promo_codes/' + codeInput).once('value');
                 if(snap.exists()) {
                     const c = snap.val(); finalPrice = Math.floor(price * (1 - c.discount / 100));
                     if(c.type === 'CREATOR') {
-                        infoTxt = `Cod Creator: **${codeInput}**`;
                         const rev = Math.floor(finalPrice * (c.revenuePct / 100));
                         const ownerSnap = await db.ref('users/' + c.ownerId + '/credits').once('value');
                         await db.ref('users/' + c.ownerId).update({ credits: (ownerSnap.val() || 0) + rev });
-                        fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                            content: `@everyone 🎙️ **PROFIT NOU CREATOR!**`, 
-                            embeds: [{ title: "DETALII", color: 15844367, fields: [{ name: "🎟️ Cod", value: codeInput, inline: true }, { name: "👤 Creator", value: `<@${c.ownerId}>`, inline: true }, { name: "💸 Profit", value: `**${rev} Cr**`, inline: true }] }] 
-                        }) });
-                    } else { infoTxt = `Cod Reducere: **${codeInput}**`; }
+                    }
                 }
             }
+
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             if((s.val() || 0) < finalPrice) return notify("CREDITE INSUFICIENTE!");
-            await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
+            
+            // Log purchase for feeds
+            const uAvatar = user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            await db.ref('purchase_history').push({ username: user.username, avatar: uAvatar, product: name, price: finalPrice, timestamp: Date.now() });
+            
+            // Update User Stats
+            const uSpent = await db.ref('users/' + user.id + '/total_spent').once('value');
+            await db.ref('users/' + user.id).update({ 
+                credits: s.val() - finalPrice,
+                total_spent: (uSpent.val() || 0) + finalPrice,
+                username: user.username,
+                avatar_url: uAvatar
+            });
+
             fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
                 content: `@everyone 🛒 **ACHIZIȚIE NOUĂ SHOP!**`, 
-                embeds: [{ title: "DETALII ACHIZIȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "ℹ️ Info", value: infoTxt, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] 
+                embeds: [{ title: "DETALII ACHIZIȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] 
             }) });
+
             closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
