@@ -13,7 +13,7 @@
         :root { 
             --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; 
             --border: #222; --discord: #7289da; --glow: 0 0 20px rgba(46, 204, 113, 0.4); 
-            --aur: #f1c40f;
+            --aur: #f1c40f; --albastru: #3498db;
         }
         
         * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -24,7 +24,6 @@
             background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        /* SIDEBAR */
         .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
         .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
         
@@ -43,7 +42,6 @@
         .btn-discord-join { background: var(--discord); color: white; }
         .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
 
-        /* MAIN CONTENT */
         .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
         .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
         
@@ -60,23 +58,17 @@
         .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
         .input-box:focus { border-color: var(--verde); }
 
-        /* MODALS & OVERLAYS */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px; }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 650px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
+        
         .page { display: none; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ADMIN SPECIFIC */
         .admin-sec { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; text-align: left; }
         .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
         .item-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tag-item { background: #111; border: 1px solid #333; padding: 5px 12px; border-radius: 5px; font-size: 13px; display: flex; align-items: center; gap: 10px; }
         .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; }
-
-        /* GRID SHOP */
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     </style>
 </head>
@@ -115,7 +107,7 @@
                     <input type="text" id="adm-uid" class="input-box" placeholder="Discord User ID">
                     <input type="text" id="adm-amt" class="input-box" placeholder="Suma Credite">
                 </div>
-                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător (pt. confirmare automată)">
+                <input type="email" id="adm-email" class="input-box" placeholder="Email Jucător (pt. confirmare)">
                 <div style="display:flex; gap:10px;">
                     <button class="btn btn-buy" onclick="adminActionManual('add')">ADĂUGĂ + EMAIL</button>
                     <button class="btn btn-danger" onclick="adminActionManual('remove')">SCOATE CREDITE</button>
@@ -123,22 +115,29 @@
             </div>
 
             <div class="admin-sec">
-                <h4>🎟️ CUPOANE & CREATOR CODES</h4>
+                <h4>🎟️ CUPOANE & CODURI CREATOR</h4>
                 <div style="display:flex; gap:10px; margin-bottom: 10px;">
-                    <input type="text" id="adm-cc-id" class="input-box" placeholder="ID Creator (Discord)">
-                    <input type="text" id="adm-cc-name" class="input-box" placeholder="COD">
+                    <select id="adm-promo-type" class="input-box" style="width:160px; background:#111;" onchange="toggleCreatorFields()">
+                        <option value="DISCOUNT">REDUCERE SIMPLĂ</option>
+                        <option value="CREATOR">COD CREATOR</option>
+                    </select>
+                    <input type="text" id="adm-promo-name" class="input-box" placeholder="COD (ex: SLIDE10)" style="text-transform:uppercase;">
+                    <input type="text" id="adm-promo-disc" class="input-box" placeholder="Reducere %" style="width:120px;">
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="adm-cc-disc" class="input-box" placeholder="Reducere % Client">
-                    <input type="text" id="adm-cc-rev" class="input-box" placeholder="Profit % Creator">
-                    <button class="btn btn-buy" style="width:auto; padding:0 30px;" onclick="saveCreatorCode()">SAVE</button>
+                
+                <div id="creator-fields" style="display:none; gap:10px; margin-bottom: 10px;">
+                    <input type="text" id="adm-promo-owner" class="input-box" placeholder="Discord ID Creator">
+                    <input type="text" id="adm-promo-rev" class="input-box" placeholder="Profit % Creator">
                 </div>
-                <div id="admin-creators-list" style="margin-top:15px; max-height: 150px; overflow-y: auto;"></div>
+
+                <button class="btn btn-buy" onclick="savePromoCode()">SALVEAZĂ COD</button>
+                
+                <div id="admin-promo-list" style="margin-top:15px; max-height: 150px; overflow-y: auto;"></div>
             </div>
 
             <div class="admin-sec">
                 <h4>📸 CERERI PLĂȚI PENDING</h4>
-                <div id="admin-req-list" style="max-height:250px; overflow-y:auto;"></div>
+                <div id="admin-req-list" style="max-height:200px; overflow-y:auto;"></div>
             </div>
 
             <button class="btn" style="background:#222; color:white; margin-top:10px;" onclick="closeModal('admin-modal')">ÎNCHIDE PANOU</button>
@@ -259,7 +258,6 @@
     </div>
 
     <script>
-        // CONFIGURARE WEBHOOKS CU NOILE LINK-URI
         const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx"; 
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
         const WH_APROBARI = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
@@ -317,6 +315,51 @@
             };
         }
 
+        // --- ADMIN LOGIC ---
+
+        function toggleCreatorFields() {
+            const type = document.getElementById('adm-promo-type').value;
+            document.getElementById('creator-fields').style.display = (type === 'CREATOR') ? 'flex' : 'none';
+        }
+
+        async function savePromoCode() {
+            const type = document.getElementById('adm-promo-type').value;
+            const code = document.getElementById('adm-promo-name').value.toUpperCase().trim();
+            const disc = parseInt(document.getElementById('adm-promo-disc').value) || 0;
+            
+            if(!code) return notify("INTRODU CODUL!");
+
+            let data = { type, discount: disc };
+
+            if(type === 'CREATOR') {
+                const owner = document.getElementById('adm-promo-owner').value.trim();
+                const rev = parseInt(document.getElementById('adm-promo-rev').value) || 0;
+                if(!owner) return notify("ID CREATOR LIPSĂ!");
+                data.ownerId = owner;
+                data.revenuePct = rev;
+            }
+
+            await db.ref('promo_codes/' + code).set(data);
+            notify("COD SALVAT!");
+        }
+
+        function loadPromoCodes() {
+            db.ref('promo_codes').on('value', s => {
+                const list = document.getElementById('admin-promo-list'); list.innerHTML = "";
+                if(s.val()) Object.keys(s.val()).forEach(code => {
+                    const c = s.val()[code];
+                    const el = document.createElement('div');
+                    el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between; align-items:center;";
+                    
+                    let info = `<b>${code}</b> [${c.type}] - ${c.discount}% OFF`;
+                    if(c.type === 'CREATOR') info += `<br><small style="color:var(--aur)">Owner: ${c.ownerId} | Comision: ${c.revenuePct}%</small>`;
+                    
+                    el.innerHTML = `<div>${info}</div><button class="tag-del" onclick="db.ref('promo_codes/${code}').remove()">✕</button>`;
+                    list.appendChild(el);
+                });
+            });
+        }
+
         async function adminActionManual(type) {
             const target = document.getElementById('adm-uid').value.trim();
             const amt = parseInt(document.getElementById('adm-amt').value);
@@ -345,48 +388,49 @@
                     await db.ref('users/' + r.uid).update({ credits: (us.val() || 0) + r.amount });
                     emailjs.send("service_2gd65tf", "template_750es5r", { to_email: r.email, to_name: r.username, amount: r.amount, idj: r.idj, approved_by: adminName });
                 }
-                // LOG APROBARE (Embed Verde)
                 fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
                     embeds: [{ title: "✅ ACHIZIȚIE NOUĂ APROBATĂ", color: 3066993, 
                     description: `**Jucător:** <@${r.uid}>\n**Produs:** ${r.type.toUpperCase()}\n**ID Joc:** ${r.idj}\n**Suma:** ${r.amount} Cr\n**Admin:** ${adminName}` }] 
                 }) });
                 notify("CERERE APROBATĂ!");
-            } else {
-                notify("CERERE RESPINSĂ!");
-            }
+            } else { notify("CERERE RESPINSĂ!"); }
             await db.ref('pending_donations/' + rid).remove();
         }
 
+        // --- SHOP LOGIC ---
+
         async function finalizeBuy(name, price) {
             const idJoc = document.getElementById('shop-id-verify').value.trim();
-            const code = document.getElementById('shop-coupon').value.toUpperCase().trim();
+            const codeInput = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
             
             let finalPrice = price; 
             let infoTxt = "Fără Cod";
             
-            const snapCr = await db.ref('creators/' + code).once('value');
-            if(snapCr.exists()) { 
-                const cData = snapCr.val();
-                finalPrice = Math.floor(price * (1 - cData.discount / 100));
-                infoTxt = `Cod Creator: **${code}**`;
-                
-                // Profit Creator
-                const rev = Math.floor(finalPrice * (cData.revenuePct / 100));
-                const ownerS = await db.ref('users/' + cData.ownerId + '/credits').once('value');
-                await db.ref('users/' + cData.ownerId).update({ credits: (ownerS.val() || 0) + rev });
-                
-                // LOG PROFIT CREATOR (Embed Aur)
-                fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
-                    embeds: [{ title: "🎙️ PROFIT CREATOR", color: 15844367, 
-                    fields: [
-                        { name: "🎟️ Cod", value: code, inline: true },
-                        { name: "👤 Creator", value: `<@${cData.ownerId}>`, inline: true },
-                        { name: "🎁 Produs", value: name, inline: true },
-                        { name: "👤 Client", value: `<@${user.id}>`, inline: true },
-                        { name: "💸 Profit", value: `**${rev} Cr** (${cData.revenuePct}%)`, inline: true }
-                    ]}] 
-                }) });
+            if(codeInput) {
+                const snap = await db.ref('promo_codes/' + codeInput).once('value');
+                if(snap.exists()) {
+                    const c = snap.val();
+                    finalPrice = Math.floor(price * (1 - c.discount / 100));
+                    
+                    if(c.type === 'CREATOR') {
+                        infoTxt = `Cod Creator: **${codeInput}**`;
+                        const rev = Math.floor(finalPrice * (c.revenuePct / 100));
+                        const ownerSnap = await db.ref('users/' + c.ownerId + '/credits').once('value');
+                        await db.ref('users/' + c.ownerId).update({ credits: (ownerSnap.val() || 0) + rev });
+                        
+                        fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
+                            embeds: [{ title: "🎙️ PROFIT CREATOR", color: 15844367, 
+                            fields: [
+                                { name: "🎟️ Cod", value: codeInput, inline: true },
+                                { name: "👤 Creator", value: `<@${c.ownerId}>`, inline: true },
+                                { name: "💸 Profit", value: `**${rev} Cr**`, inline: true }
+                            ]}] 
+                        }) });
+                    } else {
+                        infoTxt = `Cod Reducere: **${codeInput}**`;
+                    }
+                }
             }
 
             const s = await db.ref('users/' + user.id + '/credits').once('value');
@@ -394,7 +438,6 @@
             
             await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
             
-            // LOG ACHIZITIE (Embed Albastru)
             fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ 
                 embeds: [{ title: "🛒 ACHIZIȚIE JUCĂTOR", color: 3447003, 
                 fields: [
@@ -409,26 +452,35 @@
             closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
-        // UI HELPERS
-        function openAdminWithPass() { document.getElementById('password-modal').style.display = 'flex'; }
-        function verifyAdminPass() { if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { closeModal('password-modal'); document.getElementById('admin-modal').style.display = 'flex'; loadAdminReqs(); loadCreators(); } else { notify("PAROLĂ GREȘITĂ!"); } }
-        
-        async function saveCreatorCode() { 
-            const uid = document.getElementById('adm-cc-id').value.trim(); 
-            const code = document.getElementById('adm-cc-name').value.toUpperCase().trim(); 
-            const d = parseInt(document.getElementById('adm-cc-disc').value); 
-            const r = parseInt(document.getElementById('adm-cc-rev').value); 
-            if(uid && code) { await db.ref('creators/' + code).set({ ownerId: uid, discount: d, revenuePct: r }); notify("COD SALVAT!"); } 
+        function askBuy(name, price) { 
+            const status = document.getElementById('coupon-status'); 
+            const cpInput = document.getElementById('shop-coupon'); 
+            document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`; 
+            cpInput.value = ""; status.innerText = `PREȚ FINAL: ${price} Cr`; 
+            cpInput.oninput = async () => { 
+                const code = cpInput.value.toUpperCase().trim(); 
+                const snap = await db.ref('promo_codes/' + code).once('value'); 
+                if(snap.exists()) { 
+                    const c = snap.val();
+                    const pNew = Math.floor(price * (1 - c.discount / 100));
+                    status.innerText = (c.type === 'CREATOR' ? 'COD CREATOR! ' : 'COD REDUCERE! ') + `PREȚ: ${pNew} Cr`; 
+                } else { status.innerText = `PREȚ FINAL: ${price} Cr`; } 
+            }; 
+            document.getElementById('confirm-modal').style.display = 'flex'; 
+            document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price); 
         }
 
-        function loadCreators() { 
-            db.ref('creators').on('value', s => { 
-                const list = document.getElementById('admin-creators-list'); list.innerHTML = ""; 
-                if(s.val()) Object.keys(s.val()).forEach(c => { 
-                    const el = document.createElement('div'); el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between; align-items:center;"; 
-                    el.innerHTML = `<div><b>${c}</b> (D: ${s.val()[c].discount}% | R: ${s.val()[c].revenuePct}%)</div><button class="tag-del" onclick="db.ref('creators/${c}').remove()">✕</button>`; list.appendChild(el); 
-                }); 
-            }); 
+        // --- UI HELPERS ---
+
+        function openAdminWithPass() { document.getElementById('password-modal').style.display = 'flex'; }
+        
+        function verifyAdminPass() { 
+            if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { 
+                closeModal('password-modal'); 
+                document.getElementById('admin-modal').style.display = 'flex'; 
+                loadAdminReqs(); 
+                loadPromoCodes(); 
+            } else { notify("PAROLĂ GREȘITĂ!"); } 
         }
 
         function loadAdminReqs() { 
@@ -441,21 +493,6 @@
                     d.innerHTML = `<b style="color:var(--verde)">TIP: ${r.type.toUpperCase()}</b><br><img src="${r.img}" style="width:100%; border-radius:10px; margin:10px 0;"><p>👤 ${r.username} | 💰 ${r.amount} Cr</p><div style="display:flex; gap:10px;"><button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ</button><button class="btn btn-danger" onclick="adminReqAction('${id}', false)">RESPINGE</button></div>`; list.appendChild(d); 
                 }); 
             }); 
-        }
-
-        function askBuy(name, price) { 
-            const status = document.getElementById('coupon-status'); 
-            const cpInput = document.getElementById('shop-coupon'); 
-            document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`; 
-            cpInput.value = ""; status.innerText = `PREȚ FINAL: ${price} Cr`; 
-            cpInput.oninput = async () => { 
-                const code = cpInput.value.toUpperCase().trim(); 
-                const snapCr = await db.ref('creators/' + code).once('value'); 
-                if(snapCr.exists()) { status.innerText = `COD CREATOR! PREȚ: ${Math.floor(price * (1 - snapCr.val().discount / 100))} Cr`; } 
-                else { status.innerText = `PREȚ FINAL: ${price} Cr`; } 
-            }; 
-            document.getElementById('confirm-modal').style.display = 'flex'; 
-            document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price); 
         }
 
         function showPage(id) { 
