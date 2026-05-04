@@ -11,47 +11,30 @@
 
     <style>
         :root { 
-            --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: rgba(17, 17, 17, 0.85); 
+            --verde: #2ecc71; --rosu: #e74c3c; --bg: #0a0a0a; --panel: #111; 
             --border: #222; --discord: #7289da; --glow: 0 0 20px rgba(46, 204, 113, 0.4); 
         }
         
         * { box-sizing: border-box; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
         body { 
-            font-family: 'Rajdhani', sans-serif; 
-            margin: 0; 
-            color: white; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden;
-            /* Background cu imaginea ta */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://files.catbox.moe/p9p39l.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            font-family: 'Rajdhani', sans-serif; margin: 0; background: var(--bg); color: white; 
+            display: flex; height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a3a2a, #0a0a0a);
         }
 
-        .sidebar { 
-            width: 280px; 
-            background: rgba(0,0,0,0.85); 
-            border-right: 2px solid var(--verde); 
-            display: flex; 
-            flex-direction: column; 
-            backdrop-filter: blur(15px); 
-            z-index: 100; 
-        }
-        
+        .sidebar { width: 280px; background: rgba(0,0,0,0.8); border-right: 2px solid var(--verde); display: flex; flex-direction: column; backdrop-filter: blur(10px); z-index: 100; }
         .logo { padding: 40px 20px; font-size: 42px; font-weight: 800; color: var(--verde); text-align: center; letter-spacing: 5px; text-shadow: var(--glow); }
         
-        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #bbb; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
-        .nav-item:hover { color: white; background: rgba(255,255,255,0.1); transform: translateX(5px); }
-        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.2); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.1); }
+        .nav-item { padding: 18px 30px; cursor: pointer; border-left: 5px solid transparent; color: #555; font-weight: 700; font-size: 16px; margin: 5px 10px; border-radius: 0 10px 10px 0; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+        .nav-item.active { color: white; background: rgba(46, 204, 113, 0.15); border-left-color: var(--verde); box-shadow: inset 10px 0 20px rgba(46, 204, 113, 0.05); }
         .nav-admin { border-left-color: var(--rosu) !important; color: #ff7675; }
 
-        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); margin-top: auto; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 10px; }
         .u-info { display: flex; align-items: center; gap: 12px; }
         
-        .avatar-container { position: relative; width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid var(--verde); flex-shrink: 0; }
+        .avatar-container { position: relative; width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid #333; flex-shrink: 0; }
         .u-avatar { width: 100%; height: 100%; object-fit: cover; display: none; }
 
         .footer-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 5px; }
@@ -59,10 +42,9 @@
         .btn-discord-join { background: var(--discord); color: white; border: 1px solid rgba(255,255,255,0.1); }
         .btn-logout { background: transparent; color: var(--rosu); border: 1px solid var(--rosu); }
 
-        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; background: rgba(0,0,0,0.2); }
-        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.6); padding: 25px; border-radius: 20px; border: 1px solid var(--verde); margin-bottom: 40px; backdrop-filter: blur(5px); }
-        
-        .card { background: var(--panel); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; backdrop-filter: blur(10px); }
+        .main { flex: 1; padding: 50px; overflow-y: auto; position: relative; }
+        .header-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 40px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 30px; border-radius: 20px; position: relative; overflow: hidden; margin-bottom: 20px; }
         .card:hover { border-color: var(--verde); transform: translateY(-5px); box-shadow: var(--glow); }
 
         .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-family: 'Rajdhani'; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
@@ -70,36 +52,32 @@
         .btn-buy:hover { background: white; transform: scale(1.02); }
         .btn-danger { background: var(--rosu); color: white; }
 
-        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(0,0,0,0.7); border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
+        .input-box { width: 100%; padding: 15px; margin-bottom: 15px; background: #000; border: 1px solid #333; color: white; border-radius: 10px; font-family: 'Rajdhani'; font-size: 16px; }
         
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal { background: #0a0a0a; border: 2px solid var(--verde); padding: 40px; border-radius: 25px; width: 100%; max-width: 650px; text-align: center; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-height: 90vh; overflow-y: auto; }
-        
         @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .page { display: none; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .admin-sec { background: rgba(0,0,0,0.5); padding:20px; border-radius:15px; border:1px solid #333; margin-bottom:20px; text-align: left; }
-        .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        
-        #login-screen {
-            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://files.catbox.moe/p9p39l.jpg');
-            background-size: cover;
-            background-position: center;
-        }
+        .admin-sec { background:#080808; padding:20px; border-radius:15px; border:1px solid #222; margin-bottom:20px; text-align: left; }
+        .admin-sec h4 { margin: 0 0 15px 0; color: var(--verde); font-size: 18px; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        .item-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag-item { background: #111; border: 1px solid #333; padding: 5px 12px; border-radius: 5px; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+        .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="notif-container" style="position:fixed; top:30px; right:30px; z-index:10000;"></div>
 
-    <div id="login-screen" style="position:fixed; inset:0; z-index:10001; display:flex; align-items:center; justify-content:center;">
-        <div style="text-align:center; background: rgba(0,0,0,0.6); padding: 50px; border-radius: 30px; border: 1px solid var(--verde); backdrop-filter: blur(10px);">
-            <h1 style="color:var(--verde); font-size:70px; letter-spacing:15px; margin:0; text-shadow: var(--glow);">SLIDE</h1>
-            <p style="color:#eee; letter-spacing:5px; margin-bottom:40px;">DASHBOARD PREMIUM</p>
-            <button onclick="login()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 18px 60px; font-size:18px; box-shadow: 0 0 20px rgba(114, 137, 218, 0.4);">AUTENTIFICARE DISCORD</button>
+    <div id="login-screen" style="position:fixed; inset:0; background:#000; z-index:10001; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center;">
+            <h1 style="color:var(--verde); font-size:70px; letter-spacing:15px; margin:0;">SLIDE</h1>
+            <p style="color:#444; letter-spacing:5px; margin-bottom:40px;">DASHBOARD PREMIUM</p>
+            <button onclick="login()" class="btn" style="background:var(--discord); color:white; width:auto; padding: 18px 60px; font-size:18px;">AUTENTIFICARE DISCORD</button>
         </div>
     </div>
 
@@ -200,17 +178,13 @@
         <div class="header-box">
             <h2 id="page-name" style="margin:0;">HUB PRINCIPAL</h2>
             <div style="text-align:right;">
-                <div style="font-size:12px; color:#aaa;">BALANTA CREDITE</div>
-                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde); text-shadow: var(--glow);">0</div>
+                <div style="font-size:12px; color:#555;">BALANTA CREDITE</div>
+                <div id="u-credits" style="font-size:32px; font-weight:800; color:var(--verde);">0</div>
             </div>
         </div>
 
         <div id="home" class="page active">
-            <div class="card">
-                <h3>BINE AI REVENIT PE SLIDE ROMANIA!</h3>
-                <p>Navighează folosind meniul din stânga pentru a accesa magazinul sau pentru a confirma o donație.</p>
-                <p>Toate tranzacțiile sunt procesate securizat prin sistemul nostru de credite.</p>
-            </div>
+            <div class="card"><h3>BINE AI REVENIT!</h3><p>Navighează folosind meniul din stânga pentru a accesa magazinul sau pentru a confirma o donație.</p></div>
         </div>
 
         <div id="donate" class="page">
@@ -227,28 +201,27 @@
                 <input type="email" id="d-email" class="input-box" placeholder="Email (OBLIGATORIU)">
                 <input type="text" id="d-idj" class="input-box" placeholder="ID JOC">
                 <input type="text" id="d-amt" class="input-box" placeholder="Suma Credite">
-                <input type="file" id="d-file" style="margin-bottom:20px; display:block; color: white;">
+                <input type="file" id="d-file" style="margin-bottom:20px; display:block;">
                 <button class="btn btn-buy" onclick="sendDovada()">TRIMITE DOVADA</button>
             </div>
         </div>
 
         <div id="vip" class="page">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                <div class="card"><h3>VIP GOLD</h3><p style="color:var(--verde); font-weight:800; font-size:20px;">5.000 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
-                <div class="card"><h3>VIP SILVER</h3><p style="color:var(--verde); font-weight:800; font-size:20px;">2.500 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
+                <div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPARA</button></div>
+                <div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPARA</button></div>
             </div>
         </div>
 
         <div id="cars" class="page">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-                <div class="card"><h3>BMW M5 CS</h3><p style="color:var(--verde); font-weight:800; font-size:20px;">8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
-                <div class="card"><h3>MERCEDES G63</h3><p style="color:var(--verde); font-weight:800; font-size:20px;">7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
+                <div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPARA</button></div>
+                <div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPARA</button></div>
             </div>
         </div>
     </div>
 
     <script>
-        // WEBHOOKS SI CONFIG
         const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx";
         const WH_LOGS = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
@@ -264,7 +237,7 @@
 
         function notify(text) {
             const n = document.createElement('div');
-            n.style = 'background:rgba(0,0,0,0.9); color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333; backdrop-filter:blur(5px);';
+            n.style = 'background:#000; color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333;';
             n.innerText = text; document.getElementById('notif-container').appendChild(n);
             setTimeout(() => n.remove(), 4000);
         }
@@ -379,8 +352,7 @@
                 const list = document.getElementById('admin-coupons-list'); list.innerHTML = "";
                 if(s.val()) Object.keys(s.val()).forEach(c => {
                     const el = document.createElement('div'); el.className = 'tag-item';
-                    el.style = "background:rgba(255,255,255,0.05); padding: 5px 10px; border-radius:5px; margin: 2px;";
-                    el.innerHTML = `<span>${c} (-${s.val()[c].percent}%)</span> <span class="tag-del" style="color:red; cursor:pointer;" onclick="db.ref('coupons/${c}').remove()">✕</span>`;
+                    el.innerHTML = `<span>${c} (-${s.val()[c].percent}%)</span> <span class="tag-del" onclick="db.ref('coupons/${c}').remove()">✕</span>`;
                     list.appendChild(el);
                 });
             });
@@ -398,9 +370,9 @@
             db.ref('creators').on('value', s => {
                 const list = document.getElementById('admin-creators-list'); list.innerHTML = "";
                 if(s.val()) Object.keys(s.val()).forEach(c => {
-                    const el = document.createElement('div'); el.style = "background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #333; display:flex; justify-content:space-between;";
+                    const el = document.createElement('div'); el.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:5px; border:1px solid #222; display:flex; justify-content:space-between;";
                     el.innerHTML = `<div><b>${c}</b> (ID: ${s.val()[c].ownerId})<br><small>Disc: ${s.val()[c].discount}% | Rev: ${s.val()[c].revenuePct}%</small></div>
-                    <button class="tag-del" style="background:none; border:none; color:red;" onclick="db.ref('creators/${c}').remove()">ȘTERGE</button>`;
+                    <button class="tag-del" style="background:none; border:none;" onclick="db.ref('creators/${c}').remove()">ȘTERGE</button>`;
                     list.appendChild(el);
                 });
             });
@@ -459,6 +431,7 @@
             const cur = s.val() || 0;
             if(cur < finalPrice) return notify("CREDITE INSUFICIENTE!");
 
+            // Tranzactie
             await db.ref('users/' + user.id).update({ credits: cur - finalPrice });
 
             if(creatorData) {
@@ -466,6 +439,7 @@
                 const snapUC = await db.ref('users/' + creatorData.ownerId + '/credits').once('value');
                 await db.ref('users/' + creatorData.ownerId).update({ credits: (snapUC.val() || 0) + rev });
 
+                // LOG CREATOR
                 fetch(WH_CREATOR_LOGS, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -475,6 +449,7 @@
                 });
             }
 
+            // LOG SHOP
             fetch(WH_SHOP, { 
                 method: 'POST', 
                 headers: {'Content-Type': 'application/json'}, 
@@ -490,7 +465,7 @@
                 if(!s.val()) return list.innerHTML = "Nicio cerere.";
                 Object.keys(s.val()).forEach(id => {
                     const r = s.val()[id];
-                    const d = document.createElement('div'); d.style = "background:rgba(0,0,0,0.4); padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #444;";
+                    const d = document.createElement('div'); d.style = "background:#111; padding:10px; border-radius:10px; margin-bottom:10px; border:1px solid #222;";
                     d.innerHTML = `<img src="${r.img}" style="width:100%; border-radius:5px; margin-bottom:10px;"><p>👤 ${r.username} | 💰 ${r.amount} Cr<br><small>📧 ${r.email}</small></p>
                         <button class="btn btn-buy" onclick="adminReqAction('${id}', true)">APROBĂ ✅</button>
                         <button class="btn btn-danger" style="margin-top:5px;" onclick="adminReqAction('${id}', false)">RESPINGE ❌</button>`;
@@ -506,7 +481,7 @@
             if(page) page.classList.add('active');
             const nav = document.getElementById('btn-' + id);
             if(nav) nav.classList.add('active');
-            document.getElementById('page-name').innerText = id.toUpperCase().replace('-', ' ');
+            document.getElementById('page-name').innerText = id.toUpperCase();
         }
         
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
