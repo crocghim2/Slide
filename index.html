@@ -252,17 +252,6 @@
 
         let user = null;
 
-        // Functie Logare Email
-        async function sendLogEmail(subject, message) {
-            try {
-                await emailjs.send("service_default", "template_logs", {
-                    subject: subject,
-                    message: message,
-                    to_email: "admin@slideromania.ro" 
-                });
-            } catch(e) { console.error("Email Error", e); }
-        }
-
         function notify(text) {
             const n = document.createElement('div');
             n.style = 'background:#111; color:white; padding:15px 30px; border-left:5px solid var(--verde); border-radius:10px; margin-bottom:10px; font-weight:800; border:1px solid #333; animation: fadeIn 0.3s ease;';
@@ -333,24 +322,10 @@
             reader.onload = async () => {
                 const rid = Date.now();
                 await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), type, img: reader.result });
-                
                 const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ 
-                    content: `@everyone 🔔 **CERERE NOUĂ!**`, 
-                    embeds: [{ 
-                        title: "📩 TRANZACȚIE INCOMING", 
-                        color: 3447003, 
-                        fields: [
-                            { name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, 
-                            { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, 
-                            { name: "🎮 ID Joc", value: idj, inline: true }
-                        ] 
-                    }] 
-                }));
+                fd.append('payload_json', JSON.stringify({ content: `@everyone 🔔 **CERERE NOUĂ!**`, embeds: [{ title: "📩 TRANZACȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, { name: "🎮 ID Joc", value: idj, inline: true }] }] }));
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
-                
-                sendLogEmail("Cerere Noua Plata", `Jucatorul ${user.username} (Email: ${email}) a trimis o cerere de ${amt} credite.`);
                 notify("CERERE TRIMISĂ!"); showPage('home');
             };
         }
@@ -408,26 +383,7 @@
             await db.ref('logs/purchases').push({ username: user.username.toUpperCase(), item: name, price: finalPrice, timestamp: Date.now() });
 
             // Webhook Shop
-            fetch(WH_SHOP, { 
-                method: 'POST', 
-                headers: {'Content-Type': 'application/json'}, 
-                body: JSON.stringify({ 
-                    content: "@everyone 🛒 **SHOP ACTIVITY**",
-                    embeds: [{ 
-                        title: "🛒 ACHIZIȚIE FINALIZATĂ", 
-                        color: 3447003, 
-                        fields: [
-                            { name: "👤 Client", value: `<@${user.id}>`, inline: true }, 
-                            { name: "🎮 ID Joc", value: idJoc, inline: true }, 
-                            { name: "🎁 Produs", value: name, inline: true }, 
-                            { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }
-                        ],
-                        timestamp: new Date()
-                    }] 
-                }) 
-            });
-
-            sendLogEmail("Achizitie Shop", `Jucatorul ${user.username} a cumparat ${name} pentru ${finalPrice} credite.`);
+            fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "🛒 ACHIZIȚIE SHOP", color: 3447003, fields: [{ name: "👤 Client", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] }) });
 
             // Webhook Creator
             if(creatorLog) {
@@ -442,7 +398,8 @@
                                 { name: "🎫 Cod", value: `**${creatorLog.code}**`, inline: true },
                                 { name: "👤 Creator", value: `<@${creatorLog.owner}>`, inline: true },
                                 { name: "🎁 Produs", value: name, inline: true },
-                                { name: "📈 Profit", value: `**${creatorLog.profit} Cr**`, inline: true }
+                                { name: "👤 Client", value: `<@${user.id}>`, inline: true },
+                                { name: "📈 Profit", value: `**${creatorLog.profit} Cr** (${creatorLog.pct}%)`, inline: false }
                             ] 
                         }] 
                     }) 
@@ -554,36 +511,13 @@
         async function adminReqAction(rid, approved) {
             const s = await db.ref('pending_donations/' + rid).once('value');
             const r = s.val(); if(!r) return;
-            const adminName = user.username.toUpperCase(); // Adminul logat
-
             if(approved) {
                 const us = await db.ref('users/' + r.uid).once('value');
                 const uData = us.val() || { credits: 0, totalDonated: 0 };
                 await db.ref('users/' + r.uid).update({ credits: (uData.credits || 0) + r.amount, totalDonated: (uData.totalDonated || 0) + r.amount });
-                
-                // Webhook Discord fara Tag Everyone conform cerintei
-                fetch(WH_APROBARI, { 
-                    method: 'POST', 
-                    headers: {'Content-Type': 'application/json'}, 
-                    body: JSON.stringify({ 
-                        content: `<@${r.uid}> 🔔 **PLATA TA A FOST APROBATĂ!**`,
-                        embeds: [{
-                            title: "✅ TRANZACȚIE CONFIRMATĂ",
-                            color: 3066993,
-                            fields: [
-                                { name: "💰 Credite", value: `**${r.amount} Cr**`, inline: true },
-                                { name: "🛡️ Procesat de", value: adminName, inline: true },
-                                { name: "🎮 ID Joc", value: r.idj, inline: true }
-                            ],
-                            timestamp: new Date()
-                        }]
-                    }) 
-                });
-
-                sendLogEmail(`Plata Aprobata - ${adminName}`, `Adminul ${adminName} a aprobat ${r.amount} credite pentru ${r.username}.`);
+                fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `✅ Plata de **${r.amount} Cr** pt <@${r.uid}> a fost aprobată!` }) });
                 notify("CERERE APROBATĂ!");
             } else {
-                sendLogEmail(`Plata Respinsa - ${adminName}`, `Adminul ${adminName} a respins cererea lui ${r.username}.`);
                 notify("CERERE RESPINSĂ!");
             }
             await db.ref('pending_donations/' + rid).remove();
@@ -613,7 +547,6 @@
                 const uData = uSnap.val() || { credits: 0, totalDonated: 0 };
                 await db.ref('users/' + user.id).update({ credits: (uData.credits || 0) + amount, totalDonated: (uData.totalDonated || 0) + amount });
                 await db.ref('active_giftcards/' + code).remove(); notify(`+${amount} Cr adăugați!`);
-                sendLogEmail("Redeem Card", `Utilizatorul ${user.username} a activat un card de ${amount} credite.`);
             } else { notify("COD INVALID!"); }
         }
 
