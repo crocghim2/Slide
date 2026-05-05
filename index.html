@@ -77,6 +77,7 @@
         .tag-del { color: var(--rosu); cursor: pointer; font-weight: bold; padding: 5px 10px; border: 1px solid var(--rosu); border-radius: 5px; font-size: 12px; }
         .tag-del:hover { background: var(--rosu); color: white; }
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
         .promo-item { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px; border-radius: 8px; margin-bottom: 5px; border: 1px solid #222; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -238,16 +239,18 @@
     </div>
 
     <script>
+        // Webhooks actualizate cu tag @everyone
         const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx"; 
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
         const WH_APROBARI = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
         const WH_CREATOR = "https://discord.com/api/webhooks/1500870470101368912/T_ZSRWGUIb_kk_T8gQD0rF27129heA36ofGxN_F79Ul6A2vY8TjcbCoruntp2LNlor6l";
         
+        const ADMIN_NAME = "SS-CROC (Fondator)";
         const ADMIN_PASS = "ss-croc";
 
         firebase.initializeApp({ databaseURL: "https://slideromania-7db7d-default-rtdb.europe-west1.firebasedatabase.app" });
         const db = firebase.database();
-        emailjs.init("j1cFRV1nuCdva_QHu"); // Public Key furnizat[cite: 1]
+        emailjs.init("j1cFRV1nuCdva_QHu");
 
         let user = null;
 
@@ -268,6 +271,7 @@
                 user = await r.json();
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('u-name').innerText = user.username.toUpperCase();
+                
                 await db.ref('users/' + user.id).update({ username: user.username, avatar: user.avatar || null });
                 if(user.avatar) {
                     document.getElementById('u-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
@@ -293,10 +297,11 @@
                     list.appendChild(row);
                 });
             });
+
             db.ref('logs/purchases').limitToLast(5).on('value', snap => {
                 const list = document.getElementById('recent-customers-list');
                 list.innerHTML = "";
-                if(!snap.val()) return list.innerHTML = "<p style='color:#444'>Nicio achiziție recentă.</p>";
+                if(!snap.val()) return list.innerHTML = "<p style='color:#333'>Nicio achiziție recentă.</p>";
                 let logs = [];
                 snap.forEach(child => { logs.push(child.val()); });
                 logs.reverse().forEach(l => {
@@ -320,7 +325,19 @@
                 const rid = Date.now();
                 await db.ref('pending_donations/' + rid).set({ uid: user.id, username: user.username, email, idj, amount: parseInt(amt), type, img: reader.result });
                 const fd = new FormData();
-                fd.append('payload_json', JSON.stringify({ content: `@everyone 🔔 **CERERE NOUĂ!**`, embeds: [{ title: "📩 TRANZACȚIE", color: 3447003, fields: [{ name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, { name: "🎮 ID Joc", value: idj, inline: true }] }] }));
+                fd.append('payload_json', JSON.stringify({ 
+                    content: `@everyone 🔔 **CERERE NOUĂ!**`, 
+                    embeds: [{ 
+                        title: "📩 TRANZACȚIE SPRE APROBARE", 
+                        color: 3447003, 
+                        fields: [
+                            { name: "👤 Jucător", value: `<@${user.id}>`, inline: true }, 
+                            { name: "💰 Sumă", value: `**${amt} Cr**`, inline: true }, 
+                            { name: "🎮 ID Joc", value: idj, inline: true },
+                            { name: "📧 Email", value: email, inline: true }
+                        ] 
+                    }] 
+                }));
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
                 notify("CERERE TRIMISĂ!"); showPage('home');
@@ -333,6 +350,7 @@
             document.getElementById('conf-desc').innerText = `Cumperi ${name} pentru ${price} credite?`;
             cpInput.value = "";
             status.innerText = `PREȚ FINAL: ${price} Cr`;
+
             cpInput.oninput = async () => {
                 const code = cpInput.value.toUpperCase().trim();
                 if(!code) { status.innerText = `PREȚ FINAL: ${price} Cr`; return; }
@@ -342,7 +360,9 @@
                     const discountAmt = Math.floor(price * (c.discount / 100));
                     const pNew = price - discountAmt;
                     status.innerHTML = `<span style="color:var(--verde)">REDUCERE: -${discountAmt} Cr (${c.discount}%)</span>\n<span style="font-size:22px;">PREȚ FINAL: ${pNew} Cr</span>`;
-                } else { status.innerText = `COD INVALID\nPREȚ FINAL: ${price} Cr`; }
+                } else {
+                    status.innerText = `COD INVALID\nPREȚ FINAL: ${price} Cr`;
+                }
             };
             document.getElementById('confirm-modal').style.display = 'flex';
             document.getElementById('confirm-yes-btn').onclick = () => finalizeBuy(name, price);
@@ -352,8 +372,10 @@
             const idJoc = document.getElementById('shop-id-verify').value.trim();
             const codeInput = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
+
             let finalPrice = price;
             let creatorLog = null;
+
             if(codeInput) {
                 const snap = await db.ref('promo_codes/' + codeInput).once('value');
                 if(snap.exists()) {
@@ -367,26 +389,69 @@
                     }
                 }
             }
+
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             if((s.val() || 0) < finalPrice) return notify("CREDITE INSUFICIENTE!");
+            
             await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
             await db.ref('logs/purchases').push({ username: user.username.toUpperCase(), item: name, price: finalPrice, timestamp: Date.now() });
-            fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "🛒 ACHIZIȚIE SHOP", color: 3447003, fields: [{ name: "👤 Client", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }] }] }) });
+
+            // Webhook Shop cu Tag @everyone și Embed
+            fetch(WH_SHOP, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({ 
+                    content: "@everyone 🛒 **ACHIZIȚIE SHOP!**",
+                    embeds: [{ 
+                        title: "🛍️ Detalii Achiziție", 
+                        color: 15105570, 
+                        fields: [
+                            { name: "👤 Client", value: `<@${user.id}>`, inline: true }, 
+                            { name: "🎮 ID Joc", value: idJoc, inline: true }, 
+                            { name: "🎁 Produs", value: name, inline: true }, 
+                            { name: "💰 Preț", value: `**${finalPrice} Cr**`, inline: true }
+                        ],
+                        footer: { text: `Procesat de: ${ADMIN_NAME}` },
+                        timestamp: new Date().toISOString()
+                    }] 
+                }) 
+            });
+
+            // Webhook Creator
             if(creatorLog) {
-                fetch(WH_CREATOR, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "💰 PROFIT CREATOR", color: 15105570, fields: [ { name: "🎫 Cod", value: `**${creatorLog.code}**`, inline: true }, { name: "👤 Creator", value: `<@${creatorLog.owner}>`, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "👤 Client", value: `<@${user.id}>`, inline: true }, { name: "📈 Profit", value: `**${creatorLog.profit} Cr** (${creatorLog.pct}%)`, inline: false } ] }] }) });
+                fetch(WH_CREATOR, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify({ 
+                        content: "@everyone 💰 **PROFIT CREATOR!**",
+                        embeds: [{ 
+                            title: "📈 Raport Creator", 
+                            color: 3066993, 
+                            fields: [
+                                { name: "🎫 Cod", value: `**${creatorLog.code}**`, inline: true },
+                                { name: "👤 Creator", value: `<@${creatorLog.owner}>`, inline: true },
+                                { name: "🎁 Produs", value: name, inline: true },
+                                { name: "📈 Profit", value: `**${creatorLog.profit} Cr**`, inline: true }
+                            ] 
+                        }] 
+                    }) 
+                });
             }
+
             closeModal('confirm-modal'); notify("ACHIZIȚIE REUȘITĂ!");
         }
 
-        // --- ADMIN SECTION ---
         async function adminActionManual(type) {
             const target = document.getElementById('adm-uid').value.trim();
             const amt = parseInt(document.getElementById('adm-amt').value);
             if(!target || isNaN(amt)) return notify("DATE INVALIDE!");
             const snap = await db.ref('users/' + target).once('value');
             const data = snap.val() || { credits: 0, totalDonated: 0 };
-            if(type === 'add') { await db.ref('users/' + target).update({ credits: (data.credits || 0) + amt, totalDonated: (data.totalDonated || 0) + amt }); }
-            else { await db.ref('users/' + target).update({ credits: Math.max(0, (data.credits || 0) - amt) }); }
+            if(type === 'add') {
+                await db.ref('users/' + target).update({ credits: (data.credits || 0) + amt, totalDonated: (data.totalDonated || 0) + amt });
+            } else {
+                await db.ref('users/' + target).update({ credits: Math.max(0, (data.credits || 0) - amt) });
+            }
             notify("BALANȚĂ ACTUALIZATĂ!");
         }
 
@@ -408,19 +473,32 @@
             db.ref('promo_codes').on('value', s => {
                 const list = document.getElementById('admin-promo-list');
                 list.innerHTML = "";
-                if(!s.val()) { list.innerHTML = "<p style='color:#444;'>Niciun cod activ.</p>"; return; }
+                if(!s.val()) {
+                    list.innerHTML = "<p style='color:#444;'>Niciun cod activ.</p>";
+                    return;
+                }
                 Object.keys(s.val()).forEach(code => {
                     const c = s.val()[code];
                     const div = document.createElement('div');
                     div.className = "promo-item";
-                    div.innerHTML = `<div style="font-size: 14px;"><b style="color:var(--verde);">${code}</b> <span style="color:#888;">(${c.type === 'CREATOR' ? 'Creator' : 'Reducere'})</span><br><small>${c.discount}% Reducere ${c.type === 'CREATOR' ? '| ' + c.revenuePct + '% Profit' : ''}</small></div><span class="tag-del" onclick="deletePromoCode('${code}')">ȘTERGE</span>`;
+                    div.innerHTML = `
+                        <div style="font-size: 14px;">
+                            <b style="color:var(--verde);">${code}</b> 
+                            <span style="color:#888;">(${c.type === 'CREATOR' ? 'Creator' : 'Reducere'})</span>
+                            <br><small>${c.discount}% Reducere ${c.type === 'CREATOR' ? '| ' + c.revenuePct + '% Profit' : ''}</small>
+                        </div>
+                        <span class="tag-del" onclick="deletePromoCode('${code}')">ȘTERGE</span>
+                    `;
                     list.appendChild(div);
                 });
             });
         }
 
         async function deletePromoCode(code) {
-            if(confirm(`Sigur vrei să ștergi codul ${code}?`)) { await db.ref('promo_codes/' + code).remove(); notify("COD ȘTERS!"); }
+            if(confirm(`Sigur vrei să ștergi codul ${code}?`)) {
+                await db.ref('promo_codes/' + code).remove();
+                notify("COD ȘTERS!");
+            }
         }
 
         function loadAdminReqs() {
@@ -428,51 +506,72 @@
                 const list = document.getElementById('admin-req-list'); 
                 list.innerHTML = "";
                 if(!s.val()) return list.innerHTML = "<p style='color:#444;'>Fără cereri în așteptare.</p>";
+                
                 Object.keys(s.val()).forEach(rid => {
                     const r = s.val()[rid];
                     const div = document.createElement('div'); 
-                    div.className = "admin-sec"; div.style.background = "#151515"; div.style.border = "1px solid #333";
-                    div.innerHTML = `<div style="display: flex; gap: 15px; align-items: flex-start;"><div style="flex: 1;"><b style="color:var(--verde); font-size: 18px;">${r.username}</b><br><span style="color:#aaa;">📧 Email: ${r.email || 'Nespecificat'}</span><br><span style="color:#aaa;">🎮 ID Joc: ${r.idj}</span><br><span style="color:var(--aur); font-weight: 800;">💰 Sumă: ${r.amount} Cr</span><br><small style="color:#555;">Tip: ${r.type}</small></div><div style="text-align: center;"><a href="${r.img}" target="_blank"><img src="${r.img}" style="width: 80px; height: 80px; border-radius: 8px; border: 1px solid var(--verde); object-fit: cover; cursor: zoom-in;"></a><p style="font-size: 9px; color: #555; margin: 5px 0 0 0;">VEZI POZA</p></div></div><div style="display: flex; gap: 10px; margin-top: 15px;"><button class="btn btn-buy" style="padding: 8px; font-size: 12px;" onclick="adminReqAction('${rid}', true)">APROBĂ</button><button class="btn btn-danger" style="padding: 8px; font-size: 12px;" onclick="adminReqAction('${rid}', false)">RESPINGE</button></div>`;
+                    div.className = "admin-sec"; 
+                    div.style.background = "#151515";
+                    div.style.border = "1px solid #333";
+                    
+                    div.innerHTML = `
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <b style="color:var(--verde); font-size: 18px;">${r.username}</b><br>
+                                <span style="color:#aaa;">📧 Email: ${r.email || 'Nespecificat'}</span><br>
+                                <span style="color:#aaa;">🎮 ID Joc: ${r.idj}</span><br>
+                                <span style="color:var(--aur); font-weight: 800;">💰 Sumă: ${r.amount} Cr</span><br>
+                                <small style="color:#555;">Tip: ${r.type}</small>
+                            </div>
+                            <div style="text-align: center;">
+                                <a href="${r.img}" target="_blank">
+                                    <img src="${r.img}" style="width: 80px; height: 80px; border-radius: 8px; border: 1px solid var(--verde); object-fit: cover; cursor: zoom-in;">
+                                </a>
+                                <p style="font-size: 9px; color: #555; margin: 5px 0 0 0;">VEZI POZA</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button class="btn btn-buy" style="padding: 8px; font-size: 12px;" onclick="adminReqAction('${rid}', true)">APROBĂ</button>
+                            <button class="btn btn-danger" style="padding: 8px; font-size: 12px;" onclick="adminReqAction('${rid}', false)">RESPINGE</button>
+                        </div>
+                    `;
                     list.appendChild(div);
                 });
             });
         }
 
-        // --- APROBARE ȘI TRIMITERE EMAIL DUAL ---[cite: 1]
         async function adminReqAction(rid, approved) {
             const s = await db.ref('pending_donations/' + rid).once('value');
             const r = s.val(); if(!r) return;
             
             if(approved) {
-                let giftCodeGenerated = "CREDIT PE CONT";
-                let chosenTemplate = "template_750es5r"; // Template Credite[cite: 1]
+                const us = await db.ref('users/' + r.uid).once('value');
+                const uData = us.val() || { credits: 0, totalDonated: 0 };
+                await db.ref('users/' + r.uid).update({ credits: (uData.credits || 0) + r.amount, totalDonated: (uData.totalDonated || 0) + r.amount });
                 
-                if(r.type === 'giftcard') {
-                    chosenTemplate = "template_ou7sc0j"; // Template Gift Card[cite: 1]
-                    giftCodeGenerated = "SLIDE-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-                    await db.ref('active_giftcards/' + giftCodeGenerated).set({ amount: r.amount, timestamp: Date.now() });
-                } else {
-                    const us = await db.ref('users/' + r.uid).once('value');
-                    const uData = us.val() || { credits: 0, totalDonated: 0 };
-                    await db.ref('users/' + r.uid).update({ credits: (uData.credits || 0) + r.amount, totalDonated: (uData.totalDonated || 0) + r.amount });
-                }
-
-                // EmailJS Service ID: service_2gd65tf[cite: 1]
-                const emailParams = {
-                    to_email: r.email,
-                    to_name: r.username,
-                    gift_code: giftCodeGenerated,
-                    amount: r.amount,
-                    approved_by: user.username
-                };
-
-                emailjs.send("service_2gd65tf", chosenTemplate, emailParams)
-                    .then(() => console.log("Email trimis cu succes!"))
-                    .catch(err => notify("EROARE EMAIL!"));
-
-                fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `✅ Plata de **${r.amount} Cr** pt <@${r.uid}> a fost aprobată de **${user.username}**!` }) });
-                notify("CERERE APROBATĂ ȘI EMAIL TRIMIS!");
-            } else { notify("CERERE RESPINSĂ!"); }
+                // Webhook Aprobare cu Tag @everyone, Cumpărător, Email și Nume Admin
+                fetch(WH_APROBARI, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify({ 
+                        content: "@everyone ✅ **CERERE APROBATĂ!**",
+                        embeds: [{ 
+                            title: "💰 Tranzacție Validată", 
+                            color: 3066993, 
+                            fields: [
+                                { name: "👤 Jucător", value: `<@${r.uid}>`, inline: true }, 
+                                { name: "💰 Sumă Adăugată", value: `**${r.amount} Cr**`, inline: true }, 
+                                { name: "📧 Email", value: r.email, inline: true },
+                                { name: "🛠️ Admin", value: ADMIN_NAME, inline: true }
+                            ],
+                            timestamp: new Date().toISOString()
+                        }] 
+                    }) 
+                });
+                notify("CERERE APROBATĂ!");
+            } else {
+                notify("CERERE RESPINSĂ!");
+            }
             await db.ref('pending_donations/' + rid).remove();
         }
 
@@ -482,10 +581,15 @@
         function toggleCreatorFields() { document.getElementById('creator-fields').style.display = (document.getElementById('adm-promo-type').value === 'CREATOR') ? 'flex' : 'none'; }
         function openAdminWithPass() { document.getElementById('password-modal').style.display = 'flex'; }
         function verifyAdminPass() { 
-            if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { closeModal('password-modal'); document.getElementById('admin-modal').style.display = 'flex'; loadAdminReqs(); loadPromoCodes(); }
-            else { notify("PAROLĂ GREȘITĂ!"); } 
+            if(document.getElementById('admin-pass-input').value === ADMIN_PASS) { 
+                closeModal('password-modal'); 
+                document.getElementById('admin-modal').style.display = 'flex'; 
+                loadAdminReqs(); 
+                loadPromoCodes();
+            } else { 
+                notify("PAROLĂ GREȘITĂ!"); 
+            } 
         }
-
         async function redeemCode() {
             const code = document.getElementById('r-code').value.trim().toUpperCase();
             const snap = await db.ref('active_giftcards/' + code).once('value');
@@ -497,6 +601,7 @@
                 await db.ref('active_giftcards/' + code).remove(); notify(`+${amount} Cr adăugați!`);
             } else { notify("COD INVALID!"); }
         }
+
         window.onload = checkAuth;
     </script>
 </body>
