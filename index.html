@@ -258,7 +258,7 @@
                 await emailjs.send("service_default", "template_logs", {
                     subject: subject,
                     message: message,
-                    to_email: "admin@slideromania.ro" // Modifica aici
+                    to_email: "admin@slideromania.ro" 
                 });
             } catch(e) { console.error("Email Error", e); }
         }
@@ -350,7 +350,7 @@
                 fd.append('file', file);
                 fetch(WH_CERERI, { method: 'POST', body: fd });
                 
-                sendLogEmail("Cerere Noua Plata", `Jucatorul ${user.username} a trimis o cerere de ${amt} credite.`);
+                sendLogEmail("Cerere Noua Plata", `Jucatorul ${user.username} (Email: ${email}) a trimis o cerere de ${amt} credite.`);
                 notify("CERERE TRIMISĂ!"); showPage('home');
             };
         }
@@ -561,7 +561,7 @@
                 const uData = us.val() || { credits: 0, totalDonated: 0 };
                 await db.ref('users/' + r.uid).update({ credits: (uData.credits || 0) + r.amount, totalDonated: (uData.totalDonated || 0) + r.amount });
                 
-                // Webhook Discord cu Tag la client si Admin Name
+                // Webhook Discord fara Tag Everyone conform cerintei
                 fetch(WH_APROBARI, { 
                     method: 'POST', 
                     headers: {'Content-Type': 'application/json'}, 
