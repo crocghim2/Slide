@@ -241,14 +241,13 @@
             <div class="shop-grid">
                 <div class="card">
                     <h3>🔓 UNBAN</h3>
-                    <p>20.000 Cr</p>
-                    <button class="btn btn-buy" onclick="askBuy('UNBAN', 20000)">CUMPĂRĂ ACUM</button>                  
-        <div id="unban" class="page">
-            <div class="shop-grid">
-                <div class="card">
-                    <h3>🔓 UNBAN TEMPORAR</h3>
                     <p>5.000 Cr</p>
-                     <button class="btn btn-buy" onclick="askBuy('UNBAN TEMMPORAR', 5000)">CUMPĂRĂ ACUM</button>
+                    <button class="btn btn-buy" onclick="askBuy('UNBAN', 5000)">CUMPĂRĂ ACUM</button>                  
+                </div>
+                <div class="card">
+                    <h3>⏳ UNBAN TEMPORAR</h3>
+                    <p>5.000 Cr</p>
+                    <button class="btn btn-buy" onclick="askBuy('UNBAN TEMPORAR', 5000)">CUMPĂRĂ ACUM</button>                  
                 </div>
             </div>
         </div></div>
@@ -394,7 +393,6 @@
             });
 
             // Creează comanda pentru resource-ul FiveM.
-            // Resource-ul FiveM va citi shop_orders și va livra produsul prin oxmysql.
             const orderRef = db.ref('shop_orders').push();
 
             await orderRef.set({
@@ -435,7 +433,6 @@
             if(type === 'add') { await db.ref('users/' + target).update({ credits: (data.credits || 0) + amt, totalDonated: (data.totalDonated || 0) + amt }); }
             else { await db.ref('users/' + target).update({ credits: Math.max(0, (data.credits || 0) - amt) }); }
             
-            // Log Admin Manual
             fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ embeds: [{ title: "⚙️ ACȚIUNE ADMIN MANUALĂ", color: 15105570, fields: [{ name: "👮 Admin", value: user.username, inline: true }, { name: "👤 Țintă", value: `<@${target}>`, inline: true }, { name: "📝 Tip", value: type.toUpperCase(), inline: true }, { name: "💰 Sumă", value: `${amt} Cr`, inline: true }] }] }) });
             
             notify("BALANȚĂ ACTUALIZATĂ!");
@@ -509,7 +506,6 @@
                 const emailParams = { to_email: r.email, to_name: r.username, gift_code: giftCodeGenerated, amount: r.amount, approved_by: user.username };
                 emailjs.send("service_2gd65tf", chosenTemplate, emailParams).catch(err => notify("EROARE EMAIL!"));
                 
-                // Webhook Aprobări detaliat
                 fetch(WH_APROBARI, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `✅ **PLATĂ APROBATĂ!**`, embeds: [{ title: "💎 STATUS TRANZACȚIE", color: 3066993, fields: [{ name: "👤 Utilizator", value: `<@${r.uid}>`, inline: true }, { name: "📧 Email", value: r.email, inline: true }, { name: "💰 Sumă", value: `**${r.amount} Cr**`, inline: true }, { name: "👮 Aprobat de", value: user.username, inline: true }, { name: "📦 Livrare", value: giftCodeGenerated, inline: false }] }] }) });
                 
                 notify("CERERE APROBATĂ!");
