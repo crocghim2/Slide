@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slide Romania | Hub Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    
+        <div id="unban" class="page">
+            <div class="section-title">UNBAN</div>
+            <div class="shop-grid">
+                <div class="product-card">
+                    <div class="product-info">
+                        <div class="product-name">UNBAN</div>
+                        <div class="product-price">20.000 Cr</div>
+                    </div>
+                    <button class="buy-btn" onclick="askBuy('UNBAN', 20000)">CUMPĂRĂ ACUM</button>
+                </div>
+            </div>
+        </div>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
@@ -229,17 +242,7 @@
         <div id="confirm" class="page"><div class="card" style="max-width:600px; margin:auto;"><h3>📸 CONFIRMARE PLATĂ</h3><label style="font-size: 12px; color: var(--verde);">DESTINAȚIE CREDITE:</label><select id="d-type" class="input-box" style="background: #111;"><option value="credite">CREDITE DIRECT PE CONT</option><option value="giftcard">GIFT CARD (COD PE EMAIL)</option></select><input type="email" id="d-email" class="input-box" placeholder="Email-ul tău"><input type="text" id="d-idj" class="input-box" placeholder="ID Joc"><input type="text" id="d-amt" class="input-box" placeholder="Suma Credite"><p style="font-size:12px; color:#555;">UPLOAD DOVADĂ (POZĂ):</p><input type="file" id="d-file" style="margin-bottom:20px;"><button class="btn btn-buy" onclick="sendDovada()">TRIMITE SPRE APROBARE</button></div></div>
         <div id="redeem" class="page"><div class="card" style="max-width:500px; margin:auto; text-align:center;"><h2 style="color:var(--verde);">🎁 REDEEM GIFT CARD</h2><input type="text" id="r-code" class="input-box" placeholder="SLIDE-XXXX-XXXX" style="text-align:center; font-size:20px;"><button class="btn btn-buy" onclick="redeemCode()">ACTIVEAZĂ CODUL</button></div></div>
         <div id="vip" class="page"><div class="shop-grid"><div class="card"><h3>VIP GOLD</h3><p>5.000 Cr</p><small style="color:#aaa;display:block;margin-bottom:10px;"></small><button class="btn btn-buy" onclick="askBuy('VIP GOLD', 5000)">CUMPĂRĂ ACUM</button></div><div class="card"><h3>VIP SILVER</h3><p>2.500 Cr</p><small style="color:#aaa;display:block;margin-bottom:10px;"></small><button class="btn btn-buy" onclick="askBuy('VIP SILVER', 2500)">CUMPĂRĂ ACUM</button></div><div class="card"><h3>VIP DIAMOND</h3><p>10.000 Cr</p><small style="color:#aaa;display:block;margin-bottom:10px;"></small><button class="btn btn-buy" onclick="askBuy('VIP DIAMOND', 10000)">CUMPĂRĂ ACUM</button></div></div></div>
-        <div id="cars" class="page"><div class="shop-grid"><div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPĂRĂ ACUM</button></div>
-        <div id="unban" class="page">
-            <div class="shop-grid">
-                <div class="card">
-                    <h3>UNBAN</h3>
-                    <p>20.000 Cr</p>
-                    <button class="btn btn-buy" onclick="askBuy('UNBAN', 20000)">CUMPĂRĂ ACUM</button>
-                </div>
-            </div>
-        </div><div class="card"><h3>MERCEDES G63</h3><p>7.500 Cr</p><button class="btn btn-buy" onclick="askBuy('Mercedes G63', 7500)">CUMPĂRĂ ACUM</button></div><div class="card"><h3>ROLLS ROYCE</h3><p>15.000 Cr</p><button class="btn btn-buy" onclick="askBuy('Rolls Royce Cullinan', 15000)">CUMPĂRĂ ACUM</button></div></div></div></div></div>
-    <script>
+        <div id="cars" class="page"><div class="shop-grid"><div class="card"><h3>BMW M5 CS</h3><p>8.000 Cr</p><button class="btn btn-buy" onclick="askBuy('BMW M5 CS', 8000)">CUMPĂRĂ ACUM</button></div><script>
         const WH_CERERI = "https://discord.com/api/webhooks/1500603438000636035/ya-pEJG0uFqYCLOB3Rrq5rHScn5mPcYHH_fOpVa3iadI6hqoKktMiYDsYDhZt1pPJ0Gx"; 
         const WH_SHOP = "https://discord.com/api/webhooks/1500603878700482700/SZ_VEigE64-1tAHIKrxsAwnscWnYsmb1q4Xv5M-h4r28EY0q0Zf2ixu1qAiNE6z2CrH0";
         const WH_APROBARI = "https://discord.com/api/webhooks/1500603387375386654/BP-Zi7QXZMRQk_8Ivb7JWFrXjAv-Hyr7xqjI_D0G0SQq1_Epi6K3rx55AZGQsFspXcDG";
