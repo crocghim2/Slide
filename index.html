@@ -346,6 +346,11 @@
             const idJoc = document.getElementById('shop-id-verify').value.trim();
             const codeInput = document.getElementById('shop-coupon').value.toUpperCase().trim();
             if(!idJoc) return notify("INTRODU ID JOC!");
+
+            const userIdVRP = parseInt(idJoc, 10);
+            if(!Number.isInteger(userIdVRP) || userIdVRP <= 0) {
+                return notify("ID JOC INVALID!");
+            }
             let finalPrice = price;
             let creatorLog = null;
             if(codeInput) {
@@ -363,8 +368,34 @@
             }
             const s = await db.ref('users/' + user.id + '/credits').once('value');
             if((s.val() || 0) < finalPrice) return notify("CREDITE INSUFICIENTE!");
-            await db.ref('users/' + user.id).update({ credits: s.val() - finalPrice });
-            await db.ref('logs/purchases').push({ username: user.username.toUpperCase(), item: name, price: finalPrice, timestamp: Date.now() });
+            // Scade creditele
+            await db.ref('users/' + user.id).update({
+                credits: s.val() - finalPrice
+            });
+
+            // Creează comanda pentru resource-ul FiveM.
+            // Resource-ul FiveM va citi shop_orders și va livra produsul prin oxmysql.
+            const orderRef = db.ref('shop_orders').push();
+
+            await orderRef.set({
+                uid: user.id,
+                username: user.username,
+                user_id: userIdVRP,
+                item: name,
+                price: finalPrice,
+                status: "pending",
+                created_at: Date.now()
+            });
+
+            // Log achiziție
+            await db.ref('logs/purchases').push({
+                username: user.username.toUpperCase(),
+                item: name,
+                price: finalPrice,
+                user_id: userIdVRP,
+                order_id: orderRef.key,
+                timestamp: Date.now()
+            });
             
             // Webhook Shop
             fetch(WH_SHOP, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content: `@everyone 🛒 **ACHIZIȚIE NOUĂ!**`, embeds: [{ title: "🛒 SHOP SLIDE", color: 3066993, fields: [{ name: "👤 Cumpărător", value: `<@${user.id}>`, inline: true }, { name: "🎮 ID Joc", value: idJoc, inline: true }, { name: "🎁 Produs", value: name, inline: true }, { name: "💰 Preț Achitat", value: `**${finalPrice} Cr**`, inline: true }] }] }) });
